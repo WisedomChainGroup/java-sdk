@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.briandilley.jsonrpc4j:jsonrpc4j:1.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.briandilley.jsonrpc4j/jsonrpc4j/1.1/9db67b974b8ee7ed14bfdf57eb06716cee39caa7/jsonrpc4j-1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.briandilley.jsonrpc4j/jsonrpc4j/1.1/3c5dbc45775332dd0205380d77d333d20ee747bd/jsonrpc4j-1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
