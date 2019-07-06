@@ -15,27 +15,13 @@ repositories {
 
 dependencies {
     compile "io.netty:netty-all:4.0.30.Final"
-//    compile "com.madgag.spongycastle:core:${scastleVersion}" // for SHA3 and SECP256K1
-//    compile "com.madgag.spongycastle:prov:${scastleVersion}" // for SHA3 and SECP256K1
-
-//    compile "org.iq80.leveldb:leveldb:${leveldbVersion}"     // Java API wrapper around native components
-
-    compile "org.ethereum:leveldbjni-all:1.18.3"             // native leveldb components
-
-    compile "org.ethereum:rocksdbjni:5.9.2"                   // RocksDB Java API
-
-    compile "org.ethereum:solcJ-all:0.4.25"                  // Solidity Compiler win/mac/linux binaries
-
     compile "com.google.guava:guava:24.1-jre"
-
     compile "com.cedarsoftware:java-util:1.8.0" // for deep equals
-//    compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "ch.qos.logback:logback-classic:1.1.7"
     compile "com.fasterxml.jackson.core:jackson-databind:2.5.1"
     compile "org.apache.commons:commons-collections4:4.0"
     compile "org.apache.commons:commons-lang3:3.4"
     compile "commons-codec:commons-codec:1.10"
-//    compile "org.springframework:spring-context:${springVersion}"
     compile "com.typesafe:config:1.2.1"
     compile "com.googlecode.concurrent-locks:concurrent-locks:1.0.0"
 
@@ -45,11 +31,6 @@ dependencies {
 
     compile "org.xerial.snappy:snappy-java:1.1.4" // Snappy compression
 
-    // used to hide spring initialization logs messages in samples
-//    optional "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
-
-//    testCompile "junit:junit:${junitVersion}"
-//    testCompile "org.springframework:spring-test:${springVersion}"
     testCompile "org.mockito:mockito-core:2.+"
     testCompile "com.github.briandilley.jsonrpc4j:jsonrpc4j:1.1"
 
@@ -80,7 +61,12 @@ dependencies {
     compile group: 'javax.validation', name: 'validation-api', version: '2.0.0.Final'
     // https://mvnrepository.com/artifact/commons-io/commons-io
     compile group: 'commons-io', name: 'commons-io', version: '2.4'
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
+    // https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient
     compile group: 'commons-httpclient', name: 'commons-httpclient', version: '3.1'
+    // https://mvnrepository.com/artifact/p2.osgi.bundle/org.apache.commons.cli
+    compile group: 'p2.osgi.bundle', name: 'org.apache.commons.cli', version: '1.0.0.v20080604-1500'
     // https://mvnrepository.com/artifact/commons-cli/commons-cli
     compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
 }
