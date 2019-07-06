@@ -204,12 +204,11 @@ public class TxUtility {
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param GasPrice
      * @param txid
      * @return
      * @throws DecoderException
      */
-    public static String CreateRawHatchPrincipalTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String txid) throws DecoderException {
+    public static String CreateRawHatchPrincipalTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid) throws DecoderException {
         //版本号
         byte[] version=new byte[1];
         version[0]=0x01;
@@ -408,7 +407,7 @@ public class TxUtility {
      * @throws Exception
      */
     public static JSONObject ClientToIncubatePrincipal (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String txid) throws Exception {
-        String RawTransactionHex =CreateRawShareProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount,txid);
+        String RawTransactionHex =CreateRawHatchPrincipalTransaction(fromPubkeyStr, toPubkeyHashStr, amount,txid);
         byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
         byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
         String txHash = Hex.encodeHexString(hash);
