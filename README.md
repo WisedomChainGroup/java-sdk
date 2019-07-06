@@ -336,9 +336,9 @@ TxUtility. byteToTransaction()
 * 2）、第一版使用客户端主动调用服务端API进行数据的更新，后续再更换为消息事件的方式
 * 3）、只要是调用RPC-API的，返回格式都是
 * {
-*     “data” :,
-*     “statusCode”:int,
-*     “message”:String
+* “data” :,
+* “statusCode”:int,
+* “message”:String
 * }
 
 1.28 命令行实现
