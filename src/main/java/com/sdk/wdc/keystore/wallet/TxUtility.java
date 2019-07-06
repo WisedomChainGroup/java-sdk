@@ -36,11 +36,10 @@ public class TxUtility {
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param GasPrice
      * @return
      * @throws DecoderException
      */
-    public static String CreateRawTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice) throws DecoderException {
+    public static String CreateRawTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount) throws DecoderException {
         //版本号
         byte[] version=new byte[1];
         version[0]=0x01;
@@ -73,13 +72,12 @@ public class TxUtility {
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param GasPrice
      * @param sharepubkeyhash
      * @param hatchType
      * @return
      * @throws DecoderException
      */
-    public static String CreateRawHatchTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String sharepubkeyhash, Integer hatchType) throws DecoderException {
+    public static String CreateRawHatchTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String sharepubkeyhash, Integer hatchType) throws DecoderException {
         //版本号
         byte[] version=new byte[1];
         version[0]=0x01;
@@ -125,12 +123,11 @@ public class TxUtility {
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param GasPrice
      * @param txid
      * @return
      * @throws DecoderException
      */
-    public static String CreateRawProfitTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String txid) throws DecoderException {
+    public static String CreateRawProfitTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid) throws DecoderException {
         //版本号
         byte[] version=new byte[1];
         version[0]=0x01;
@@ -167,12 +164,11 @@ public class TxUtility {
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param GasPrice
      * @param txid
      * @return
      * @throws DecoderException
      */
-    public static String CreateRawShareProfitTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String txid) throws DecoderException {
+    public static String CreateRawShareProfitTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid) throws DecoderException {
         //版本号
         byte[] version=new byte[1];
         version[0]=0x01;
@@ -306,18 +302,17 @@ public class TxUtility {
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param GasPrice
      * @param prikeyStr
      * @return
      * @throws Exception
      */
-    public static JSONObject ClientToTransferAccount(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String prikeyStr) throws Exception {
+    public static JSONObject ClientToTransferAccount(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr) throws Exception {
 //        HashMap map = CreateRawTransaction(fromPubkeyStr, toPubkeyHashStr, amount,GasPrice);
 //        HashMap map2 = signRawBasicTransaction(map,prikeyStr);
 //        byte[] transha= (byte[]) map2.get("transha");
 //        String txHash = Hex.encodeHexString(transha);
 //        return  txHash;
-        String RawTransactionHex = CreateRawTransaction(fromPubkeyStr, toPubkeyHashStr, amount,GasPrice);
+        String RawTransactionHex = CreateRawTransaction(fromPubkeyStr, toPubkeyHashStr, amount);
         byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
         byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
         String txHash = Hex.encodeHexString(hash);
@@ -335,13 +330,12 @@ public class TxUtility {
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param GasPrice
      * @param prikeyStr
      * @return
      * @throws Exception
      */
-    public static JSONObject ClientToIncubateAccount(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String prikeyStr, String sharepubkeyhash, Integer hatchType) throws Exception {
-        String RawTransactionHex = CreateRawHatchTransaction(fromPubkeyStr, toPubkeyHashStr, amount,GasPrice,sharepubkeyhash,hatchType);
+    public static JSONObject ClientToIncubateAccount(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String sharepubkeyhash, Integer hatchType) throws Exception {
+        String RawTransactionHex = CreateRawHatchTransaction(fromPubkeyStr, toPubkeyHashStr, amount,sharepubkeyhash,hatchType);
         byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
         byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
         String txHash = Hex.encodeHexString(hash);
@@ -359,14 +353,13 @@ public class TxUtility {
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param GasPrice
      * @param prikeyStr
      * @param txid
      * @return
      * @throws Exception
      */
-    public static JSONObject ClientToIncubateProfit (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String prikeyStr, String txid) throws Exception {
-        String RawTransactionHex = CreateRawProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount,GasPrice,txid);
+    public static JSONObject ClientToIncubateProfit (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String txid) throws Exception {
+        String RawTransactionHex = CreateRawProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount,txid);
         byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
         byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
         String txHash = Hex.encodeHexString(hash);
@@ -385,14 +378,13 @@ public class TxUtility {
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param GasPrice
      * @param prikeyStr
      * @param txid
      * @return
      * @throws Exception
      */
-    public static JSONObject ClientToIncubateShareProfit (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String prikeyStr, String txid) throws Exception {
-        String RawTransactionHex =CreateRawShareProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount,GasPrice,txid);
+    public static JSONObject ClientToIncubateShareProfit (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String txid) throws Exception {
+        String RawTransactionHex =CreateRawShareProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount,txid);
         byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
         byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
         String txHash = Hex.encodeHexString(hash);
@@ -410,14 +402,13 @@ public class TxUtility {
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param GasPrice
      * @param prikeyStr
      * @param txid
      * @return
      * @throws Exception
      */
-    public static JSONObject ClientToIncubatePrincipal (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String prikeyStr, String txid) throws Exception {
-        String RawTransactionHex =CreateRawShareProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount,GasPrice,txid);
+    public static JSONObject ClientToIncubatePrincipal (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String txid) throws Exception {
+        String RawTransactionHex =CreateRawShareProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount,txid);
         byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
         byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
         String txHash = Hex.encodeHexString(hash);
