@@ -16,6 +16,7 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+
 import sun.tools.jar.resources.jar;
 
 import java.io.*;
@@ -66,6 +67,7 @@ public class TxUtility {
         String RawTransactionStr = Hex.encodeHexString(RawTransaction);
         return  RawTransactionStr;
     }
+
 
     /**
      * 构造申请孵化事务
@@ -592,9 +594,6 @@ public class TxUtility {
 //        BigDecimal divide = bi1.divide(bi2, 0, RoundingMode.HALF_UP);
 //
 //        System.out.println(divide.longValue());
-        APIResult a = new APIResult();
-        JSONObject j = JSONObject.fromObject(a);
-        System.out.println(j);
 
     }
     //java -
