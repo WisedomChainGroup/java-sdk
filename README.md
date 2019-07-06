@@ -1,168 +1,377 @@
-# 接口说明
+# APPSDK方法说明
 
-### 1.
+APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事务的构造，签名，发送以及孵化器相关的操作，对于RPC来说，提供若干的接口，对于客户端来说，需要提供若干的实现方法，如下所示：
 
-### 生成keystore。
-方法：
+1. 基本说明
 
-WalletUtility. fromPassword()
+1）、事务类型
 
-### 参数：
+|编号	|交易类型	|说明	|
+|---	|---	|---	|
+|1	|0x01	|WDC转账	|
+|---	|---	|---	|
+|2	|0x09	|申请孵化	|
+|3	|0x0a	|获取利息收益	|
+|4	|0x0b	|获取分享收益	|
+|5	|0x0c	|停止孵化	|
 
-密码：
-password（String类型）
+2）、区块确认完成
+通过事务的哈希值查询确认区块数，并且确认是否已经完成，
+我们认为往后确定2区块即可表示已经完成。
+无论什么事务，都要等待至少2个区块确认才算完成
 
-### 返回值：
+1. 生成keystore文件
 
-{
-"StatusCode": 0,
-"Message":"",
-"Content"：json格式keystore
-}
+WalletUtility.generateKeystore()
+参数：
+1）、密码（String),
+2）、路径（String)选填
+返回类型：String
+返回值：address
 
-
-### 2.
-
-### 通过公钥哈希获取地址。
-方法：
-
-WalletUtility.pubkeyHashToAddress()
-
-### 参数：
-
-公钥哈希：
-pubkeyHash（String类型）
-
-### 返回值：
-
-{
-
-"StatusCode": 0,
-
-"Message":address
-
-"Content"：null
-
-}
-
-### 3.
-
-### 通过地址获取公钥哈希。
-方法：
-
-WalletUtility.addressToPubkeyHash()
-
-### 参数：
-
-地址：
-address（String类型）
-
-### 返回值：
-
-{
-
-"StatusCode": 0,
-
-"Message":pubkeyHash
-
-"Content"：null
-
-}
-
-### 
-
-### 4.
-
-### 通过私钥获取公钥。
-方法：
-
-WalletUtility.prikeyToPubkey()
-
-### 参数：
-
-
-私钥：
-
-prikey（String类型）
-
-### 返回值：
-
-
-{
-
-"StatusCode": 0,
-
-"Message":Pubkey
-
-"Content"：null
-
-}
-
-### 
-
-### 5.
-
-### 地址有效性校验。
-方法：
+1. 地址校验
 
 WalletUtility.verifyAddress()
+参数：
+1）、地址字符串（String)
+返回类型：int
+返回值：
+0（正常）
 
-### 参数：
+* 1（出错）地址前缀错误
+* 2（出错）校验错误
 
-地址：
+1. 通过地址获得公钥哈希
 
-address（String类型）
+WalletUtility.addressToPubkeyHash()
+参数：
+1）、地址字符串（String)
+返回类型：String（十六进制字符串）
+返回值：pubkeyHash
 
-### 返回值：
+1. 通过公钥哈希获得地址
 
+WalletUtility. pubkeyHashToAddress()
+参数：
+1）、公钥哈希（String)
+返回类型：String
+返回值：Address
+
+1. 通过keystore获得地址
+
+WalletUtility.keystoreToAddress()
+参数：
+1）、keystore（String)
+2）、密码（String)
+返回类型：String
+返回值：Address
+
+1. 通过keystore获得公钥哈希
+
+WalletUtility. keystoreToPubkeyHash()
+参数：
+1）、keystore（String)
+2）、密码（String)
+返回类型：String
+返回值：PubkeyHash
+
+1. 通过keystore获得私钥
+
+WalletUtility. obtainPrikey()
+参数：
+1）、keystore（String)
+2）、密码（String)
+返回类型：String（十六进制字符串）
+返回值：Prikey
+
+1. 通过keystore获得公钥
+
+WalletUtility.keystoreToPubkey()
+参数：
+1）、keystore（String)
+2）、密码（String)
+返回类型：String（十六进制字符串）
+返回值：Pubkey
+
+1. 导入keystore
+
+WalletUtility. importKeystore()
+参数：
+1）、keystore（String)
+2）、路径（String)选填
+返回类型：String
+返回值：Address
+
+1. 修改KeyStore密码方法
+
+WalletUtility.modifyPassword()
+参数：
+1）、keystore（String)
+2）、旧密码（String)
+3）、新密码（String)
+返回类型：json
+返回值：Keystore
+
+1. SHA3-256哈希方法
+
+SHA3Utility.HexStringkeccak256*()*
+参数：
+1）、哈希原文（字节数组)
+返回类型：十六进制字符串
+返回值：哈希值
+
+1. Ripemd-160哈希方法
+
+RipemdUtility.HexStringRipemd160*()*
+参数：
+1）、哈希原文（字节数组)
+返回类型：十六进制字符串
+返回值：哈希值
+
+1. base58编码方法
+
+Base58Utility.*encode ()*
+参数：
+1）、哈希原文（字节数组)
+返回类型：String
+返回值：哈希值
+
+1. 获得地址余额
+
+WalletUtility. getBalance()
+参数：
+1）、地址（String)
+返回类型：json
+返回值：
 {
-
-"StatusCode": StatusCode,
-
-"Message": Message，
-
-"Content"：null
-
+data :null;
+(int)statusCode:0
+(String)message:余额（BigDecimal)
 }
 
-### 返回值说明：
+1. 根据事务哈希获得所在区块哈希以及高度
 
+WalletUtility. getTransactioninfo ()
+参数：
+1）、事务哈希（十六进制字符串)
+返回类型：json
+返回值：
 {
-
-StatusCode：返回数据状态:
-                         0（正常）
-                         -1（出错）
-
-                         -2（出错）
-
-Message：错误提示。
-Content：null
-
+data :定义如下;
+(int)statusCode:0
+(String)message:null
+}
+data:
+{
+**"blockHash"**:区块哈希(十六进制字符串), 
+        **"height"**:区块高度(Long)
 }
 
-### 
+1. 根据事务哈希获得确认区块数
 
-### 6.
-
-### 更新地址。
-方法：
-
-WalletUtility.oldaddtonewadd()
-
-### 参数：
-
-需要更新的地址：
-
-oldAddress（String类型）
-
-### 返回值：
-
+WalletUtility. confirmedBlockNumber()
+参数：
+1）、事务哈希（十六进制字符串)
+返回类型：json
+返回值：
 {
-
-"StatusCode": 0,
-
-"Message":newAddress
-
-"Content"：null
-
+data :null;
+(int)statusCode:0
+(String)message:确认区块数（Long)
 }
+
+1. 创建原生转账事务
+
+TxUtility.CreateRawTransaction*()*
+参数：
+1）、发送者公钥（十六进制字符串)
+2）、接收者公钥哈希（十六进制字符串)
+3）、转账金额（BigDecimal)
+~~4~~~~）、~~~~Gas单价~~~~（~~~~BigDecimal~~~~)~~
+返回类型：十六进制字符串
+返回值：事务哈希
+
+1. 签名转账事务事务
+
+TxUtility.signRawBasicTransaction*()*
+参数：
+1）、事务（十六进制字符串)
+2）、私钥（十六进制字符串)
+返回类型：十六进制字符串
+返回值：事务哈希
+返回事务十六进制字符串
+
+1. 广播转账事务
+
+## 广播转账事务可以与1.20的封装方法合并
+
+返回事务十六进制字符串
+以下的三条事务，孵化申请、提取利息以及提取分享收益
+补充下原生事务创建、签名以及发送的方法
+
+1. 发起转账申请-连接服务
+
+本方法需要连接服务端
+包含了三个连续的步骤：构造原声事务、签名以及发送
+
+## 方法名修改为ClientToTransferAccount()
+
+TxUtility. ClientToTransferAccount*()*
+参数：
+1）、发送者公钥（十六进制字符串)
+2）、接收者公钥哈希（十六进制字符串)
+3）、转账金额（BigDecimal)
+~~4~~~~）、~~~~Gas单价~~~~（~~~~BigDecimal~~~~)~~
+5）、私钥（十六进制字符串)
+返回类型：Json
+返回值：
+{
+data :null;
+(int)statusCode:
+1(成功)
+1（失败）
+(String)message:返回事务哈希（十六进制字符串)
+}
+注意，这里的成功或者失败，仅仅是指动作本身，真正看事务有没有最终成功，还需要通过事务哈希查询确认区块数
+
+1. 发起孵化申请
+
+方法名修改为ClientToIncubateAccount()
+TxUtility. ClientToIncubateAccount*()*
+参数：
+1）、发送者公钥（十六进制字符串)
+2）、接收者公钥哈希（十六进制字符串)
+3）、金额（BigDecimal)
+~~4~~~~）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)~~
+5）、私钥（十六进制字符串)
+6）、分享者公钥哈希（十六进制字符串)
+7）、孵化类型（int)
+返回类型：Json
+返回值：
+{
+data :null;
+(int)statusCode:
+1(成功)
+1（失败）
+(String)message:返回事务哈希（十六进制字符串）
+}
+无论成功与否，都返回事务哈希
+
+1. 提取收益
+
+TxUtility. ClientToIncubateProfit *()*
+参数：
+1）、发送者公钥（十六进制字符串)
+2）、接收者公钥哈希（十六进制字符串)
+3）、收益（BigDecimal)
+~~4~~~~）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)~~
+5）、私钥（十六进制字符串)
+6）、孵化的事务哈希（十六进制字符串)
+返回类型：Json
+返回值：
+{
+data :null;
+(int)statusCode:
+1(成功)
+1（失败）
+(String)message:事务哈希（十六进制字符串）
+}
+
+1. 提取分享收益
+
+TxUtility.ClientToIncubateShareProfit ()
+参数：
+1）、发送者公钥（十六进制字符串)
+2）、接收者公钥哈希（十六进制字符串)
+3）、分享收益（BigDecimal)
+~~4~~~~）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)~~
+5）、私钥（十六进制字符串)
+6）、孵化的事务哈希（十六进制字符串)
+返回类型：Json
+返回值：
+{
+data :null;
+(int)statusCode:
+1(成功)
+1（失败）
+(String)message:事务哈希（十六进制字符串）
+}
+
+1. 提取本金
+
+TxUtility. ClientToIncubatePrincipal()
+参数：
+1）、发送者公钥（十六进制字符串)
+2）、接收者公钥哈希（十六进制字符串)
+3）、本金（BigDecimal)
+~~4~~~~）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)~~
+5）、私钥（十六进制字符串)
+6）、孵化的事务哈希（十六进制字符串)
+返回类型：Json
+返回值：
+{
+data :null;
+(int)statusCode:
+1(成功)
+1（失败）
+(String)message:事务哈希（十六进制字符串）
+}
+
+1. 获取事务对象
+
+TxUtility. byteToTransaction()
+参数：
+1）、事务哈希（十六进制字符串)
+返回类型：Json
+返回值：
+{
+data : Transaction;
+(int)statusCode:0
+(String)message:null
+}
+
+1. 本地参数配置
+
+最低手续费，默认为0.002wdc
+余额可见区块确认数：2
+
+1. 注意点
+
+1）、与服务端之间的参数传递，采用JSON格式
+并且使用protobuf字节传递
+2）、第一版使用客户端主动调用服务端API进行数据的更新，后续再更换为消息事件的方式
+3）、只要是调用RPC-API的，返回格式都是
+{
+    “data” :,
+“statusCode”:int,
+“Message”:String
+}
+
+1. 命令行实现
+
+假设SDK编译后的程序名为wcli
+[Image: image.png]在main方法中调用一个CLIInterface.call
+传入的参数为main方法中的args参数数组
+CLIInterface类中定义若干的参数处理方法
+我们实现几个命令行操作
+1）、wcli
+accountnew –password <password> -path<path>(选填) –batch<batch>(数量,选填)
+~~提示输入密码，两次输入密码确认后，~~在程序所在目录下自动创建一个wisdom_keystore文件夹，并且创建相应的keystore
+~~2）、~~~~wcli ~~~~-~~~~accountsnew ~~~~–~~~~password <password> -path<path>(选填)~~~~ ~~~~–~~~~batch<batch>(数量)~~
+~~提示输入密码，两次输入密码确认后，~~在程序所在目录下自动创建一个~~wisdom_keystore~~~~文件夹，并且创建相应的~~~~keystore~~
+3）、wcli -addresstopubkeyhash <address>
+传入参数为地址字符串
+返回公钥哈希
+4）、wcli -keystoretoaddress
+path<keystore-file path>-password<password>
+~~传入参数为k~~~~eystore~~~~文件路径~~
+~~提示输入密码后~~
+返回address
+5）、wcli -keystoretopubkeyhash -path<keystore-filepath>-password<password>
+~~传入参数为~~~~keystore~~~~文件路径 ~~
+~~提示输入密码后~~
+返回公钥哈希
+6）、wcli–connect -ip<ip> -port<port>
+连接rpc
+传入参数为IP地址、端口号
+返回值为true/false
