@@ -5,6 +5,7 @@ import com.google.protobuf.ByteString;
 import com.sdk.wdc.ApiResult.APIResult;
 import com.sdk.wdc.account.Transaction;
 import com.sdk.wdc.encoding.BigEndian;
+import com.sdk.wdc.keystore.crypto.RipemdUtility;
 import com.sdk.wdc.keystore.crypto.SHA3Utility;
 import com.sdk.wdc.keystore.crypto.ed25519.Ed25519PrivateKey;
 import com.sdk.wdc.keystore.util.ByteUtil;
@@ -13,19 +14,22 @@ import com.sdk.wdc.protobuf.ProtocolModel;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
+import sun.tools.jar.resources.jar;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.logging.Level;
 
 public class TxUtility {
     private static final Long rate= 100000000L;
     public static final String node = "http://192.168.0.101:19585/sendTransaction";
     public static final String node2 = "http://localhost:19585/block";
+    private static final Long serviceCharge= 200000L;
 
     /**
      * 构造交易事务
@@ -49,7 +53,7 @@ public class TxUtility {
         //签发者公钥哈希 20字节
         byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
         //gas单价
-        byte[] gasPrice = ByteUtil.longToBytes(GasPrice.multiply(BigDecimal.valueOf(rate)).longValue());
+        byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(50000L,serviceCharge));
         //转账金额 无符号64位
         BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
         byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
@@ -88,7 +92,7 @@ public class TxUtility {
         //签发者公钥哈希 20字节
         byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
         //gas单价
-        byte[] gasPrice =ByteUtil.longToBytes(GasPrice.multiply(BigDecimal.valueOf(rate)).longValue());
+        byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(80000L,serviceCharge));
         //孵化本金 无符号64位
         BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
         byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
@@ -139,8 +143,8 @@ public class TxUtility {
         //签发者公钥哈希 20字节
         byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
         //gas单价
-        byte[] gasPrice =ByteUtil.longToBytes(GasPrice.multiply(BigDecimal.valueOf(rate)).longValue());
-        //孵化本金 无符号64位
+        byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(80000L,serviceCharge));
+        //收益 无符号64位
         BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
         byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
         //为签名留白
@@ -181,8 +185,49 @@ public class TxUtility {
         //签发者公钥哈希 20字节
         byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
         //gas单价
-        byte[] gasPrice =ByteUtil.longToBytes(GasPrice.multiply(BigDecimal.valueOf(rate)).longValue());
-        //孵化本金 无符号64位
+        byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(80000L,serviceCharge));
+        //分享收益 无符号64位
+        BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
+        byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
+        //为签名留白
+        byte[] signull=new byte[64];
+        //接收者公钥哈希
+        byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
+        //构造payload
+        byte[] payload = Hex.decodeHex(txid.toCharArray());
+        //长度
+        byte[] payloadleng= BigEndian.encodeUint32(payload.length);
+        byte[] allPayload=ByteUtil.merge(payloadleng,payload);
+        byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
+        String RawTransactionStr = Hex.encodeHexString(RawTransaction);
+        return  RawTransactionStr;
+    }
+
+    /**
+     * 构造提取本金
+     * @param fromPubkeyStr
+     * @param toPubkeyHashStr
+     * @param amount
+     * @param GasPrice
+     * @param txid
+     * @return
+     * @throws DecoderException
+     */
+    public static String CreateRawHatchPrincipalTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String txid) throws DecoderException {
+        //版本号
+        byte[] version=new byte[1];
+        version[0]=0x01;
+        //类型：申请孵化
+        byte[] type=new byte[1];
+        type[0]=0x0c;
+        //Nonce 无符号64位
+        byte[] nonece=BigEndian.encodeUint64(1);
+//        byte[] nonce=ByteUtil.encodeUint64(100000000);
+        //签发者公钥哈希 20字节
+        byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+        //gas单价
+        byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(80000L,serviceCharge));
+        //本金 无符号64位
         BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
         byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
         //为签名留白
@@ -361,6 +406,31 @@ public class TxUtility {
     }
 
     /**
+     * 构造签名的收取本金事务
+     * @param fromPubkeyStr
+     * @param toPubkeyHashStr
+     * @param amount
+     * @param GasPrice
+     * @param prikeyStr
+     * @param txid
+     * @return
+     * @throws Exception
+     */
+    public static JSONObject ClientToIncubatePrincipal (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, BigDecimal GasPrice, String prikeyStr, String txid) throws Exception {
+        String RawTransactionHex =CreateRawShareProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount,GasPrice,txid);
+        byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+        byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+        String txHash = Hex.encodeHexString(hash);
+        String traninfo = Hex.encodeHexString(signRawBasicTransaction);
+        String msg = sendTransac(node,"traninfo="+traninfo);
+        JSONObject jsonObject = JSONObject.fromObject(msg);
+        APIResult ar = (APIResult) JSONObject.toBean(jsonObject,APIResult.class);
+        ar.setMessage(txHash);
+        JSONObject json = JSONObject.fromObject(ar);
+        return  json;
+    }
+
+    /**
      * 通过事务十六进制字符串获取Transaction
      * @param transactionHexStr
      * @return
@@ -444,4 +514,101 @@ public class TxUtility {
         }
         return str;
     }
+
+    public static String connect(String ip,String port,String data) {
+        String str = "";
+        try {
+            String path = "http://192.168.0.116:19585/block/-1";
+
+            URL url = new URL(path);
+            //打开和url之间的连接
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            PrintWriter out = null;
+            //请求方式
+            conn.setRequestMethod("GET");
+//           //设置通用的请求属性
+            conn.setRequestProperty("accept", "*/*");
+            conn.setRequestProperty("connection", "Keep-Alive");
+            conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
+            //设置是否向httpUrlConnection输出，设置是否从httpUrlConnection读入，此外发送post请求必须设置这两个
+            //最常用的Http请求无非是get和post，get请求可以获取静态页面，也可以把参数放在URL字串后面，传递给servlet，
+            //post与get的 不同之处在于post的参数不是放在URL字串里面，而是放在http请求的正文内。
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            //获取URLConnection对象对应的输出流
+            out = new PrintWriter(conn.getOutputStream());
+            //发送请求参数即数据
+            out.print(data);
+            //缓冲数据
+            out.flush();
+            //获取URLConnection对象对应的输入流
+            InputStream is = conn.getInputStream();
+            //构造一个字符流缓存
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            while ((str = br.readLine()) != null) {
+                System.out.println(str);
+            }
+            //关闭流
+            is.close();
+            //断开连接，最好写上，disconnect是在底层tcp socket链接空闲时才切断。如果正在被其他线程使用就不切断。
+            //固定多线程的话，如果不disconnect，链接会增多，直到收发不出信息。写上disconnect后正常一些。
+            conn.disconnect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
+    public static void connect(String ip, String port) {
+        HttpClient client = new HttpClient();
+        String url = "http://"+ip+":"+port;
+        GetMethod getMethod = new GetMethod(url);
+        int code = 0;
+        try {
+            code = client.executeMethod(getMethod);
+            if (code == 200) {
+                String res = getMethod.getResponseBodyAsString();
+                System.out.println(res);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 计算gas单价
+     * @param gas
+     * @param total
+     * @return
+     */
+    public static Long obtainServiceCharge(Long gas,Long total){
+        BigDecimal a = new BigDecimal(gas.toString());
+        BigDecimal b = new BigDecimal(total.toString());
+        BigDecimal divide = b.divide(a, 0, RoundingMode.HALF_UP);
+        Long gasPrice = divide.longValue();
+        return gasPrice;
+    }
+
+
+    public static void main(String[] args) throws Exception {
+//        connect("192.168.0.116","19585/block/-1");
+//        WalletUtility.generateKeystore("12345678","E:\\test1\\rpcsdk-J\\classes\\artifacts\\wcli_jar");
+
+
+//        System.out.println(obtainServiceCharge(50000L,serviceCharge));
+//        BigDecimal bi1 = new BigDecimal(a.toString());
+//        BigDecimal bi2 = new BigDecimal(b.toString());
+//        BigDecimal divide = bi1.divide(bi2, 0, RoundingMode.HALF_UP);
+//
+//        System.out.println(divide.longValue());
+        APIResult a = new APIResult();
+        JSONObject j = JSONObject.fromObject(a);
+        System.out.println(j);
+
+    }
+    //java -
+    //jar com.example.wdc.main.jar -connet -ip 192.168.0.116 -port 19585/block/-1
+
+
 }

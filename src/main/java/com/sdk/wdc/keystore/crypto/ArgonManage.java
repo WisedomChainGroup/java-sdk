@@ -5,7 +5,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.springframework.stereotype.Component;
 
 
-@Component
+
 public class ArgonManage {
 	public static enum Type {
 		ARGON2d,

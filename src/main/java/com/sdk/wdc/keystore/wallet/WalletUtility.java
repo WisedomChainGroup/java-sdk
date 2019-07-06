@@ -94,7 +94,7 @@ public class WalletUtility {
     public static String generateKeystore(String password,String path) throws Exception{
         String folderPath = path;
         if (folderPath == "" || folderPath == null){
-            folderPath = System.getProperty("user.dir")+File.separator+"Keystore";
+            folderPath = System.getProperty("user.dir")+File.separator+"wisdom_keystore";
         }
 
         File folder = new File(folderPath);
@@ -438,26 +438,26 @@ public class WalletUtility {
 //        sendTransac("http://192.168.0.101:19585/sendTransaction","traninfo="+ae);
 
 
-//        generateKeystore("111111111","");
+        generateKeystore("111111111","");
 //        String json = "{\"address\":\"14FK7qoUCwFfWhyxRNZ2raTTpdxash5X5F\",\"crypto\":{\"cipher\":\"aes-256-ctr\",\"cipherparams\":{\"iv\":\"217641cd61819ad69308d112bf5e0d45\"},\"ciphertext\":\"ff14986b43032681133286f7bda525391620b491f0c515c4a0c81785eec5dd4e\"},\"id\":\"b94acf2c-8cd2-438a-81db-bbe6a054591d\",\"kdf\":\"argon2id\",\"kdfparams\":{\"memoryCost\":20480,\"parallelism\":2,\"salt\":\"bddcd55fda732028c04f58fe606393cd462ea8f97734974e5e97240bead90f24\",\"timeCost\":4},\"mac\":\"d83b224cc5600283b6a7b4707ee7a33a2bae6744354b4efb037852ebbbe8b766\",\"version\":\"1\"}";
 //        String j2 = "{\"address\":\"14FK7qoUCwFfWhyxRNZ2raTTpdxash5X5F\",\"crypto\":{\"cipher\":\"aes-256-ctr\",\"cipherparams\":{\"iv\":\"10f7e5c71469e5d1113a65fdc8ad7904\"},\"ciphertext\":\"bced792a2d4c08023ab08cce040d26548d14e3a95ba0cb80b63fab37e41243b3\"},\"id\":\"1210a3de-76b9-4dff-a931-0cac40696eaa\",\"kdf\":\"argon2id\",\"kdfparams\":{\"memoryCost\":20480,\"parallelism\":2,\"salt\":\"31c3a1abe88b2d548c6134ed6c898a5d3ca7364b076a0aefe7be36677a3b829a\",\"timeCost\":4},\"mac\":\"6d7baba7496d54aa78a2e2cb6180ccf3cfee35f7fe28ed915063b141663d8de1\",\"version\":\"1\"}";
 //        System.out.println(json.equals(j2));
 //        System.out.println(obtainPrikey(j2,"66666666"));
 //        String pri = "d20169b247ded0188a5e2ce39e4f13a6c9990c22ce953216900cd2c0c98f238e";
-//        modifyPassword(pri,"66666666");
+//        modifyPassword(json,"111111111","13245678");
 
-        String json = "{\"address\":\"14FK7qoUCwFfWhyxRNZ2raTTpdxash5X5F\",\"crypto\":{\"cipher\":\"aes-256-ctr\",\"cipherparams\":{\"iv\":\"217641cd61819ad69308d112bf5e0d45\"},\"ciphertext\":\"ff14986b43032681133286f7bda525391620b491f0c515c4a0c81785eec5dd4e\"},\"id\":\"b94acf2c-8cd2-438a-81db-bbe6a054591d\",\"kdf\":\"argon2id\",\"kdfparams\":{\"memoryCost\":20480,\"parallelism\":2,\"salt\":\"bddcd55fda732028c04f58fe606393cd462ea8f97734974e5e97240bead90f24\",\"timeCost\":4},\"mac\":\"d83b224cc5600283b6a7b4707ee7a33a2bae6744354b4efb037852ebbbe8b766\",\"version\":\"1\"}";
-        String json2= "{\"address\":\"14FK7qoUCwFfWhyxRNZ2raTTpdxash5X5F\",\"crypto\":{\"cipher\":\"aes-256-ctr\",\"cipherparams\":{\"iv\":\"f7c7955c264fab611448a5a7547c19f5\"},\"ciphertext\":\"3a79082e5e7e7cfb104d343f15b6b89cb2f9ea2798295434dc49d199a7d87068\"},\"id\":\"b61c5f1a-8614-4000-b3a4-535da6761cba\",\"kdf\":\"argon2id\",\"kdfparams\":{\"memoryCost\":20480,\"parallelism\":2,\"salt\":\"88f5f11ad699b928cbb730cfeab464840e185b81204dfca0ead2f8c5a580fe62\",\"timeCost\":4},\"mac\":\"f37fab8200aa7bf60655ea24cdd0639ebf2421e5f66950f96d657668e6828aa2\",\"version\":\"1\"}";
-        System.out.println(modifyPassword(json,"111111111","77777777"));
-
-//        System.out.println(importKeystore(json2,""));
-//        APIResult a = new APIResult();
-//        a.setMessage("1");
-//        JSONObject json  = JSONObject.fromObject(a);
-        System.out.println(json);
-
-
-        System.out.println(pubkeyHashToAddress("00e9dfbeb7887ca5a16859c162d50457be2910f0"));
+//        String json = "{\"address\":\"14FK7qoUCwFfWhyxRNZ2raTTpdxash5X5F\",\"crypto\":{\"cipher\":\"aes-256-ctr\",\"cipherparams\":{\"iv\":\"217641cd61819ad69308d112bf5e0d45\"},\"ciphertext\":\"ff14986b43032681133286f7bda525391620b491f0c515c4a0c81785eec5dd4e\"},\"id\":\"b94acf2c-8cd2-438a-81db-bbe6a054591d\",\"kdf\":\"argon2id\",\"kdfparams\":{\"memoryCost\":20480,\"parallelism\":2,\"salt\":\"bddcd55fda732028c04f58fe606393cd462ea8f97734974e5e97240bead90f24\",\"timeCost\":4},\"mac\":\"d83b224cc5600283b6a7b4707ee7a33a2bae6744354b4efb037852ebbbe8b766\",\"version\":\"1\"}";
+//        String json2= "{\"address\":\"14FK7qoUCwFfWhyxRNZ2raTTpdxash5X5F\",\"crypto\":{\"cipher\":\"aes-256-ctr\",\"cipherparams\":{\"iv\":\"f7c7955c264fab611448a5a7547c19f5\"},\"ciphertext\":\"3a79082e5e7e7cfb104d343f15b6b89cb2f9ea2798295434dc49d199a7d87068\"},\"id\":\"b61c5f1a-8614-4000-b3a4-535da6761cba\",\"kdf\":\"argon2id\",\"kdfparams\":{\"memoryCost\":20480,\"parallelism\":2,\"salt\":\"88f5f11ad699b928cbb730cfeab464840e185b81204dfca0ead2f8c5a580fe62\",\"timeCost\":4},\"mac\":\"f37fab8200aa7bf60655ea24cdd0639ebf2421e5f66950f96d657668e6828aa2\",\"version\":\"1\"}";
+//        System.out.println(modifyPassword(json,"111111111","77777777"));
+//
+////        System.out.println(importKeystore(json2,""));
+////        APIResult a = new APIResult();
+////        a.setMessage("1");
+////        JSONObject json  = JSONObject.fromObject(a);
+//        System.out.println(json);
+//
+//
+//        System.out.println(pubkeyHashToAddress("00e9dfbeb7887ca5a16859c162d50457be2910f0"));
     }
 
 
