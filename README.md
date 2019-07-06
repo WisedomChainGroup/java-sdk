@@ -337,8 +337,8 @@ TxUtility. byteToTransaction()
 * 3）、只要是调用RPC-API的，返回格式都是
 * {
 *     “data” :,
-* “statusCode”:int,
-* “message”:String
+*     “statusCode”:int,
+*     “message”:String
 * }
 
 1.28 命令行实现
