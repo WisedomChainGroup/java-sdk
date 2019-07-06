@@ -187,7 +187,7 @@ WalletUtility. confirmedBlockNumber()
 * 1）、发送者公钥（十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
 * 3）、转账金额（BigDecimal)
-* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)~~
+* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)
 * 返回类型：十六进制字符串
 * 返回值：事务哈希
 
@@ -221,7 +221,7 @@ TxUtility. ClientToTransferAccount*()*
 * 1）、发送者公钥（十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
 * 3）、转账金额（BigDecimal)
-* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)~~
+* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)
 * 5）、私钥（十六进制字符串)
 * 返回类型：Json
 * 返回值：
@@ -242,7 +242,7 @@ TxUtility. ClientToTransferAccount*()*
 * 1）、发送者公钥（十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
 * 3）、金额（BigDecimal)
-* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)~~
+* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)
 * 5）、私钥（十六进制字符串)
 * 6）、分享者公钥哈希（十六进制字符串)
 * 7）、孵化类型（int)
@@ -264,7 +264,7 @@ TxUtility. ClientToIncubateProfit *()*
 * 1）、发送者公钥（十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
 * 3）、收益（BigDecimal)
-* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)~~
+* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)
 * 5）、私钥（十六进制字符串)
 * 6）、孵化的事务哈希（十六进制字符串)
 * 返回类型：Json
@@ -284,7 +284,7 @@ TxUtility.ClientToIncubateShareProfit ()
 * 1）、发送者公钥（十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
 * 3）、分享收益（BigDecimal)
-* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)~~
+* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)
 * 5）、私钥（十六进制字符串)
 * 6）、孵化的事务哈希（十六进制字符串)
 * 返回类型：Json
@@ -304,7 +304,7 @@ TxUtility. ClientToIncubatePrincipal()
 * 1）、发送者公钥（十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
 * 3）、本金（BigDecimal)
-* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)~~
+* 4）、~~~~Gas单价~~~~（~~~~GasPrice~~~~)
 * 5）、私钥（十六进制字符串)
 * 6）、孵化的事务哈希（十六进制字符串)
 * 返回类型：Json
