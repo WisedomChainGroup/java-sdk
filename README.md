@@ -163,8 +163,8 @@ WalletUtility. getTransactioninfo ()
 * }
 * data:
 * {
-* **"blockHash"**:区块哈希(十六进制字符串), 
-*        **"height"**:区块高度(Long)
+** "blockHash":区块哈希(十六进制字符串), 
+** "height":区块高度(Long)
 * }
 
 1.16 根据事务哈希获得确认区块数
