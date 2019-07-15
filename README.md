@@ -22,28 +22,26 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
 
 1.1 生成keystore文件
 
-WalletUtility.generateKeystore()
+* WalletUtility.fromPassword()
 参数：
-* 1）、密码（String),
-* 2）、路径（String)选填
-* 返回类型：String
-* 返回值：address
+* 1）、密码（String)
+* 返回类型：json
+* 返回值：keystore
 
 1.2 地址校验
 
-WalletUtility.verifyAddress()
+* WalletUtility.verifyAddress()
 * 参数：
 * 1）、地址字符串（String)
 * 返回类型：int
 * 返回值：
 * 0（正常）
-
 * -1（出错）地址前缀错误
 * -2（出错）校验错误
 
 1.3 通过地址获得公钥哈希
 
-WalletUtility.addressToPubkeyHash()
+* WalletUtility.addressToPubkeyHash()
 * 参数：
 * 1）、地址字符串（String)
 * 返回类型：String（十六进制字符串）
@@ -51,7 +49,7 @@ WalletUtility.addressToPubkeyHash()
 
 1.4 通过公钥哈希获得地址
 
-WalletUtility. pubkeyHashToAddress()
+* WalletUtility. pubkeyHashToAddress()
 * 参数：
 * 1）、公钥哈希（String)
 * 返回类型：String
@@ -59,7 +57,7 @@ WalletUtility. pubkeyHashToAddress()
 
 1.5 通过keystore获得地址
 
-WalletUtility.keystoreToAddress()
+* WalletUtility.keystoreToAddress()
 * 参数：
 * 1）、keystore（String)
 * 2）、密码（String)
@@ -68,7 +66,7 @@ WalletUtility.keystoreToAddress()
 
 1.6 通过keystore获得公钥哈希
 
-WalletUtility. keystoreToPubkeyHash()
+* WalletUtility. keystoreToPubkeyHash()
 * 参数：
 * 1）、keystore（String)
 * 2）、密码（String)
@@ -77,7 +75,7 @@ WalletUtility. keystoreToPubkeyHash()
 
 1.7 通过keystore获得私钥
 
-WalletUtility. obtainPrikey()
+* WalletUtility. obtainPrikey()
 * 参数：
 * 1）、keystore（String)
 * 2）、密码（String)
@@ -86,7 +84,7 @@ WalletUtility. obtainPrikey()
 
 1.8 通过keystore获得公钥
 
-WalletUtility.keystoreToPubkey()
+* WalletUtility.keystoreToPubkey()
 * 参数：
 * 1）、keystore（String)
 * 2）、密码（String)
@@ -95,7 +93,7 @@ WalletUtility.keystoreToPubkey()
 
 1.9 导入keystore
 
-WalletUtility. importKeystore()
+* WalletUtility. importKeystore()
 * 参数：
 * 1）、keystore（String)
 * 2）、路径（String)选填
@@ -104,7 +102,7 @@ WalletUtility. importKeystore()
 
 1.10 修改KeyStore密码方法
 
-WalletUtility.modifyPassword()
+* WalletUtility.modifyPassword()
 * 参数：
 * 1）、keystore（String)
 * 2）、旧密码（String)
@@ -114,7 +112,7 @@ WalletUtility.modifyPassword()
 
 1.11 SHA3-256哈希方法
 
-* SHA3Utility.HexStringkeccak256*()*
+* SHA3Utility.HexStringkeccak256()
 * 参数：
 * 1）、哈希原文（字节数组)
 * 返回类型：十六进制字符串
@@ -122,7 +120,7 @@ WalletUtility.modifyPassword()
 
 1.12 Ripemd-160哈希方法
 
-RipemdUtility.HexStringRipemd160*()*
+* RipemdUtility.HexStringRipemd160()
 * 参数：
 * 1）、哈希原文（字节数组)
 * 返回类型：十六进制字符串
@@ -130,112 +128,50 @@ RipemdUtility.HexStringRipemd160*()*
 
 1.13 base58编码方法
 
-Base58Utility.*encode ()*
+* Base58Utility.encode ()
 * 参数：
 * 1）、哈希原文（字节数组)
 * 返回类型：String
 * 返回值：哈希值
+* 
+1.14 创建原生转账事务
 
-1.14 获得地址余额
-
-WalletUtility. getBalance()
+* TxUtility.CreateRawTransaction()
 * 参数：
-* 1）、地址（String)
-* 返回类型：json
-* 返回值：
-* {
-* data :null;
-* (int)statusCode:0
-* (String)message:余额（BigDecimal)
-* }
-
-1.15 根据事务哈希获得所在区块哈希以及高度
-
-WalletUtility. getTransactioninfo ()
-参数：
-* 1）、事务哈希（十六进制字符串)
-* 返回类型：json
-* 返回值：
-* {
-* data :定义如下;
-* (int)statusCode:0
-* (String)message:null
-* }
-* data:
-* {
-* "blockHash":区块哈希(十六进制字符串), 
-* "height":区块高度(Long)
-* }
-
-1.16 根据事务哈希获得确认区块数
-
-WalletUtility. confirmedBlockNumber()
-* 参数：
-* 1）、事务哈希（十六进制字符串)
-* 返回类型：json
-* 返回值：
-* {
-* data :null;
-* (int)statusCode:0
-* (String)message:确认区块数（Long)
-* }
-
-1.17 创建原生转账事务
-
-* TxUtility.CreateRawTransaction*()*
-* 参数：
-* 1）、发送者公钥（十六进制字符串)
+* 1）、发送者公钥(十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
-* 3）、转账金额（BigDecimal)
+* 3）、转账金额(BigDecimal)
+* 4）、Nonce(Long)
 * 返回类型：十六进制字符串
-* 返回值：事务哈希
+* 返回值：未签名的事务哈希
 
-1.18 签名转账事务事务
-
-TxUtility.signRawBasicTransaction*()*
+1.15 签名事务
+* TxUtility.signRawBasicTransaction()
 * 参数：
 * 1）、事务（十六进制字符串)
 * 2）、私钥（十六进制字符串)
 * 返回类型：十六进制字符串
-* 返回值：事务哈希
-* 返回事务十六进制字符串
+* 返回值：已签名事务哈希
 
-1.19 广播转账事务
-
-## 广播转账事务可以与1.20的封装方法合并
-
-返回事务十六进制字符串
-以下的三条事务，孵化申请、提取利息以及提取分享收益
-补充下原生事务创建、签名以及发送的方法
-
-1.20 发起转账申请-连接服务
-
-本方法需要连接服务端
-包含了三个连续的步骤：构造原声事务、签名以及发送
-
-## 方法名修改为ClientToTransferAccount()
-
-TxUtility. ClientToTransferAccount*()*
+1.16 发起转账申请
+* TxUtility. ClientToTransferAccount()
 * 参数：
-* 1）、发送者公钥（十六进制字符串)
-* 2）、接收者公钥哈希（十六进制字符串)
+* 1）、发送者公钥(十六进制字符串)
+* 2）、接收者公钥哈希(十六进制字符串)
 * 3）、转账金额（BigDecimal)
 * 4）、私钥（十六进制字符串)
+* 5）、Nonce(Long)
 * 返回类型：Json
 * 返回值：
 * {
-* data :null;
-* (int)statusCode:
-* 1(成功)
-* -1（失败）
-* (String)message:返回事务哈希（十六进制字符串)
+* data :txHash(事务哈希，十六进制字符串)
+* (int)statusCode:0
+* (String)message:traninfo（已签名事务，十六进制字符串)
 * }
 * 注意，这里的成功或者失败，仅仅是指动作本身，真正看事务有没有最终成功，还需要通过事务哈希查询确认区块数
 
-1.21 发起孵化申请
-
-* 方法名修改为ClientToIncubateAccount()
-* TxUtility. ClientToIncubateAccount*()*
+1.17 发起孵化申请(孵化器)
+* TxUtility. ClientToIncubateAccount()
 * 参数：
 * 1）、发送者公钥（十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
@@ -243,77 +179,72 @@ TxUtility. ClientToTransferAccount*()*
 * 4）、私钥（十六进制字符串)
 * 5）、分享者公钥哈希（十六进制字符串)
 * 6）、孵化类型（int)
+* 7）、Nonce(Long)
 * 返回类型：Json
 * 返回值：
 * {
-* data :null;
-* (int)statusCode:
-* 1(成功)
-* -1（失败）
-* (String)message:返回事务哈希（十六进制字符串）
+* data :txHash(事务哈希，十六进制字符串)
+* (int)statusCode:0
+* (String)message:traninfo（已签名事务，十六进制字符串)
 * }
-* 无论成功与否，都返回事务哈希
 
-1.22 提取收益
+1.18 提取收益(孵化器)
 
-TxUtility. ClientToIncubateProfit *()*
+* TxUtility. ClientToIncubateProfit()
 参数：
 * 1）、发送者公钥（十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
 * 3）、收益（BigDecimal)
 * 4）、私钥（十六进制字符串)
 * 5）、孵化的事务哈希（十六进制字符串)
+* 6）、Nonce(Long)
 * 返回类型：Json
 * 返回值：
 * {
-* data :null;
-* (int)statusCode:
-* 1(成功)
-* -1（失败）
-* (String)message:事务哈希（十六进制字符串）
+* data :txHash(事务哈希，十六进制字符串)
+* (int)statusCode:0
+* (String)message:traninfo（已签名事务，十六进制字符串)
 * }
 
-1.23 提取分享收益
+1.19 提取分享收益(孵化器)
 
-TxUtility.ClientToIncubateShareProfit ()
+* TxUtility.ClientToIncubateShareProfit ()
 * 参数：
 * 1）、发送者公钥（十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
 * 3）、分享收益（BigDecimal)
 * 4）、私钥（十六进制字符串)
 * 5）、孵化的事务哈希（十六进制字符串)
+* 6）、Nonce(Long)
 * 返回类型：Json
 * 返回值：
 * {
-* data :null;
-* (int)statusCode:
-* 1(成功)
-* -1（失败）
-* (String)message:事务哈希（十六进制字符串）
+* data :txHash(事务哈希，十六进制字符串)
+* (int)statusCode:0
+* (String)message:traninfo（已签名事务，十六进制字符串)
 * }
 
-1.24 提取本金
+1.20 提取本金(孵化器)
 
-TxUtility. ClientToIncubatePrincipal()
+* TxUtility. ClientToIncubatePrincipal()
 * 参数：
 * 1）、发送者公钥（十六进制字符串)
 * 2）、接收者公钥哈希（十六进制字符串)
 * 3）、本金（BigDecimal)
 * 4）、私钥（十六进制字符串)
 * 5）、孵化的事务哈希（十六进制字符串)
+* 6）、Nonce(Long)
 * 返回类型：Json
 * 返回值：
 * {
-* data :null;
-* (int)statusCode:
-* 1(成功)
-* -1（失败）
-* (String)message:事务哈希（十六进制字符串）
+* data :txHash(事务哈希，十六进制字符串)
+* (int)statusCode:0
+* (String)message:traninfo（已签名事务，十六进制字符串)
 * }
 
-1.25 获取事务对象
+1.21 获取事务对象
 
-TxUtility. byteToTransaction()
+* TxUtility. byteToTransaction()
 * 参数：
 * 1）、事务哈希（十六进制字符串)
 * 返回类型：Json
@@ -324,12 +255,117 @@ TxUtility. byteToTransaction()
 * (String)message:null
 * }
 
-1.26 本地参数配置
+1.22 获取Nonce
+
+*   方法：sendNonce     
+*	参数：pubkeyhash  
+*	返回类型：Long
+
+1.23 获取余额
+
+*   方法：sendBalance   
+*	参数：pubkeyhash 	
+* 	返回类型：Long
+
+1.24 广播事务
+*   方法： sendTransaction	
+*	参数：traninfo
+*	返回：
+*   {
+*   data :null;
+*   statusCode(int):
+*   1(成功)
+*   -1（失败）
+*   message(String):返回对应信息
+*    }
+        
+1.25 查询当前区块高度
+*   方法：block
+*	参数：-1
+*	返回：当前区块高度
+		
+1.26 根据事务哈希获得所在区块哈希以及高度
+
+*   方法：block
+*	参数：txHash
+*	返回：
+*	{
+*	data :定义如下;
+*   statusCode(int):0
+*	message(String):null
+*    }
+*    data:
+*   {
+*   "blockHash":区块哈希(十六进制字符串), 
+*   "height":区块高度(Long)
+*   }
+
+1.27 根据事务哈希获得区块确认状态
+
+*   方法：transactionConfirmed
+*	参数：txHash
+*	返回： 
+*   1 已确认
+*   -1未确认
+
+1.28 连接孵化器节点(孵化器)
+* token http连接中，headers上加token字段，参数为NUMtD0dEXungVX7eLuXkEurH5BCJzw  String类型
+* 所有同步节点都传 int类型 高度字段：height
+URL http://XXXX:19585/WisdomCore/+对应同步后缀
+
+1.29 转账同步(孵化器)
+* sendTransferList
+* 返回：Json格式
+* {"message":"SUCCESS","data":[],"statusCode":1}
+* statusCode：1是正常，-1是不正常
+* message：返回成功或错误信息
+* data：返回json格式的信息
+* data信息如下：
+* private java.lang.String coinAddress;//   钱包地址
+* private java.lang.String fromAddress;//   出账钱包地址
+* private BigDecimal amount;//   领取金额
+* private java.lang.String tranHash;//   区块hash
+* private java.lang.Long coinHeigth;//   区块高度
+* private BigDecimal fee;//   手续费
+ 
+1.30 孵化同步(孵化器)
+* sendHatchList
+* 返回：json格式，参数同上
+* data信息如下:
+* private java.lang.String coinAddress;//   钱包地址
+* private BigDecimal coinAccount;//   孵化资产
+* private java.lang.String inviteAddress;//   邀请人地址
+* private java.lang.String coinHash;//   孵化事务hash
+* private java.lang.Long blockHeight;//   孵化事务区块高度
+* private java.lang.Integer blockType;//   孵化类型（120：120天，365：365天）
+ 
+1.31 利息同步(孵化器)
+* sendInterestList
+* 返回：json格式，参数同上
+* data信息如下:
+* private java.lang.String coinHash;//   孵化事务hash
+* private java.lang.String coinAddress;//   钱包地址
+* private BigDecimal amount;//   领取金额
+* private java.lang.String tranHash;//   区块Hash
+* private java.lang.Long coinHeigth;//   区块高度
+ 
+1.32 分享同步(孵化器)
+* sendShareList
+* 返回：json格式，参数同上
+* data信息如下:
+* private java.lang.String coinAddress;//   钱包地址
+* private java.lang.String inviteAddress;//   推荐人钱包地址
+* private java.lang.String coinHash;//   区块事务hash
+* private BigDecimal amount;//   领取金额
+* private java.lang.String tranHash;//   推荐孵化单的事务hash
+* private java.lang.Long coinHeigth;//   区块高度
+
+1.33 本地参数配置
 
 最低手续费，默认为0.002wdc
 余额可见区块确认数：2
 
-1.27 注意点
+1.34 注意点
 
 * 1）、与服务端之间的参数传递，采用JSON格式
 并且使用protobuf字节传递
@@ -341,7 +377,7 @@ TxUtility. byteToTransaction()
 * “message”:String
 * }
 
-1.28 命令行实现
+1.35 命令行实现
 
 假设SDK编译后的程序名为wcli
 * [Image: image.png]在main方法中调用一个CLIInterface.call传入的参数为main方法中的args参数数组
