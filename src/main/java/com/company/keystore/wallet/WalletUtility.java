@@ -24,6 +24,7 @@ import java.util.Arrays;
 
 
 public class WalletUtility {
+
     public String address;
     public Crypto crypto;
     private static final int saltLength = 32;
@@ -87,8 +88,8 @@ public class WalletUtility {
                 return  json;
             }
         }catch (Exception e){
-                JSONObject json = JSON.parseObject("");;
-                return json;
+            JSONObject json = JSON.parseObject("");;
+            return json;
         }
     }
 
@@ -113,7 +114,7 @@ public class WalletUtility {
             String filePath=folderPath+"\\"+ks.address;
             File file = new File(filePath);
             file.createNewFile();
-    //        JSONObject ksjson = JSONObject.fromObject(ks);
+            //        JSONObject ksjson = JSONObject.fromObject(ks);
             String _ksjson = JSONObject.toJSONString(ks);
             JSONObject ksjson = JSON.parseObject(_ksjson);
             String _cryptojson = JSONObject.toJSONString(crypto);
@@ -127,7 +128,7 @@ public class WalletUtility {
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(str);
             bw.close();
-        return  ks.address;
+            return  ks.address;
         } catch (Exception e) {
             return "";
         }
@@ -199,9 +200,12 @@ public class WalletUtility {
    */
     public static String pubkeyHashToAddress(String r1Str){
         try {
-            String s6 = Base58Utility.encode(Hex.decodeHex("00dcdd115937ee813a9b5901ca2b4153804b5c3a3e0a14afe6".toCharArray()));
-            String s7 = Base58Utility.encode(Hex.decodeHex("00dcdd115937ee813a9b5901ca2b4153804b5c3a3e0a14afe6".toCharArray()));
-            String s8 = Base58Utility.encode("00dcdd115937ee813a9b5901ca2b4153804b5c3a3e0a14afe6".getBytes());
+            byte[] r1 = Hex.decodeHex(r1Str.toCharArray());
+            byte[] r2 = ByteUtil.prepend(r1,(byte)0x00);
+            byte[] r3 = SHA3Utility.keccak256(SHA3Utility.keccak256(r1));
+            byte[] b4 = ByteUtil.bytearraycopy(r3,0,4);
+            byte[] b5 = ByteUtil.byteMerger(r2,b4);
+            String s6 = Base58Utility.encode(b5);
             return  s6;
         }catch (Exception e){
             return "";
@@ -293,7 +297,7 @@ public class WalletUtility {
             String privateKey =  new String(Hex.encodeHex(KeystoreAction.decrypt(ks,password)));
             return  privateKey;
         }catch (Exception e){
-            return "123";
+            return "";
         }
     }
 
@@ -305,7 +309,7 @@ public class WalletUtility {
     public static String prikeyToPubkey(String prikey){
         try {
             if(prikey.length() != 64 || new BigInteger(Hex.decodeHex(prikey.toCharArray())).compareTo(new BigInteger(ByteUtils.hexStringToBytes(t))) > 0){
-                throw new Exception("Private key format error");
+                return "";
             }
             Ed25519PrivateKey eprik = new Ed25519PrivateKey(Hex.decodeHex(prikey.toCharArray()));
             Ed25519PublicKey epuk = eprik.generatePublicKey();
@@ -362,11 +366,4 @@ public class WalletUtility {
         }
     }
 
-    public static void main(String[] args) {
-        byte[] a = new byte[32];
-        System.out.println(Hex.encodeHexString(a));
-        ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, a);
-        byte[] derivedKey = argon2id.hash("123456".getBytes());
-        System.out.println(Hex.encodeHexString(derivedKey));
-    }
 }
