@@ -442,19 +442,30 @@ URL http://XXXX:19585/WisdomCore/+对应同步后缀
 
 1.33 获取当前可提取利息(孵化器)
 ```
-getNowInterest
+getNowInterest（POST）
+参数：coinHash（孵化的事务哈希）
 返回：json格式，参数同上
 data信息如下:
 dueinAmount：可提取利息（不计算是否到期）
 capitalAmount:当前利息总余额
 ```
 
-1.34 本地参数配置
+1.34 获取当前可提取分享收益(孵化器)
+```
+getNowShare（POST）
+参数：coinHash（孵化的事务哈希）
+返回：json格式，参数同上
+data信息如下:
+dueinAmount：可提取分享收益（不计算是否到期）
+capitalAmount:当前利息总余额
+```
+
+1.35 本地参数配置
 
 最低手续费，默认为0.002wdc
 余额可见区块确认数：2
 
-1.35 注意点
+1.36 注意点
 
 * 1）、与服务端之间的参数传递，采用JSON格式
 并且使用protobuf字节传递
@@ -467,7 +478,7 @@ capitalAmount:当前利息总余额
  “message”:String
  }
 ```
-1.36 命令行实现
+1.37 命令行实现
 
 假设SDK编译后的程序名为wcli
 * [Image: image.png]在main方法中调用一个CLIInterface.call传入的参数为main方法中的args参数数组
