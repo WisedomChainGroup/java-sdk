@@ -171,9 +171,98 @@ WalletUtility. importKeystore()
  (String)message:traninfo（已签名事务，十六进制字符串)
  }
  ```
+ 
+ 1.18 发起存证事务
+ ```
+ TxUtility. CreateRawProveTransaction()
+ 参数：
+ 1）、发送者公钥(十六进制字符串)
+ 2）、存证内容（字节数组）
+ 3）、Nonce(Long)
+ 返回类型：Json
+ 返回值：
+ {
+ data :txHash(事务哈希，十六进制字符串)
+ (int)statusCode:0
+ (String)message:traninfo（已签名事务，十六进制字符串)
+ }
+ ```
+ 
+ 1.19 发起投票事务
+ ```
+ TxUtility. CreateRawVoteTransaction()
+ 参数：
+ 1）、发送者公钥(十六进制字符串)
+ 2）、接收者公钥哈希(十六进制字符串)
+ 3）、票数（Int）
+ 4）、Nonce(Long)
+ 返回类型：Json
+ 返回值：
+ {
+ data :txHash(事务哈希，十六进制字符串)
+ (int)statusCode:0
+ (String)message:traninfo（已签名事务，十六进制字符串)
+ }
+```
+
+1.20 发起投票撤回事务
+ ```
+ TxUtility. CreateRawVoteWithdrawTransaction()
+ 参数：
+ 1）、发送者公钥(十六进制字符串)
+ 2）、接收者公钥哈希(十六进制字符串)
+ 3）、票数（Int，必须与投票数保持一致）
+ 4）、Nonce(Long)
+ 5）、投票事务哈希（十六进制字符串）
+ 返回类型：Json
+ 返回值：
+ {
+ data :txHash(事务哈希，十六进制字符串)
+ (int)statusCode:0
+ (String)message:traninfo（已签名事务，十六进制字符串)
+ }
+```
+
+1.21 发起抵押事务
+ ```
+ TxUtility. CreateRawMortgageTransaction()
+ 参数：
+ 1）、发送者公钥(十六进制字符串)
+ 2）、接收者公钥哈希(十六进制字符串)
+ 3）、金额（BigDecimal）
+ 4）、撤回条件，默认不携带任何数据，表示可无条件撤回(字节数组)
+ 5）、nonce（Long）
+ 返回类型：Json
+ 返回值：
+ {
+ data :txHash(事务哈希，十六进制字符串)
+ (int)statusCode:0
+ (String)message:traninfo（已签名事务，十六进制字符串)
+ }
+```
+
+1.22 发起抵押撤回事务
+ ```
+ TxUtility. CreateRawMortgageWithdrawTransaction()
+ 参数：
+ 1）、发送者公钥(十六进制字符串)
+ 2）、接收者公钥哈希(十六进制字符串)
+ 3）、金额（BigDecimal，金额必须与抵押的保持一致）
+ 4）、抵押事务哈希(十六进制字符串)
+ 5）、nonce（Long）
+ 返回类型：Json
+ 返回值：
+ {
+ data :txHash(事务哈希，十六进制字符串)
+ (int)statusCode:0
+ (String)message:traninfo（已签名事务，十六进制字符串)
+ }
+```
+
+
 * 注意，这里的成功或者失败，仅仅是指动作本身，真正看事务有没有最终成功，还需要通过事务哈希查询确认区块数
 
-1.17 发起孵化申请(孵化器)
+1.23 发起孵化申请(孵化器)
 ```
  TxUtility. ClientToIncubateAccount()
  参数：
@@ -192,7 +281,7 @@ WalletUtility. importKeystore()
  (String)message:traninfo（已签名事务，十六进制字符串)
  }
 ```
-1.18 提取收益(孵化器)
+1.24 提取收益(孵化器)
 ```
  TxUtility. ClientToIncubateProfit()
 参数：
@@ -210,7 +299,7 @@ WalletUtility. importKeystore()
  (String)message:traninfo（已签名事务，十六进制字符串)
  }
 ```
-1.19 提取分享收益(孵化器)
+1.25 提取分享收益(孵化器)
 ```
  TxUtility.ClientToIncubateShareProfit ()
  参数：
@@ -228,7 +317,7 @@ WalletUtility. importKeystore()
  (String)message:traninfo（已签名事务，十六进制字符串)
  }
 ```
-1.20 提取本金(孵化器)
+1.26 提取本金(孵化器)
 ```
  TxUtility. ClientToIncubatePrincipal()
  参数：
@@ -246,7 +335,7 @@ WalletUtility. importKeystore()
  (String)message:traninfo（已签名事务，十六进制字符串)
  }
 ```
-1.21 获取事务对象
+1.27 获取事务对象
 ```
  TxUtility. byteToTransaction()
  参数：
@@ -456,7 +545,7 @@ getNowShare（POST）
 参数：coinHash（孵化的事务哈希）
 返回：json格式，参数同上
 data信息如下:
-dueinAmount：可提取分享收益（不计算是否到期）
+dueinAmount：可提取利息（不计算是否到期）
 capitalAmount:当前利息总余额
 ```
 
