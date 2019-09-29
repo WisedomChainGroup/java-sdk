@@ -350,7 +350,7 @@ public class TxUtility extends Thread{
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(20000L,serviceCharge));
             //本金 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
             byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
@@ -393,7 +393,7 @@ public class TxUtility extends Thread{
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(20000L,serviceCharge));
             //本金 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
             byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
