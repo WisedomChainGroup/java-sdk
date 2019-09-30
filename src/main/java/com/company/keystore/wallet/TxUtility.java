@@ -333,11 +333,10 @@ public class TxUtility extends Thread{
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
-     * @param payload
      * @param nonce
      * @return
      */
-    public static String CreateRawMortgageTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, byte[] payload,Long nonce){
+    public static String CreateRawMortgageTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount,Long nonce){
         try {
             //版本号
             byte[] version=new byte[1];
@@ -359,6 +358,9 @@ public class TxUtility extends Thread{
             //接收者公钥哈希
             byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //构造payload
+            JSONObject payloadJson = new JSONObject();
+            payloadJson.put("type","miner");
+            byte[] payload = payloadJson.getBytes("UTF-8");
 //            byte[] payload = Hex.decodeHex(txid.toCharArray());
             //长度
             byte[] payloadleng= BigEndian.encodeUint32(payload.length);
@@ -701,13 +703,12 @@ public class TxUtility extends Thread{
      * @param toPubkeyHashStr
      * @param amount
      * @param nonce
-     * @param payload
      * @param prikeyStr
      * @return
      */
-    public static JSONObject ClientToTransferMortgage (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce,byte[] payload,String prikeyStr){
+    public static JSONObject ClientToTransferMortgage (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce,String prikeyStr){
         try{
-            String RawTransactionHex =CreateRawMortgageTransaction(fromPubkeyStr, toPubkeyHashStr, amount, payload,nonce);
+            String RawTransactionHex =CreateRawMortgageTransaction(fromPubkeyStr, toPubkeyHashStr, amount,nonce);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash =new String(Hex.encodeHex(hash)) ;
@@ -990,4 +991,5 @@ public class TxUtility extends Thread{
             return str;
         }
     }
+
 }
