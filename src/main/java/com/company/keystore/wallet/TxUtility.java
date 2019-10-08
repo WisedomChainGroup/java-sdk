@@ -360,7 +360,7 @@ public class TxUtility extends Thread{
             //构造payload
             JSONObject payloadJson = new JSONObject();
             payloadJson.put("type","miner");
-            byte[] payload = payloadJson.getBytes("UTF-8");
+            byte[] payload = payloadJson.toJSONString().getBytes("UTF-8");
 //            byte[] payload = Hex.decodeHex(txid.toCharArray());
             //长度
             byte[] payloadleng= BigEndian.encodeUint32(payload.length);
@@ -404,7 +404,11 @@ public class TxUtility extends Thread{
             //接收者公钥哈希
             byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //构造payload
-            byte[] payload = Hex.decodeHex(txid.toCharArray());
+            JSONObject payloadJson = new JSONObject();
+            payloadJson.put("type","miner");
+            payloadJson.put("txid",txid);
+            byte[] payload = payloadJson.toJSONString().getBytes("UTF-8");
+
             //长度
             byte[] payloadleng= BigEndian.encodeUint32(payload.length);
             byte[] allPayload=ByteUtil.merge(payloadleng,payload);
