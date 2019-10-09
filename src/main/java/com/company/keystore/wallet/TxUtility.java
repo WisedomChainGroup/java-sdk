@@ -315,7 +315,7 @@ public class TxUtility extends Thread{
             byte[] signull=new byte[64];
             //接收者公钥哈希
             byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
-            //长度
+            //payload
             byte[] payload = Hex.decodeHex(txid.toCharArray());
             //长度
             byte[] payloadleng= BigEndian.encodeUint32(payload.length);
@@ -357,14 +357,7 @@ public class TxUtility extends Thread{
             byte[] signull=new byte[64];
             //接收者公钥哈希
             byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
-            //构造payload
-            JSONObject payloadJson = new JSONObject();
-            payloadJson.put("type","miner");
-            byte[] payload = payloadJson.toJSONString().getBytes("UTF-8");
-//            byte[] payload = Hex.decodeHex(txid.toCharArray());
-            //长度
-            byte[] payloadleng= BigEndian.encodeUint32(payload.length);
-            byte[] allPayload=ByteUtil.merge(payloadleng,payload);
+            byte[] allPayload= BigEndian.encodeUint32(0);
             byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
             String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
             return  RawTransactionStr;
@@ -403,12 +396,8 @@ public class TxUtility extends Thread{
             byte[] signull=new byte[64];
             //接收者公钥哈希
             byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
-            //构造payload
-            JSONObject payloadJson = new JSONObject();
-            payloadJson.put("type","miner");
-            payloadJson.put("txid",txid);
-            byte[] payload = payloadJson.toJSONString().getBytes("UTF-8");
-
+            //payload
+            byte[] payload = Hex.decodeHex(txid.toCharArray());
             //长度
             byte[] payloadleng= BigEndian.encodeUint32(payload.length);
             byte[] allPayload=ByteUtil.merge(payloadleng,payload);
@@ -994,6 +983,7 @@ public class TxUtility extends Thread{
         public Object call() throws Exception {
             return str;
         }
+
     }
 
 }
