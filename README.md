@@ -171,14 +171,14 @@ WalletUtility. importKeystore()
  (String)message:traninfo（已签名事务，十六进制字符串)
  }
  ```
- 
  1.18 发起存证事务
  ```
- TxUtility. CreateRawProveTransaction()
+ TxUtility. ClientToTransferProve()
  参数：
  1）、发送者公钥(十六进制字符串)
  2）、存证内容（字节数组）
  3）、Nonce(Long)
+ 4）、发送者私钥（十六进制字符串）
  返回类型：Json
  返回值：
  {
@@ -190,12 +190,13 @@ WalletUtility. importKeystore()
  
  1.19 发起投票事务
  ```
- TxUtility. CreateRawVoteTransaction()
+ TxUtility.ClientToTransferVote()
  参数：
  1）、发送者公钥(十六进制字符串)
  2）、接收者公钥哈希(十六进制字符串)
- 3）、票数（Int）
+ 3）、票数（Long）
  4）、Nonce(Long)
+ 5）、发送者私钥（十六进制字符串）
  返回类型：Json
  返回值：
  {
@@ -207,13 +208,14 @@ WalletUtility. importKeystore()
 
 1.20 发起投票撤回事务
  ```
- TxUtility. CreateRawVoteWithdrawTransaction()
+ TxUtility.ClientToTransferVoteWithdraw()
  参数：
  1）、发送者公钥(十六进制字符串)
  2）、接收者公钥哈希(十六进制字符串)
- 3）、票数（Int，必须与投票数保持一致）
+ 3）、票数（Long，必须与投票数保持一致）
  4）、Nonce(Long)
- 5）、投票事务哈希（十六进制字符串）
+ 5）、发送者私钥（十六进制字符串）
+ 6）、投票事务哈希（十六进制字符串）
  返回类型：Json
  返回值：
  {
@@ -223,15 +225,15 @@ WalletUtility. importKeystore()
  }
 ```
 
-1.21 发起抵押事务
+1.21 发起抵押事务（只能给自己抵押）
  ```
- TxUtility. CreateRawMortgageTransaction()
+ TxUtility.ClientToTransferMortgage()
  参数：
  1）、发送者公钥(十六进制字符串)
  2）、接收者公钥哈希(十六进制字符串)
- 3）、金额（BigDecimal）
- 4）、撤回条件，默认不携带任何数据，表示可无条件撤回(字节数组)
- 5）、nonce（Long）
+ 3）、金额（Long）
+ 4）、nonce（Long）
+ 5）、发送者私钥(十六进制字符串)
  返回类型：Json
  返回值：
  {
@@ -243,13 +245,14 @@ WalletUtility. importKeystore()
 
 1.22 发起抵押撤回事务
  ```
- TxUtility. CreateRawMortgageWithdrawTransaction()
+ TxUtility.ClientToTransferMortgageWithdraw()
  参数：
  1）、发送者公钥(十六进制字符串)
  2）、接收者公钥哈希(十六进制字符串)
- 3）、金额（BigDecimal，金额必须与抵押的保持一致）
- 4）、抵押事务哈希(十六进制字符串)
- 5）、nonce（Long）
+ 3）、金额（Long，金额必须与抵押的保持一致）
+ 4）、nonce（Long）
+ 5）、抵押事务哈希(十六进制字符串)
+ 6）、发送者私钥(十六进制字符串)
  返回类型：Json
  返回值：
  {
