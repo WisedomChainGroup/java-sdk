@@ -176,7 +176,7 @@ WalletUtility. importKeystore()
  TxUtility. ClientToTransferProve()
  参数：
  1）、发送者公钥(十六进制字符串)
- 2）、存证内容payload(存证事务：UTF-8编码、其余事务：十六进制字符串) 
+ 2）、存证内容payload（字节数组，UTF-8编码，上限为1000字节）
       例如：byte[] payload = "text".getBytes("UTF-8");
  3）、Nonce(Long)
  4）、发送者私钥（十六进制字符串）
