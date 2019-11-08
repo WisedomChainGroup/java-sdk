@@ -176,8 +176,7 @@ WalletUtility. importKeystore()
  TxUtility. ClientToTransferProve()
  参数：
  1）、发送者公钥(十六进制字符串)
- 2）、存证内容payload（字节数组，UTF-8编码，上限为1000字节）
-      例如：byte[] payload = "text".getBytes("UTF-8");
+ 2）、存证内容（字节数组）
  3）、Nonce(Long)
  4）、发送者私钥（十六进制字符串）
  返回类型：Json
@@ -428,7 +427,7 @@ WalletUtility. importKeystore()
 *	String from;  发起者公钥16进制字符串
 *	long gas_price; 事务手续费单价
 *	long amount; 金额
-*	String payload; payload数据(存证事务：UTF-8编码、其余事务：十六进制字符串)
+*	String payload; payload数据
 *	String signature; 签名16进制字符串
 *	String to;  接受者公钥哈希16进制字符串
 ```
@@ -446,7 +445,7 @@ WalletUtility. importKeystore()
       "from": "0000000000000000000000000000000000000000000000000000000000000000", // 发送者的公钥， 用于验证签名
       "gasPrice": 0, // gasPrice 用于计算手续费
       "amount": 2000000000, // 交易数量，单位是 brain
-      "payload": null, // payload 用于数据存证，一般填null(存证事务：UTF-8编码、其余事务：十六进制字符串)
+      "payload": null, // payload 用于数据存证，一般填null
       "to": "08f74cb61f41f692011a5e66e3c038969eb0ec75", // 接收者的地址
       "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", // 签名
       "blockHash": "e2ccac56f58adb3f2f77edd96645931fac93dd058e7da21421d95f2ac9cc44ac", // 事务所在区块的哈希
@@ -470,7 +469,7 @@ WalletUtility. importKeystore()
 *	String from;  发起者公钥16进制字符串
 *	long gas_price; 事务手续费单价
 *	long amount; 金额
-*	String payload; payload数据(存证事务：UTF-8编码、其余事务：十六进制字符串)
+*	String payload; payload数据
 *	String signature; 签名16进制字符串
 *	String to;  接受者公钥哈希16进制字符串
 ```
@@ -594,3 +593,38 @@ CLIInterface类中定义若干的参数处理方法
 * 连接rpc
 传入参数为IP地址、端口号
 返回值为true/false
+
+1.38 浏览器信息
+```
+方法：WisdomCore/ExplorerInfo（GET）
+参数：无
+返回：{"message": "SUCCESS","data": {},"code": 2000}
+data格式: 
+	{
+        "blocksCount": 8547,//24小时内的出块数量
+        "target": "000019b936ba20a901082aca448779aaf1ed4c03204ea6cec85e5cd851c5e956",//难度值
+        "averageBlockInterval": 10.44,//最近十个区块的平均出块时间
+        "averageFee": 0,//平均手续费
+        "pendingTransactions": 0,//在pending中的事务数
+        "queuedTransactions": 0,//在queued中的事务数
+        "lastConfirmedHeight": 15002,//已经写入库的区块数
+        "bestHeight": 15005//forkDB中的区块数
+    },
+    "code": 2000
+```
+1.39 地址的投票信息
+```
+方法：votes/（地址）
+参数：token=NUMtD0dEXungVX7eLuXkEurH5BCJzw（放在header里面）
+返回："0000000000000000000000000000": {}
+data格式:
+    "1DjBbTrnf3jiDp4z8zucZc8E8rxhGmFXVz": {
+        "address": "1DjBbTrnf3jiDp4z8zucZc8E8rxhGmFXVz",//投票地址
+        "amount": 205000000000,//投票数量
+        "accumulated": 3475608//衰减后的投票权益
+    }
+```
+
+
+
+
