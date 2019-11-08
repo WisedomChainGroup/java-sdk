@@ -596,7 +596,7 @@ CLIInterface类中定义若干的参数处理方法
 
 1.38 浏览器信息
 ```
-方法：WisdomCore/ExplorerInfo（GET）
+方法：WisdomCore\ExplorerInfo（GET）
 参数：无
 返回：{"message": "SUCCESS","data": {},"code": 2000}
 data格式: 
@@ -614,7 +614,7 @@ data格式:
 ```
 1.39 地址的投票信息
 ```
-方法：votes/（地址）
+方法：votes\（地址）（GET）
 参数：token=NUMtD0dEXungVX7eLuXkEurH5BCJzw（放在header里面）
 返回："0000000000000000000000000000": {}
 data格式:
