@@ -570,7 +570,39 @@ capitalAmount:当前利息总余额
  “message”:String
  }
 ```
-1.37 命令行实现
+
+1.37 浏览器信息
+```
+方法：WisdomCore\ExplorerInfo（GET）
+参数：无
+返回：{"message": "SUCCESS","data": {},"code": 2000}
+data格式: 
+	{
+        "blocksCount": 8547,//24小时内的出块数量
+        "target": "000019b936ba20a901082aca448779aaf1ed4c03204ea6cec85e5cd851c5e956",//难度值
+        "averageBlockInterval": 10.44,//最近十个区块的平均出块时间
+        "averageFee": 0,//平均手续费
+        "pendingTransactions": 0,//在pending中的事务数
+        "queuedTransactions": 0,//在queued中的事务数
+        "lastConfirmedHeight": 15002,//已经写入库的区块数
+        "bestHeight": 15005//forkDB中的区块数
+    },
+    "code": 2000
+```
+1.38 地址的投票信息
+```
+方法：votes\（地址）（GET）
+参数：token=NUMtD0dEXungVX7eLuXkEurH5BCJzw（放在header里面）
+返回："0000000000000000000000000000": {}
+data格式:
+    "1DjBbTrnf3jiDp4z8zucZc8E8rxhGmFXVz": {
+        "address": "1DjBbTrnf3jiDp4z8zucZc8E8rxhGmFXVz",//投票地址
+        "amount": 205000000000,//投票数量
+        "accumulated": 3475608//衰减后的投票权益
+    }
+```
+
+2. 命令行实现
 
 假设SDK编译后的程序名为wcli
 * [Image: image.png]在main方法中调用一个CLIInterface.call传入的参数为main方法中的args参数数组
@@ -593,37 +625,6 @@ CLIInterface类中定义若干的参数处理方法
 * 连接rpc
 传入参数为IP地址、端口号
 返回值为true/false
-
-1.38 浏览器信息
-```
-方法：WisdomCore\ExplorerInfo（GET）
-参数：无
-返回：{"message": "SUCCESS","data": {},"code": 2000}
-data格式: 
-	{
-        "blocksCount": 8547,//24小时内的出块数量
-        "target": "000019b936ba20a901082aca448779aaf1ed4c03204ea6cec85e5cd851c5e956",//难度值
-        "averageBlockInterval": 10.44,//最近十个区块的平均出块时间
-        "averageFee": 0,//平均手续费
-        "pendingTransactions": 0,//在pending中的事务数
-        "queuedTransactions": 0,//在queued中的事务数
-        "lastConfirmedHeight": 15002,//已经写入库的区块数
-        "bestHeight": 15005//forkDB中的区块数
-    },
-    "code": 2000
-```
-1.39 地址的投票信息
-```
-方法：votes\（地址）（GET）
-参数：token=NUMtD0dEXungVX7eLuXkEurH5BCJzw（放在header里面）
-返回："0000000000000000000000000000": {}
-data格式:
-    "1DjBbTrnf3jiDp4z8zucZc8E8rxhGmFXVz": {
-        "address": "1DjBbTrnf3jiDp4z8zucZc8E8rxhGmFXVz",//投票地址
-        "amount": 205000000000,//投票数量
-        "accumulated": 3475608//衰减后的投票权益
-    }
-```
 
 
 
