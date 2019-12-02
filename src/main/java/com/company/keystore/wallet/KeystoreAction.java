@@ -130,30 +130,7 @@ public class KeystoreAction {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        fromPassword("11111111111");
-            Keystore ks = new Keystore();
-            String privateKey;
-            try {
-                String folderPath = "D:\\project\\WisdomCore-J\\Keystore\\13toiTLSPym6c2W3s56vynoD5WKZr6scR71562327446";
-                FileInputStream file = null;
-                file= new FileInputStream(folderPath);
-                byte[] data = new byte[1024]; //数据存储的数组
-                int i = file.read(data);//对比上面代码中的 int n = fis.read();读取第一个字节的数据返回到n中
 
-                //解析数据
-                String str = new String(data,0,i);
-                ks = WalletUtility.unmarshal(str);
-
-                file.close();
-                privateKey =  new String(Hex.encodeHex(KeystoreAction.decrypt(ks,"12345678")));
-                System.out.println("privateKey:"+privateKey);
-            }catch (FileNotFoundException e){
-                e.printStackTrace();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-    }
 
 
 }

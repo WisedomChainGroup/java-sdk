@@ -185,7 +185,7 @@ public class WalletUtility {
                 return  json;
             }
         }catch (Exception e){
-            JSONObject json = JSON.parseObject("");;
+            JSONObject json = JSON.parseObject("");
             return json;
         }
     }
@@ -308,8 +308,14 @@ public class WalletUtility {
      */
     public static String prikeyToPubkey(String prikey){
         try {
-            if(prikey.length() != 64 || new BigInteger(Hex.decodeHex(prikey.toCharArray())).compareTo(new BigInteger(ByteUtils.hexStringToBytes(t))) > 0){
-                return "";
+            if(prikey.length() == 64){
+                if(new BigInteger(Hex.decodeHex(prikey.toCharArray())).compareTo(new BigInteger(ByteUtils.hexStringToBytes(t))) > 0){
+                    return "";
+                }
+            }else if(prikey.length() == 128){
+                if(new BigInteger(Hex.decodeHex(prikey.substring(0,64).toCharArray())).compareTo(new BigInteger(ByteUtils.hexStringToBytes(t))) > 0){
+                    return "";
+                }
             }
             Ed25519PrivateKey eprik = new Ed25519PrivateKey(Hex.decodeHex(prikey.toCharArray()));
             Ed25519PublicKey epuk = eprik.generatePublicKey();
