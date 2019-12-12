@@ -2,7 +2,6 @@ package com.company.keystore.wallet;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.company.ApiResult.APIResult;
 import com.company.keystore.crypto.*;
 import com.company.keystore.crypto.ed25519.Ed25519PrivateKey;
 import com.company.keystore.crypto.ed25519.Ed25519PublicKey;
@@ -18,6 +17,7 @@ import org.apache.commons.codec.binary.Hex;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -31,7 +31,6 @@ public class WalletUtility {
     private static final int ivLength = 16;
     private static final String defaultVersion = "1";
     private static final String t = "1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ec";
-    public static byte[] outscrip;
     private static final Long rate= 100000000L;
 
 
@@ -108,7 +107,7 @@ public class WalletUtility {
                 folder.mkdirs();
             }
             Keystore ks = null;
-            ks = KeystoreAction.fromPassword(password);
+            ks = KeystoreController.fromPassword(password);
             Crypto crypto = ks.crypto;
             Cipherparams cipherparams = crypto.cipherparams;
             String filePath=folderPath+"\\"+ks.address;
@@ -206,7 +205,7 @@ public class WalletUtility {
             byte[] b4 = ByteUtil.bytearraycopy(r3,0,4);
             byte[] b5 = ByteUtil.byteMerger(r2,b4);
             String s6 = Base58Utility.encode(b5);
-            return  s6;
+            return  "WX"+s6;
         }catch (Exception e){
             return "";
         }
@@ -222,9 +221,7 @@ public class WalletUtility {
      */
     public static String addressToPubkeyHash(String address){
         try {
-            byte[] r5 = Base58Utility.decode(address);
-            byte[] r2 = ByteUtil.bytearraycopy(r5,0,21);
-            byte[] r1 = ByteUtil.bytearraycopy(r2,1,20);
+            byte[] r1 = KeystoreController.addressToPubkeyhashByte(address);
             String publickeyHash =  new String(Hex.encodeHex(r1));
             return  publickeyHash;
         }catch (Exception e){
@@ -257,8 +254,8 @@ public class WalletUtility {
     public static String keystoreToPubkey(String ksJson,String password){
         try {
             Keystore ks = JSON.parseObject(ksJson, Keystore.class);
-            String privateKey =  KeystoreAction.obPrikey(ks,password);
-            String pubkey = KeystoreAction.prikeyToPubkey(privateKey);
+            String privateKey =  KeystoreController.obPrikey(ks,password);
+            String pubkey = prikeyToPubkey(privateKey);
             return  pubkey;
         }catch (Exception e){
             return "";
@@ -274,8 +271,8 @@ public class WalletUtility {
     public static String keystoreToPubkeyHash(String ksJson,String password){
         try {
             Keystore ks = JSON.parseObject(ksJson, Keystore.class);
-            String privateKey =  KeystoreAction.obPrikey(ks,password);
-            String pubkey = KeystoreAction.prikeyToPubkey(privateKey);
+            String privateKey =  KeystoreController.obPrikey(ks,password);
+            String pubkey = prikeyToPubkey(privateKey);
             byte[] pub256 = SHA3Utility.keccak256(Hex.decodeHex(pubkey.toCharArray()));
             byte[] r1 = RipemdUtility.ripemd160(pub256);
             String pubkeyHash = new String(Hex.encodeHex(r1));
@@ -294,7 +291,7 @@ public class WalletUtility {
     public static String obtainPrikey(String ksJson, String password){
         try {
             Keystore ks = JSON.parseObject(ksJson, Keystore.class);
-            String privateKey =  new String(Hex.encodeHex(KeystoreAction.decrypt(ks,password)));
+            String privateKey =  new String(Hex.encodeHex(KeystoreController.decrypt(ks,password)));
             return  privateKey;
         }catch (Exception e){
             return "";
@@ -355,11 +352,16 @@ public class WalletUtility {
      */
     public static int verifyAddress(String address){
         try {
-            byte[] r5 = Base58Utility.decode(address);
-            if(!address.startsWith("1")){
+            if (!address.startsWith("1") && !address.startsWith("WX") && !address.startsWith("WR")){
                 return  -1;
             }
-            byte[] r3 = SHA3Utility.keccak256(SHA3Utility.keccak256(KeystoreAction.atph(address)));
+            byte[] r5 = {};
+            if(address.startsWith("1")){
+                r5 = Base58Utility.decode(address);
+            }else{
+                r5 = Base58Utility.decode(address.substring(2));
+            }
+            byte[] r3 = SHA3Utility.keccak256(SHA3Utility.keccak256(KeystoreController.addressToPubkeyhashByte(address)));
             byte[] b4 = ByteUtil.bytearraycopy(r3,0,4);
             byte[] _b4 = ByteUtil.bytearraycopy(r5,r5.length-4,4);
             if(Arrays.equals(b4,_b4)){
@@ -368,6 +370,7 @@ public class WalletUtility {
                 return  -2;
             }
         }catch (Exception e){
+            e.printStackTrace();
             return -2;
         }
     }

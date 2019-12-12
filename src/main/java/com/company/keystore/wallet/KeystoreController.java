@@ -10,13 +10,10 @@ import com.company.keystore.util.Utils;
 import com.google.common.primitives.Bytes;
 import org.apache.commons.codec.binary.Hex;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.logging.Level;
 
-public class KeystoreAction {
+public class KeystoreController {
     private static final String t = "1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ec";
     public String address;
     public Crypto crypto;
@@ -33,25 +30,22 @@ public class KeystoreAction {
         byte[] r3 = SHA3Utility.keccak256(SHA3Utility.keccak256(r1));
         byte[] b4 = ByteUtil.bytearraycopy(r3,0,4);
         byte[] b5 = ByteUtil.byteMerger(r2,b4);
-        String s6 = Base58Utility.encode(b5);
+        String s6 = "WX"+Base58Utility.encode(b5);
         return  s6;
     }
 
-    public static byte[] atph(String address){
-        byte[] r5 = Base58Utility.decode(address);
+    public static byte[] addressToPubkeyhashByte(String address){
+        byte[] r5 = {};
+        if(address.startsWith("1")){
+            r5 = Base58Utility.decode(address);
+        }else{
+            r5 = Base58Utility.decode(address.substring(2));
+        }
         byte[] r2 = ByteUtil.bytearraycopy(r5,0,21);
         byte[] r1 = ByteUtil.bytearraycopy(r2,1,20);
         return  r1;
     }
 
-    public static String phta(byte[] r1){
-        byte[] r2 = ByteUtil.prepend(r1,(byte)0x00);
-        byte[] r3 = SHA3Utility.keccak256(SHA3Utility.keccak256(r1));
-        byte[] b4 = ByteUtil.bytearraycopy(r3,0,4);
-        byte[] b5 = ByteUtil.byteMerger(r2,b4);
-        String s6 = Base58Utility.encode(b5);
-        return  s6;
-    }
 
     public static byte[] decrypt(Keystore keystore,String password) throws Exception{
         if (!verifyPassword(keystore,password)){
@@ -77,18 +71,8 @@ public class KeystoreAction {
     }
 
     public static String obPrikey(Keystore ks,String password) throws Exception {
-        String privateKey =  new String(Hex.encodeHex(KeystoreAction.decrypt(ks,password)));
+        String privateKey =  new String(Hex.encodeHex(KeystoreController.decrypt(ks,password)));
         return privateKey;
-    }
-
-    public static String prikeyToPubkey(String prikey) throws Exception {
-        if(prikey.length() != 64 || new BigInteger(Hex.decodeHex(prikey.toCharArray())).compareTo(new BigInteger(ByteUtils.hexStringToBytes(t))) > 0){
-            throw new Exception("Private key format error");
-        }
-        Ed25519PrivateKey eprik = new Ed25519PrivateKey(Hex.decodeHex(prikey.toCharArray()));
-        Ed25519PublicKey epuk = eprik.generatePublicKey();
-        String pubkey = new String(Hex.encodeHex(epuk.getEncoded()));
-        return pubkey;
     }
 
     public static Keystore fromPassword(String password) throws Exception{
