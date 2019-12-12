@@ -1,5 +1,8 @@
 # APPSDK方法说明
 
+lombok usage
+https://jingyan.baidu.com/article/0a52e3f4e53ca1bf63ed725c.html
+
 APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事务的构造，签名，发送以及孵化器相关的操作，对于RPC来说，提供若干的接口，对于客户端来说，需要提供若干的实现方法，如下所示：
 
 ## 1.0 基本说明
