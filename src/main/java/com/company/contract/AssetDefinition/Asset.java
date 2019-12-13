@@ -28,7 +28,7 @@ public class Asset {
 
 
     public byte[] RLPserialization() {
-        return RLPElement.encode(new Asset(
+        return RLPElement.readRLPTree(new Asset(
                                         this.getCode(),
                                         this.getOffering(),
                                         this.getTotalamount(),

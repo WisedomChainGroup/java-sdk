@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.tdf.rlp.RLP;
-import org.tdf.rlp.RLPDeserializer;
+import org.tdf.rlp.RLPCodec;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class MultTransfer{
 
     public boolean RLPdeserialization(byte[] payload) {
         try{
-            MultTransfer multTransfer= RLPDeserializer.deserialize(payload,MultTransfer.class);
+            MultTransfer multTransfer= RLPCodec.decode(payload,MultTransfer.class);
             this.origin=multTransfer.getOrigin();
             this.dest=multTransfer.getDest();
             this.pubhash=multTransfer.getPubhash();

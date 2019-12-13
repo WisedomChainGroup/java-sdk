@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.tdf.rlp.RLP;
-import org.tdf.rlp.RLPDeserializer;
+import org.tdf.rlp.RLPCodec;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +17,7 @@ public class AssetIncreased{
 
     public boolean RLPdeserialization(byte[] payload) {
         try{
-            AssetIncreased assetIncreased = RLPDeserializer.deserialize(payload, AssetIncreased.class);
+            AssetIncreased assetIncreased = RLPCodec.decode(payload, AssetIncreased.class);
             this.amount= assetIncreased.amount;
         }catch (Exception e){
             return false;

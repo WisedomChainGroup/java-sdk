@@ -5,8 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.tdf.rlp.RLP;
-import org.tdf.rlp.RLPDeserializer;
-
+import org.tdf.rlp.RLPCodec;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class AssetTransfer{
 
     public boolean RLPdeserialization(byte[] payload) {
         try{
-            AssetTransfer assetTransfer = RLPDeserializer.deserialize(payload, AssetTransfer.class);
+            AssetTransfer assetTransfer = RLPCodec.decode(payload, AssetTransfer.class);
             this.from= assetTransfer.getFrom();
             this.to= assetTransfer.getTo();
             this.value= assetTransfer.getValue();

@@ -10,8 +10,6 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.sun.activation.registries.LogSupport.log;
-
 public class Main {
     private static final Logger log = Logger.getLogger(Main.class.getName());
     private static Options options = new Options();

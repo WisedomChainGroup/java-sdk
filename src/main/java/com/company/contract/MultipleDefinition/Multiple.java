@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.tdf.rlp.RLP;
-import org.tdf.rlp.RLPDeserializer;
+import org.tdf.rlp.RLPCodec;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class Multiple{
 
     public boolean RLPdeserialization(byte[] payload) {
         try{
-            Multiple multiple= RLPDeserializer.deserialize(payload,Multiple.class);
+            Multiple multiple= RLPCodec.decode(payload,Multiple.class);
             this.assetHash=multiple.getAssetHash();
             this.min=multiple.getMin();
             this.max=multiple.getMax();

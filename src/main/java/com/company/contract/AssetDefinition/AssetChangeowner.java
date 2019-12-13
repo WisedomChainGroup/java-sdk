@@ -5,8 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.tdf.rlp.RLP;
-import org.tdf.rlp.RLPDeserializer;
-
+import org.tdf.rlp.RLPCodec;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class AssetChangeowner{
 
     public boolean RLPdeserialization(byte[] payload) {
         try{
-            AssetChangeowner assetChangeowner = RLPDeserializer.deserialize(payload, AssetChangeowner.class);
+            AssetChangeowner assetChangeowner = RLPCodec.decode(payload, AssetChangeowner.class);
             this.newowner= assetChangeowner.getNewowner();
         }catch (Exception e){
             return false;

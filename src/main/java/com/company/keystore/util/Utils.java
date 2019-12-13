@@ -1,8 +1,5 @@
 package com.company.keystore.util;
 
-
-import com.google.protobuf.ByteString;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
