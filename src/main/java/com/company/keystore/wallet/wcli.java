@@ -114,8 +114,8 @@ public class wcli {
                         String str = new String(data,0,i);
                         ks = WalletUtility.unmarshal(str);
                         file.close();
-                        String privatekey =  KeystoreAction.obPrikey(ks,password);
-                        String pubkey = KeystoreAction.prikeyToPubkey(privatekey);
+                        String privatekey =  KeystoreController.obPrikey(ks,password);
+                        String pubkey = WalletUtility.prikeyToPubkey(privatekey);
                         byte[] pub256 = SHA3Utility.keccak256(Hex.decodeHex(pubkey.toCharArray()));
                         byte[] r1 = RipemdUtility.ripemd160(pub256);
                         String pubkeyHash = new String(Hex.encodeHex(r1));

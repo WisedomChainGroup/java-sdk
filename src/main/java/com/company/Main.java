@@ -69,7 +69,7 @@ public class Main {
                        ks = WalletUtility.unmarshal(str);
 
                        file.close();
-                       privateKey = new String(Hex.encodeHex(KeystoreAction.decrypt(ks,password)));
+                       privateKey = new String(Hex.encodeHex(KeystoreController.decrypt(ks,password)));
                        System.out.println("privateKey:"+privateKey);
                    }catch (FileNotFoundException e){
                        e.printStackTrace();
