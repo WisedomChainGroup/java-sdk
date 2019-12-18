@@ -1,8 +1,11 @@
 package com.company.keystore.crypto;
 
+import com.company.keystore.util.ByteUtil;
 import com.kosprov.jargon2.api.Jargon2;
 import org.apache.commons.codec.binary.Hex;
 import javax.crypto.Mac;
+import java.nio.charset.StandardCharsets;
+
 public class ArgonManage {
 	public static enum Type {
 		ARGON2d,
@@ -36,7 +39,6 @@ public class ArgonManage {
 	public static final int timeCost = 4;
 	public static final int parallelism = 2;
 
-
 	public ArgonManage() {
 	}
 
@@ -57,11 +59,16 @@ public class ArgonManage {
 		this.salt = salt;
 	}
 
-	public byte[] hash(byte[] in){
-		String password = new String(Hex.encodeHex(salt)) + new String(Hex.encodeHex(in));
+	public byte[] hash(byte[] in,String version){
+		String password;
+		if(version.equals("1")){
+			 password = new String(Hex.encodeHex(salt)) + new String(Hex.encodeHex(in));
+		}else {
+			 password = new String(ByteUtil.merge(salt,in), StandardCharsets.US_ASCII);
+		}
 		return Jargon2.jargon2Hasher().type(this.type).memoryCost(memoryCost)
 				.timeCost(timeCost).parallelism(parallelism).salt(salt)
-				.password(password.getBytes()).rawHash();
+				.password(password.getBytes(StandardCharsets.US_ASCII)).rawHash();
 	}
 
 	public String kdf(){

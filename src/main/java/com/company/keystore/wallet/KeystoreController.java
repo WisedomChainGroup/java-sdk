@@ -11,6 +11,7 @@ import com.google.common.primitives.Bytes;
 import org.apache.commons.codec.binary.Hex;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 public class KeystoreController {
@@ -20,6 +21,7 @@ public class KeystoreController {
     private static final int saltLength = 32;
     private static final int ivLength = 16;
     private static final String defaultVersion = "1";
+    private static final String newVersion = "1";
     private SecureRandom random;
 
 
@@ -52,7 +54,7 @@ public class KeystoreController {
             throw new Exception("invalid password");
         }
         ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, Hex.decodeHex(keystore.kdfparams.salt.toCharArray()));
-        byte[] derivedKey = argon2id.hash(password.getBytes());
+        byte[] derivedKey = argon2id.hash(password.getBytes(),keystore.version);
         byte[] iv = Hex.decodeHex(keystore.crypto.cipherparams.iv.toCharArray());
         AESManage aes = new AESManage(iv);
         return aes.decrypt(derivedKey, Hex.decodeHex(keystore.crypto.ciphertext.toCharArray()));
@@ -61,7 +63,7 @@ public class KeystoreController {
     public static boolean verifyPassword(Keystore keystore,String password) throws Exception{
         // 验证密码是否正确 计算 mac
         ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, Hex.decodeHex(keystore.kdfparams.salt.toCharArray()));
-        byte[] derivedKey = argon2id.hash(password.getBytes());
+        byte[] derivedKey = argon2id.hash(password.getBytes(),keystore.version);
         byte[] cipherPrivKey = Hex.decodeHex(keystore.crypto.ciphertext.toCharArray());
         byte[] mac = SHA3Utility.keccak256(Bytes.concat(
                 derivedKey,cipherPrivKey
@@ -75,44 +77,6 @@ public class KeystoreController {
         return privateKey;
     }
 
-    public static Keystore fromPassword(String password) throws Exception{
-        if (password.length()>20 || password.length()<8){
-            throw new Exception("请输入8-20位密码");
-        }else {
-            KeyPair keyPair = KeyPair.generateEd25519KeyPair();
-            PublicKey publicKey = keyPair.getPublicKey();
-            String s=new String(keyPair.getPrivateKey().getEncoded());
-            byte[] salt = new byte[saltLength];
-            byte[] iv = new byte[ivLength];
-            SecureRandom random = new SecureRandom();
-            random.nextBytes(iv);
-            SecureRandom sr = new SecureRandom();
-            sr.nextBytes(salt);
-            ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, salt);
-            AESManage aes = new AESManage(iv);
-
-            byte[] derivedKey = argon2id.hash(password.getBytes());
-            byte[] cipherPrivKey = aes.encrypt(derivedKey, keyPair.getPrivateKey().getBytes());
-            byte[] mac = SHA3Utility.keccak256(Bytes.concat(
-                    derivedKey, cipherPrivKey
-                    )
-            );
-
-            Crypto crypto = new Crypto(
-                    AESManage.cipher, new String(Hex.encodeHex(cipherPrivKey)),
-                    new Cipherparams(
-                            new String(Hex.encodeHex(iv))
-                    )
-            );
-            Kdfparams kdfparams = new Kdfparams(ArgonManage.memoryCost, ArgonManage.timeCost, ArgonManage.parallelism,new String(Hex.encodeHex(salt)));
-            com.company.keystore.account.Address ads = new com.company.keystore.account.Address(publicKey);
-            ArgonManage params = new ArgonManage(salt);
-            Keystore ks = new Keystore(ads.getAddress(), crypto, Utils.generateUUID(),
-                    defaultVersion, new String(Hex.encodeHex(mac)), argon2id.kdf(), kdfparams
-            );
-            return ks;
-        }
-    }
 
 
 
