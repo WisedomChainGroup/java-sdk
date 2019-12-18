@@ -61,11 +61,12 @@ public class ArgonManage {
 
 	public byte[] hash(byte[] in,String version){
 		String password;
-		if(version.equals("1")){
-			 password = new String(Hex.encodeHex(salt)) + new String(Hex.encodeHex(in));
-		}else {
-			 password = new String(ByteUtil.merge(salt,in), StandardCharsets.US_ASCII);
+		if(version.equals("2")){
+			return Jargon2.jargon2Hasher().type(this.type).memoryCost(memoryCost)
+					.timeCost(timeCost).parallelism(parallelism).salt(salt)
+					.password(ByteUtil.merge(salt, in)).rawHash();
 		}
+		password = new String(Hex.encodeHex(salt)) + new String(Hex.encodeHex(in));
 		return Jargon2.jargon2Hasher().type(this.type).memoryCost(memoryCost)
 				.timeCost(timeCost).parallelism(parallelism).salt(salt)
 				.password(password.getBytes(StandardCharsets.US_ASCII)).rawHash();

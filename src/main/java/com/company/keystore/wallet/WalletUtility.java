@@ -379,4 +379,60 @@ public class WalletUtility {
         }
     }
 
+    public static void main(String[] args) throws DecoderException {
+        String t = "{\"address\":\"WX1CRXnUJx9Tq4ZpNkkueeKFxCbYg1E4uTCt\",\"kdfparams\":{\"salt\":\"234b39aee82b3f1a6b0d8ca82f55f7cdfe68aaf7bdf81ab409845131fb0cbded\",\"memoryCost\":20480,\"parallelism\":2,\"timeCost\":4},\"id\":\"2503441f-dbaa-4a08-870b-6a10e517293e\",\"kdf\":\"argon2id\",\"version\":\"2\",\"mac\":\"68fa5fb450e1d25e9f85f860c47736c0f4235e640bbd5704b72468a2c3882922\",\"crypto\":{\"cipher\":\"aes-256-ctr\",\"ciphertext\":\"154e1ecf3a4ca92563804ae19d524f13d32d394473d0d0ce9ab2316d4eefb3e9\",\"cipherparams\":{\"iv\":\"150f6026ea457d6c65104c5a6d4307a5\"}}}";
+//        String t = "{\"address\":\"1CRXnUJx9Tq4ZpNkkueeKFxCbYg1E4uTCt\",\"kdfparams\":{\"salt\":\"e8b8ae8daea9873a478dca5e6125b937c986df116d0f6d124f981e865ddeec86\",\"memoryCost\":20480,\"parallelism\":2,\"timeCost\":4},\"id\":\"e3354109-50ac-4a6e-97cc-3aa87f85f1bf\",\"kdf\":\"argon2id\",\"version\":\"1\",\"mac\":\"b9cea49dbf53eed3b7922310d735b6245841284bd1dedca0510734b3eb3a51d3\",\"crypto\":{\"cipher\":\"aes-256-ctr\",\"ciphertext\":\"d1d957207037169b318618051a4985fb44f0ee4d21d1af42612c0dcb8ccb3d4e\",\"cipherparams\":{\"iv\":\"a377a16b806d4ed3910ab15b67b3661a\"}}}";
+//        System.out.println(obtainPrikey(t,"test123456"));
+//        System.out.println(prikeyToPubkey("014c2f41f7c267c3c6fc41fa652b34e8b7f65861e839061d9ad9b8b00b1cd39c"));
+//        System.out.println(prikeyToPubkey("01ddaccaa550531531c98810220cdb7c003de4ff70ea8d693d3d026f1992c6a4"));
+//        System.out.println(updateKeystoreVersion1to2(t,"test123456"));
+
+        String salt = "3b663f3f3f3f3f3f653f501e3f3f3f3f4e3f3f38673f5220783f3f3f173f3f3f";
+
+        String e8 = "e8b8ae8daea9873a478dca5e6125b937c986df116d0f6d124f981e865ddeec86";
+
+        String _3f = "3f293f3f3f3f3f3f3f3f3f4a3f073f3f744a0c6f3f4a00773f19743f143f3f43";
+
+        ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, _3f.getBytes(StandardCharsets.US_ASCII));
+        for(byte b: "e8b8ae8daea9873a478dca5e6125b937c986df116d0f6d124f981e865ddeec86".getBytes(StandardCharsets.US_ASCII)){
+//            System.out.println(0xff & b);
+        }
+        byte[] derivedKey = argon2id.hash("test123456".getBytes(StandardCharsets.US_ASCII),newVersion);
+        System.out.println(Hex.encodeHexString(derivedKey));
+//
+//        ArgonManage argon2id2 = new ArgonManage(ArgonManage.Type.ARGON2id, Hex.decodeHex("3b663f3f3f3f3f3f653f501e3f3f3f3f4e3f3f38673f5220783f3f3f173f3f3f".toCharArray()));
+//        byte[] derivedKey2 = argon2id2.hash("test123456".getBytes(),newVersion);
+//        System.out.println(Hex.encodeHexString(derivedKey2));
+
+//System.out.println(fromPassword("test123456"));
+
+//        String s = "{\"address\":\"WX19zujA9ZZrXaFBHJtFRSWkTvHyGxWX94Fm\",\"kdfparams\":{\"salt\":\"3b663f3f3f3f3f3f653f501e3f3f3f3f4e3f3f38673f5220783f3f3f173f3f3f\",\"memoryCost\":20480,\"parallelism\":2,\"timeCost\":4},\"id\":\"a713f151-4ec7-4f08-ad1d-4208df0a4c51\",\"kdf\":\"argon2id\",\"version\":\"2\",\"mac\":\"33c787fff89007d223de6cd0fbbb5e352e71abbc4822a28acae06012ac956712\",\"crypto\":{\"cipher\":\"aes-256-ctr\",\"ciphertext\":\"ea9ca7b7865b1db021513c6957aae2d27af9f878c349960f54b7c4e20bd74a90\",\"cipherparams\":{\"iv\":\"e6b860d069dfb0883219cd9704769669\"}}}\n";
+//        String s = "{\"address\":\"WX19zujA9ZZrXaFBHJtFRSWkTvHyGxWX94Fm\",\"kdfparams\":{\"salt\":\"000a453f5f60203f0e3f3f125d07593f7d3f3f084c7e373f3f3f745e161e3f41\",\"memoryCost\":20480,\"parallelism\":2,\"timeCost\":4},\"id\":\"1a7ecd2b-7775-41a1-94d1-a22ccd4422c4\",\"kdf\":\"argon2id\",\"version\":\"2\",\"mac\":\"f62d4b2a2937c652dce2201f012ea305e9ed069aa8f0a0f12dddbd031e093c88\",\"crypto\":{\"cipher\":\"aes-256-ctr\",\"ciphertext\":\"5503be55c62f6abf5b129c315f83fd530c8ede659378a2471854eb18ae6e1042\",\"cipherparams\":{\"iv\":\"4fabdeec94355ff8d879b29435eaaee3\"}}}\n";
+//        System.out.println(updateKeystoreVersion1to2(s,"test123456"));
+//        System.out.println(obtainPrikey(s,"test123456"));
+        //a2fd0c910cda464a3bdd0591038597920a85adfd7cd38c78978df94932145f4f
+
+        String json = "{\n" +
+                "  \"address\": \"1CRXnUJx9Tq4ZpNkkueeKFxCbYg1E4uTCt\",\n" +
+                "  \"kdfparams\": {\n" +
+                "    \"salt\": \"e8b8ae8daea9873a478dca5e6125b937c986df116d0f6d124f981e865ddeec86\",\n" +
+                "    \"memoryCost\": 20480,\n" +
+                "    \"parallelism\": 2,\n" +
+                "    \"timeCost\": 4\n" +
+                "  },\n" +
+                "  \"id\": \"e3354109-50ac-4a6e-97cc-3aa87f85f1bf\",\n" +
+                "  \"kdf\": \"argon2id\",\n" +
+                "  \"version\": \"1\",\n" +
+                "  \"mac\": \"b9cea49dbf53eed3b7922310d735b6245841284bd1dedca0510734b3eb3a51d3\",\n" +
+                "  \"crypto\": {\n" +
+                "    \"cipher\": \"aes-256-ctr\",\n" +
+                "    \"ciphertext\": \"d1d957207037169b318618051a4985fb44f0ee4d21d1af42612c0dcb8ccb3d4e\",\n" +
+                "    \"cipherparams\": {\n" +
+                "      \"iv\": \"a377a16b806d4ed3910ab15b67b3661a\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+        System.out.println(updateKeystoreVersion1to2(json, "test123456"));
+
+    }
 }

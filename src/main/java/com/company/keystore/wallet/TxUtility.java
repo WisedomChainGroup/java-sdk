@@ -518,6 +518,7 @@ public class TxUtility extends Thread{
             JSONObject json = JSON.parseObject(jsonString);
             return  json;
         }catch (Exception e){
+            e.printStackTrace();
             JSONObject json = JSON.parseObject("");
             return  json;
         }
@@ -921,10 +922,7 @@ public class TxUtility extends Thread{
         //构造一个字符流缓存
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         while ((str = br.readLine()) != null) {
-            System.out.println("1111");
-            System.out.println(str);
             Long timeConsuming = Duration.between(beginTime,LocalDateTime.now()).toMillis();
-            System.out.println(timeConsuming);
         }
         //关闭流
         is.close();
@@ -938,7 +936,7 @@ public class TxUtility extends Thread{
         private String str;
 
 
-        MyCallable(String path,String data) {
+        MyCallable(String path, String data) {
             String str = "";
             try {
                 URL url = new URL(path);

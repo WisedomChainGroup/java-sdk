@@ -1,0 +1,20 @@
+{
+  "address": "WX1CRXnUJx9Tq4ZpNkkueeKFxCbYg1E4uTCt",
+  "kdfparams": {
+    "salt": "fbef6a21b1a79df8766fcb8a485c92473c3db3573e8a509d2107e445b85b977e",
+    "memoryCost": 20480,
+    "parallelism": 2,
+    "timeCost": 4
+  },
+  "id": "38dd6e42-d04c-4543-be7b-d20611b7ce05",
+  "kdf": "argon2id",
+  "version": "2",
+  "mac": "4084d6398ebc4f109a9117fd69ea1a7121202d8f7f12ed53a6d15d45a3c45aff",
+  "crypto": {
+    "cipher": "aes-256-ctr",
+    "ciphertext": "6ef8ed78943cd5ed962fe1d7c30765496affb2822e923079178a2d44cb3d6262",
+    "cipherparams": {
+      "iv": "79f74d2df6e9909c8f1f8c5f058f4612"
+    }
+  }
+}
