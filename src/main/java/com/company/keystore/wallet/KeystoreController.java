@@ -53,8 +53,8 @@ public class KeystoreController {
         if (!verifyPassword(keystore,password)){
             throw new Exception("invalid password");
         }
-        ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, Hex.decodeHex(keystore.kdfparams.salt.toCharArray()));
-        byte[] derivedKey = argon2id.hash(password.getBytes(),keystore.version);
+        ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, keystore.kdfparams.salt, keystore.version);
+        byte[] derivedKey = argon2id.hash(password.getBytes());
         byte[] iv = Hex.decodeHex(keystore.crypto.cipherparams.iv.toCharArray());
         AESManage aes = new AESManage(iv);
         return aes.decrypt(derivedKey, Hex.decodeHex(keystore.crypto.ciphertext.toCharArray()));
@@ -62,8 +62,9 @@ public class KeystoreController {
 
     public static boolean verifyPassword(Keystore keystore,String password) throws Exception{
         // 验证密码是否正确 计算 mac
-        ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, Hex.decodeHex(keystore.kdfparams.salt.toCharArray()));
-        byte[] derivedKey = argon2id.hash(password.getBytes(),keystore.version);
+        ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, keystore.kdfparams.salt, keystore.version);
+
+        byte[] derivedKey = argon2id.hash(password.getBytes());
         byte[] cipherPrivKey = Hex.decodeHex(keystore.crypto.ciphertext.toCharArray());
         byte[] mac = SHA3Utility.keccak256(Bytes.concat(
                 derivedKey,cipherPrivKey
