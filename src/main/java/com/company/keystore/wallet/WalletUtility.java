@@ -156,7 +156,7 @@ public class WalletUtility {
             byte[] b4 = ByteUtil.bytearraycopy(r3, 0, 4);
             byte[] b5 = ByteUtil.byteMerger(r2, b4);
             String s6 = Base58Utility.encode(b5);
-            return "WX" + s6;
+            return s6;
         } catch (Exception e) {
             return "";
         }
@@ -334,6 +334,7 @@ public class WalletUtility {
     public static JSON updateKeystoreVersion1to2(String keystoreJson, String password){
         try {
             String prikey = obtainPrikey(keystoreJson,password);
+            if (prikey.length() == 128) prikey = prikey.substring(0,64);
             Ed25519PrivateKey privateKey = new Ed25519PrivateKey(Hex.decodeHex(prikey.toCharArray()));
             Ed25519PublicKey publicKey = privateKey.generatePublicKey();
             if (password.length()>20 || password.length()<8){
