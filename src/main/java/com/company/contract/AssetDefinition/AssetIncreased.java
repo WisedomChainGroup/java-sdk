@@ -1,28 +1,34 @@
 package com.company.contract.AssetDefinition;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.tdf.rlp.RLP;
 import org.tdf.rlp.RLPCodec;
+import org.tdf.rlp.RLPElement;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class AssetIncreased{
+public class AssetIncreased {
     @RLP(0)
     private long amount;
 
-    public boolean RLPdeserialization(byte[] payload) {
-        try{
+    public AssetIncreased RLPdeserialization(byte[] payload) {
+        try {
             AssetIncreased assetIncreased = RLPCodec.decode(payload, AssetIncreased.class);
-            this.amount= assetIncreased.amount;
-        }catch (Exception e){
-            return false;
+            this.amount = assetIncreased.amount;
+            return assetIncreased;
+        } catch (Exception e) {
+            throw e;
         }
-        return true;
     }
 
+    public byte[] RLPdeserialization() {
+        return RLPElement.readRLPTree(this).getEncoded();
+    }
+
+    public AssetIncreased(long amount) {
+        this.amount = amount;
+    }
 }

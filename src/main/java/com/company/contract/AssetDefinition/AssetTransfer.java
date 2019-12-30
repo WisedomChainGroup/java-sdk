@@ -1,19 +1,16 @@
 package com.company.contract.AssetDefinition;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.tdf.rlp.RLP;
 import org.tdf.rlp.RLPCodec;
-
-import java.util.List;
+import org.tdf.rlp.RLPElement;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class AssetTransfer{
+public class AssetTransfer {
     @RLP(0)
     private byte[] from;
     @RLP(1)
@@ -22,16 +19,24 @@ public class AssetTransfer{
     private long value;
 
 
-    public boolean RLPdeserialization(byte[] payload) {
-        try{
+    public AssetTransfer RLPdeserialization(byte[] payload) {
+        try {
             AssetTransfer assetTransfer = RLPCodec.decode(payload, AssetTransfer.class);
-            this.from= assetTransfer.getFrom();
-            this.to= assetTransfer.getTo();
-            this.value= assetTransfer.getValue();
-        }catch (Exception e){
-            return false;
+            this.from = assetTransfer.getFrom();
+            this.to = assetTransfer.getTo();
+            this.value = assetTransfer.getValue();
+            return assetTransfer;
+        } catch (Exception e) {
+            throw e;
         }
-        return true;
     }
 
+    public byte[] RLPdeserialization() {
+        return RLPElement.readRLPTree(this).getEncoded();
+    }
+
+    public AssetTransfer(byte[] from, byte[] to, long value) {
+        this.from = from;
+        this.to = to;
+    }
 }

@@ -4,18 +4,21 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.company.ApiResult.APIResult;
 import com.company.account.Transaction;
+import com.company.contract.AssetDefinition.Asset;
+import com.company.contract.AssetDefinition.AssetChangeowner;
+import com.company.contract.AssetDefinition.AssetIncreased;
+import com.company.contract.AssetDefinition.AssetTransfer;
 import com.company.encoding.BigEndian;
+import com.company.keystore.crypto.RipemdUtility;
 import com.company.keystore.crypto.SHA3Utility;
 import com.company.keystore.crypto.ed25519.Ed25519PrivateKey;
 import com.company.keystore.util.ByteUtil;
 import com.company.protobuf.HatchModel;
 import com.company.protobuf.ProtocolModel;
 import com.google.protobuf.ByteString;
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -24,53 +27,55 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
 
-public class TxUtility extends Thread{
-    private static final Long rate= 100000000L;
-    private static final Long serviceCharge= 200000L;
+public class TxUtility extends Thread {
+    private static final Long rate = 100000000L;
+    private static final Long serviceCharge = 200000L;
 
 
     /**
      * 构造交易事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
      * @return
      */
-    public static String CreateRawTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount,Long nonce){
+    public static String CreateRawTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce) {
         try {
             //版本号
-            byte[] version=new byte[1];
-            version[0]=0x01;
+            byte[] version = new byte[1];
+            version[0] = 0x01;
             //类型：WDC转账
-            byte[] type=new byte[1];
-            type[0]=0x01;
+            byte[] type = new byte[1];
+            type[0] = 0x01;
             //Nonce 无符号64位
-            byte[] nonece= BigEndian.encodeUint64(nonce+1);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(50000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(50000L, serviceCharge));
             //转账金额 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
-            byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
             //为签名留白
-            byte[] signull=new byte[64];
+            byte[] signull = new byte[64];
             //接收者公钥哈希
-            byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //长度
-            byte[] allPayload= BigEndian.encodeUint32(0);
-            byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
-            String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
-        return  RawTransactionStr;
-        }catch (Exception e){
+            byte[] allPayload = BigEndian.encodeUint32(0);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
             return "";
         }
     }
 
     /**
      * 构造申请孵化事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
@@ -78,296 +83,303 @@ public class TxUtility extends Thread{
      * @param hatchType
      * @return
      */
-    public static String CreateRawHatchTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String sharepubkeyhash, Integer hatchType,Long nonce){
+    public static String CreateRawHatchTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String sharepubkeyhash, Integer hatchType, Long nonce) {
         try {
             //版本号
-            byte[] version=new byte[1];
-            version[0]=0x01;
+            byte[] version = new byte[1];
+            version[0] = 0x01;
             //类型：申请孵化
-            byte[] type=new byte[1];
-            type[0]=0x09;
+            byte[] type = new byte[1];
+            type[0] = 0x09;
             //Nonce 无符号64位
-            byte[] nonece=BigEndian.encodeUint64(nonce+1);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
             //孵化本金 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
-            byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
             //为签名留白
-            byte[] signull=new byte[64];
+            byte[] signull = new byte[64];
             //接收者公钥哈希
-            byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //构造payload
             HatchModel.Payload.Builder payloads = HatchModel.Payload.newBuilder();
             byte[] nullTxid = new byte[32];
             payloads.setTxId(ByteString.copyFrom(nullTxid));
-            if (sharepubkeyhash != null){
+            if (sharepubkeyhash != null) {
                 payloads.setSharePubkeyHash(sharepubkeyhash);
             }
             payloads.setType(hatchType);
             byte[] payload = payloads.build().toByteArray();
             //长度
-    //        byte[] payloadleng= BigEndian.encodeUint32(payload.length);
-            byte[] payloadleng= ByteUtil.intToBytes(payload.length);
-            byte[] allPayload=ByteUtil.merge(payloadleng,payload);
-    //        byte[] allPayload= BigEndian.encodeUint32(0);
-            byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
-            String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
-            return  RawTransactionStr;
-        }catch (Exception e){
+            //        byte[] payloadleng= BigEndian.encodeUint32(payload.length);
+            byte[] payloadleng = ByteUtil.intToBytes(payload.length);
+            byte[] allPayload = ByteUtil.merge(payloadleng, payload);
+            //        byte[] allPayload= BigEndian.encodeUint32(0);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
             return "";
         }
     }
 
     /**
-     *构造利息收益事务
+     * 构造利息收益事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
      * @param txid
      * @return
      */
-    public static String CreateRawProfitTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid, Long nonce){
+    public static String CreateRawProfitTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid, Long nonce) {
         try {
             //版本号
-            byte[] version=new byte[1];
-            version[0]=0x01;
+            byte[] version = new byte[1];
+            version[0] = 0x01;
             //类型：利息收益
-            byte[] type=new byte[1];
-            type[0]=0x0a;
+            byte[] type = new byte[1];
+            type[0] = 0x0a;
             //Nonce 无符号64位
-            byte[] nonece=BigEndian.encodeUint64(nonce+1);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
             //收益 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
-            byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
             //为签名留白
-            byte[] signull=new byte[64];
+            byte[] signull = new byte[64];
             //接收者公钥哈希
-            byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //构造payload
             byte[] payload = Hex.decodeHex(txid.toCharArray());
             //长度
-            byte[] payloadleng= BigEndian.encodeUint32(payload.length);
-            byte[] allPayload=ByteUtil.merge(payloadleng,payload);
-            byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
-            String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
-            return  RawTransactionStr;
-        }catch (Exception e){
+            byte[] payloadleng = BigEndian.encodeUint32(payload.length);
+            byte[] allPayload = ByteUtil.merge(payloadleng, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
             return "";
         }
     }
 
     /**
-     *构造分享收益事务
+     * 构造分享收益事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
      * @param txid
      * @return
      */
-    public static String CreateRawShareProfitTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid,Long nonce){
+    public static String CreateRawShareProfitTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid, Long nonce) {
         try {
             //版本号
-            byte[] version=new byte[1];
-            version[0]=0x01;
+            byte[] version = new byte[1];
+            version[0] = 0x01;
             //类型：申请孵化
-            byte[] type=new byte[1];
-            type[0]=0x0b;
+            byte[] type = new byte[1];
+            type[0] = 0x0b;
             //Nonce 无符号64位
-            byte[] nonece=BigEndian.encodeUint64(nonce+1);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
             //分享收益 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
-            byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
             //为签名留白
-            byte[] signull=new byte[64];
+            byte[] signull = new byte[64];
             //接收者公钥哈希
-            byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //构造payload
             byte[] payload = Hex.decodeHex(txid.toCharArray());
             //长度
-            byte[] payloadleng= BigEndian.encodeUint32(payload.length);
-            byte[] allPayload=ByteUtil.merge(payloadleng,payload);
-            byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
-            String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
-            return  RawTransactionStr;
-        }catch (Exception e){
+            byte[] payloadleng = BigEndian.encodeUint32(payload.length);
+            byte[] allPayload = ByteUtil.merge(payloadleng, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
             return "";
         }
     }
 
     /**
      * 构造提取本金
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
      * @param txid
      * @return
      */
-    public static String CreateRawHatchPrincipalTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid,Long nonce){
+    public static String CreateRawHatchPrincipalTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid, Long nonce) {
         try {
             //版本号
-            byte[] version=new byte[1];
-            version[0]=0x01;
+            byte[] version = new byte[1];
+            version[0] = 0x01;
             //类型：提取本金
-            byte[] type=new byte[1];
-            type[0]=0x0c;
+            byte[] type = new byte[1];
+            type[0] = 0x0c;
             //Nonce 无符号64位
-            byte[] nonece=BigEndian.encodeUint64(nonce+1);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
             //本金 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
-            byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
             //为签名留白
-            byte[] signull=new byte[64];
+            byte[] signull = new byte[64];
             //接收者公钥哈希
-            byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //构造payload
             byte[] payload = Hex.decodeHex(txid.toCharArray());
             //长度
-            byte[] payloadleng= BigEndian.encodeUint32(payload.length);
-            byte[] allPayload=ByteUtil.merge(payloadleng,payload);
-            byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
-            String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
-            return  RawTransactionStr;
-        }catch (Exception e){
+            byte[] payloadleng = BigEndian.encodeUint32(payload.length);
+            byte[] allPayload = ByteUtil.merge(payloadleng, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
             return "";
         }
     }
 
     /**
      * 构造投票事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
      * @param nonce
      * @return
      */
-    public static String CreateRawVoteTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce){
+    public static String CreateRawVoteTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce) {
         try {
             //版本号
-            byte[] version=new byte[1];
-            version[0]=0x01;
+            byte[] version = new byte[1];
+            version[0] = 0x01;
             //类型：投票
-            byte[] type=new byte[1];
-            type[0]=0x02;
+            byte[] type = new byte[1];
+            type[0] = 0x02;
             //Nonce 无符号64位
-            byte[] nonece= BigEndian.encodeUint64(nonce+1);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(20000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(20000L, serviceCharge));
             //转账金额 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
-            byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
             //为签名留白
-            byte[] signull=new byte[64];
+            byte[] signull = new byte[64];
             //接收者公钥哈希
-            byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //长度
-            byte[] allPayload= BigEndian.encodeUint32(0);
-            byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
-            String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
-            return  RawTransactionStr;
-        }catch (Exception e){
+            byte[] allPayload = BigEndian.encodeUint32(0);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
             return "";
         }
     }
 
     /**
      * 构造投票撤回事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
      * @param nonce
      * @return
      */
-    public static String CreateRawVoteWithdrawTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce,String txid){
+    public static String CreateRawVoteWithdrawTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce, String txid) {
         try {
             //版本号
-            byte[] version=new byte[1];
-            version[0]=0x01;
+            byte[] version = new byte[1];
+            version[0] = 0x01;
             //类型：投票撤回
-            byte[] type=new byte[1];
-            type[0]=0x0d;
+            byte[] type = new byte[1];
+            type[0] = 0x0d;
             //Nonce 无符号64位
-            byte[] nonece= BigEndian.encodeUint64(nonce+1);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(20000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(20000L, serviceCharge));
             //转账金额 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
-            byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
             //为签名留白
-            byte[] signull=new byte[64];
+            byte[] signull = new byte[64];
             //接收者公钥哈希
-            byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //payload
             byte[] payload = Hex.decodeHex(txid.toCharArray());
             //长度
-            byte[] payloadleng= BigEndian.encodeUint32(payload.length);
-            byte[] allPayload=ByteUtil.merge(payloadleng,payload);
-            byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
-            String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
-            return  RawTransactionStr;
-        }catch (Exception e){
+            byte[] payloadleng = BigEndian.encodeUint32(payload.length);
+            byte[] allPayload = ByteUtil.merge(payloadleng, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
             return "";
         }
     }
 
     /**
      * 构造抵押事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
      * @param nonce
      * @return
      */
-    public static String CreateRawMortgageTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount,Long nonce){
+    public static String CreateRawMortgageTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce) {
         try {
             //版本号
-            byte[] version=new byte[1];
-            version[0]=0x01;
+            byte[] version = new byte[1];
+            version[0] = 0x01;
             //类型：抵押
-            byte[] type=new byte[1];
-            type[0]=0x0e;
+            byte[] type = new byte[1];
+            type[0] = 0x0e;
             //Nonce 无符号64位
-            byte[] nonece=BigEndian.encodeUint64(nonce+1);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(20000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(20000L, serviceCharge));
             //本金 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
-            byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
             //为签名留白
-            byte[] signull=new byte[64];
+            byte[] signull = new byte[64];
             //接收者公钥哈希
-            byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
-            byte[] allPayload= BigEndian.encodeUint32(0);
-            byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
-            String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
-            return  RawTransactionStr;
-        }catch (Exception e){
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            byte[] allPayload = BigEndian.encodeUint32(0);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
             return "";
         }
     }
 
     /**
      * 构造抵押撤回事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
@@ -375,89 +387,90 @@ public class TxUtility extends Thread{
      * @param nonce
      * @return
      */
-    public static String CreateRawMortgageWithdrawTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid,Long nonce){
+    public static String CreateRawMortgageWithdrawTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String txid, Long nonce) {
         try {
             //版本号
-            byte[] version=new byte[1];
-            version[0]=0x01;
+            byte[] version = new byte[1];
+            version[0] = 0x01;
             //类型：抵押撤回
-            byte[] type=new byte[1];
-            type[0]=0x0f;
+            byte[] type = new byte[1];
+            type[0] = 0x0f;
             //Nonce 无符号64位
-            byte[] nonece=BigEndian.encodeUint64(nonce+1);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(20000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(20000L, serviceCharge));
             //本金 无符号64位
             BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
-            byte[] Amount=ByteUtil.longToBytes(bdAmount.longValue());
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
             //为签名留白
-            byte[] signull=new byte[64];
+            byte[] signull = new byte[64];
             //接收者公钥哈希
-            byte[] toPubkeyHash=Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //payload
             byte[] payload = Hex.decodeHex(txid.toCharArray());
             //长度
-            byte[] payloadleng= BigEndian.encodeUint32(payload.length);
-            byte[] allPayload=ByteUtil.merge(payloadleng,payload);
-            byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
-            String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
-            return  RawTransactionStr;
-        }catch (Exception e){
+            byte[] payloadleng = BigEndian.encodeUint32(payload.length);
+            byte[] allPayload = ByteUtil.merge(payloadleng, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
             return "";
         }
     }
 
     /**
      * 构造存证事务
+     *
      * @param fromPubkeyStr
      * @param payload
      * @param nonce
      * @return
      */
-    public static String CreateRawProveTransaction(String fromPubkeyStr, byte[] payload,Long nonce){
+    public static String CreateRawProveTransaction(String fromPubkeyStr, byte[] payload, Long nonce) {
         try {
             //版本号
-            byte[] version=new byte[1];
-            version[0]=0x01;
+            byte[] version = new byte[1];
+            version[0] = 0x01;
             //类型：抵押撤回
-            byte[] type=new byte[1];
-            type[0]=0x03;
+            byte[] type = new byte[1];
+            type[0] = 0x03;
             //Nonce 无符号64位
-            byte[] nonece=BigEndian.encodeUint64(nonce+1);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
-            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L,serviceCharge));
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
             //本金 无符号64位
-            byte[] Amount=ByteUtil.longToBytes(0);
+            byte[] Amount = ByteUtil.longToBytes(0);
             //为签名留白
-            byte[] signull=new byte[64];
+            byte[] signull = new byte[64];
             //接收者公钥哈希
             byte[] toPubkeyHash = new byte[20];
             //构造payload
 //            byte[] payload = Hex.decodeHex(txid.toCharArray());
             //长度
-            byte[] payloadleng= BigEndian.encodeUint32(payload.length);
-            byte[] allPayload=ByteUtil.merge(payloadleng,payload);
-            byte[] RawTransaction=ByteUtil.merge(version,type,nonece,fromPubkeyHash,gasPrice,Amount,signull,toPubkeyHash,allPayload);
-            String RawTransactionStr =new String(Hex.encodeHex(RawTransaction));
-            return  RawTransactionStr;
-        }catch (Exception e){
+            byte[] payloadleng = BigEndian.encodeUint32(payload.length);
+            byte[] allPayload = ByteUtil.merge(payloadleng, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
             return "";
         }
     }
 
 
-
     /**
      * 构建签名事务
+     *
      * @param RawTransactionHex
      * @param prikeyStr
      * @return
      */
-    public static String signRawBasicTransaction(String RawTransactionHex, String prikeyStr){
+    public static String signRawBasicTransaction(String RawTransactionHex, String prikeyStr) {
         try {
             byte[] RawTransaction = Hex.decodeHex(RawTransactionHex.toCharArray());
             //私钥字节数组
@@ -477,20 +490,21 @@ public class TxUtility extends Thread{
             //signo
             byte[] signo = ByteUtil.bytearraycopy(RawTransaction, 58, 64);
             //to
-            byte[] to = ByteUtil.bytearraycopy(RawTransaction, 122, 20);;
+            byte[] to = ByteUtil.bytearraycopy(RawTransaction, 122, 20);
+            ;
             //payloadlen
             byte[] payloadlen = ByteUtil.bytearraycopy(RawTransaction, 142, 4);
             //payload
-            byte[] payload = ByteUtil.bytearraycopy(RawTransaction, 146, (int)BigEndian.decodeUint32(payloadlen));
-            byte[] RawTransactionNoSign=ByteUtil.merge(version,type,nonce,from,gasprice,amount,signo,to,payloadlen,payload);
-            byte[] RawTransactionNoSig=ByteUtil.merge(version,type,nonce,from,gasprice,amount);
+            byte[] payload = ByteUtil.bytearraycopy(RawTransaction, 146, (int) BigEndian.decodeUint32(payloadlen));
+            byte[] RawTransactionNoSign = ByteUtil.merge(version, type, nonce, from, gasprice, amount, signo, to, payloadlen, payload);
+            byte[] RawTransactionNoSig = ByteUtil.merge(version, type, nonce, from, gasprice, amount);
             //签名数据
-            byte[] sig=new Ed25519PrivateKey(privkey).sign(RawTransactionNoSign);
-            byte[] transha= SHA3Utility.keccak256(ByteUtil.merge(RawTransactionNoSig,sig,to,payloadlen,payload));
-            byte[] signRawBasicTransaction = ByteUtil.merge(version,transha,type,nonce,from,gasprice,amount,sig,to,payloadlen,payload);
-            String signRawBasicTransactionHex =new String(Hex.encodeHex(signRawBasicTransaction));
+            byte[] sig = new Ed25519PrivateKey(privkey).sign(RawTransactionNoSign);
+            byte[] transha = SHA3Utility.keccak256(ByteUtil.merge(RawTransactionNoSig, sig, to, payloadlen, payload));
+            byte[] signRawBasicTransaction = ByteUtil.merge(version, transha, type, nonce, from, gasprice, amount, sig, to, payloadlen, payload);
+            String signRawBasicTransactionHex = new String(Hex.encodeHex(signRawBasicTransaction));
             return signRawBasicTransactionHex;
-        }catch (Exception e){
+        } catch (Exception e) {
             return "";
         }
     }
@@ -498,60 +512,63 @@ public class TxUtility extends Thread{
 
     /**
      * 构造签名的交易事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
      * @param prikeyStr
      * @return
      */
-    public static JSONObject ClientToTransferAccount(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr,Long nonce){
+    public static JSONObject ClientToTransferAccount(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, Long nonce) {
         try {
-            String RawTransactionHex = CreateRawTransaction(fromPubkeyStr, toPubkeyHashStr, amount,nonce);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+            String RawTransactionHex = CreateRawTransaction(fromPubkeyStr, toPubkeyHashStr, amount, nonce);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
-            String traninfo =new String(Hex.encodeHex(signRawBasicTransaction));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             e.printStackTrace();
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
     /**
      * 构造签名的孵化申请事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
      * @param prikeyStr
      */
-    public static JSONObject ClientToIncubateAccount(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String sharepubkeyhash, Integer hatchType,Long nonce){
+    public static JSONObject ClientToIncubateAccount(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String sharepubkeyhash, Integer hatchType, Long nonce) {
         try {
-            String RawTransactionHex = CreateRawHatchTransaction(fromPubkeyStr, toPubkeyHashStr, amount,sharepubkeyhash,hatchType,nonce);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+            String RawTransactionHex = CreateRawHatchTransaction(fromPubkeyStr, toPubkeyHashStr, amount, sharepubkeyhash, hatchType, nonce);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
-            String txHash =new String(Hex.encodeHex(hash)) ;
-            String traninfo =new String(Hex.encodeHex(signRawBasicTransaction)) ;
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
     /**
      * 构造签名的收益事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
@@ -559,27 +576,28 @@ public class TxUtility extends Thread{
      * @param txid
      * @return
      */
-    public static JSONObject ClientToIncubateProfit (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String txid, Long nonce){
+    public static JSONObject ClientToIncubateProfit(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String txid, Long nonce) {
         try {
-            String RawTransactionHex = CreateRawProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount,txid, nonce);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+            String RawTransactionHex = CreateRawProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount, txid, nonce);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
-            String txHash =new String(Hex.encodeHex(hash));
-            String traninfo =new String(Hex.encodeHex(signRawBasicTransaction));
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
     /**
      * 构造签名的分享收益事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
@@ -587,27 +605,28 @@ public class TxUtility extends Thread{
      * @param txid
      * @return
      */
-    public static JSONObject ClientToIncubateShareProfit (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String txid,Long nonce){
+    public static JSONObject ClientToIncubateShareProfit(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String txid, Long nonce) {
         try {
-            String RawTransactionHex =CreateRawShareProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount,txid,nonce);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+            String RawTransactionHex = CreateRawShareProfitTransaction(fromPubkeyStr, toPubkeyHashStr, amount, txid, nonce);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
-            String txHash =new String(Hex.encodeHex(hash));
-            String traninfo =new String(Hex.encodeHex(signRawBasicTransaction)) ;
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
     /**
      * 构造签名的收取本金事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
@@ -615,27 +634,28 @@ public class TxUtility extends Thread{
      * @param txid
      * @return
      */
-    public static JSONObject ClientToIncubatePrincipal (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String txid,Long nonce){
-        try{
-            String RawTransactionHex =CreateRawHatchPrincipalTransaction(fromPubkeyStr, toPubkeyHashStr, amount,txid,nonce);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+    public static JSONObject ClientToIncubatePrincipal(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, String txid, Long nonce) {
+        try {
+            String RawTransactionHex = CreateRawHatchPrincipalTransaction(fromPubkeyStr, toPubkeyHashStr, amount, txid, nonce);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
-            String txHash =new String(Hex.encodeHex(hash)) ;
-            String traninfo =new String(Hex.encodeHex(signRawBasicTransaction));
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
     /**
      * 构造签名的投票事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
@@ -643,27 +663,28 @@ public class TxUtility extends Thread{
      * @param prikeyStr
      * @return
      */
-    public static JSONObject ClientToTransferVote (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce,String prikeyStr){
-        try{
-            String RawTransactionHex =CreateRawVoteTransaction(fromPubkeyStr, toPubkeyHashStr, amount,nonce);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+    public static JSONObject ClientToTransferVote(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce, String prikeyStr) {
+        try {
+            String RawTransactionHex = CreateRawVoteTransaction(fromPubkeyStr, toPubkeyHashStr, amount, nonce);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
-            String txHash =new String(Hex.encodeHex(hash)) ;
-            String traninfo =new String(Hex.encodeHex(signRawBasicTransaction));
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
     /**
      * 构造签名的投票撤回事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
@@ -671,28 +692,29 @@ public class TxUtility extends Thread{
      * @param prikeyStr
      * @return
      */
-    public static JSONObject ClientToTransferVoteWithdraw (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce,String prikeyStr,String txid){
-        try{
-            String RawTransactionHex =CreateRawVoteWithdrawTransaction(fromPubkeyStr, toPubkeyHashStr, amount,nonce,txid);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+    public static JSONObject ClientToTransferVoteWithdraw(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce, String prikeyStr, String txid) {
+        try {
+            String RawTransactionHex = CreateRawVoteWithdrawTransaction(fromPubkeyStr, toPubkeyHashStr, amount, nonce, txid);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
-            String txHash =new String(Hex.encodeHex(hash)) ;
-            String traninfo =new String(Hex.encodeHex(signRawBasicTransaction));
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
 
     /**
      * 构造签名的抵押事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
@@ -700,27 +722,28 @@ public class TxUtility extends Thread{
      * @param prikeyStr
      * @return
      */
-    public static JSONObject ClientToTransferMortgage (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce,String prikeyStr){
-        try{
-            String RawTransactionHex =CreateRawMortgageTransaction(fromPubkeyStr, toPubkeyHashStr, amount,nonce);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+    public static JSONObject ClientToTransferMortgage(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce, String prikeyStr) {
+        try {
+            String RawTransactionHex = CreateRawMortgageTransaction(fromPubkeyStr, toPubkeyHashStr, amount, nonce);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
-            String txHash =new String(Hex.encodeHex(hash)) ;
-            String traninfo =new String(Hex.encodeHex(signRawBasicTransaction));
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
     /**
      * 构造签名的抵押撤回事务
+     *
      * @param fromPubkeyStr
      * @param toPubkeyHashStr
      * @param amount
@@ -729,95 +752,99 @@ public class TxUtility extends Thread{
      * @param prikeyStr
      * @return
      */
-    public static JSONObject ClientToTransferMortgageWithdraw (String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce,String txid,String prikeyStr){
-        try{
-            String RawTransactionHex =CreateRawMortgageWithdrawTransaction(fromPubkeyStr, toPubkeyHashStr, amount, txid,nonce);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+    public static JSONObject ClientToTransferMortgageWithdraw(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, Long nonce, String txid, String prikeyStr) {
+        try {
+            String RawTransactionHex = CreateRawMortgageWithdrawTransaction(fromPubkeyStr, toPubkeyHashStr, amount, txid, nonce);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
-            String txHash =new String(Hex.encodeHex(hash)) ;
-            String traninfo =new String(Hex.encodeHex(signRawBasicTransaction));
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
 
     /**
      * 构造签名的存证事务
+     *
      * @param fromPubkeyStr
      * @param nonce
      * @param payload
      * @param prikeyStr
      * @return
      */
-    public static JSONObject ClientToTransferProve(String fromPubkeyStr, Long nonce,byte[] payload,String prikeyStr){
-        try{
-            String RawTransactionHex =CreateRawProveTransaction(fromPubkeyStr, payload,nonce);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex,prikeyStr).toCharArray());
+    public static JSONObject ClientToTransferProve(String fromPubkeyStr, Long nonce, byte[] payload, String prikeyStr) {
+        try {
+            String RawTransactionHex = CreateRawProveTransaction(fromPubkeyStr, payload, nonce);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
-            String txHash =new String(Hex.encodeHex(hash)) ;
-            String traninfo =new String(Hex.encodeHex(signRawBasicTransaction));
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
     /**
      * 通过事务十六进制字符串获取Transaction
+     *
      * @param transactionHexStr
      * @return
      */
-    public static JSONObject byteToTransaction(String transactionHexStr){
+    public static JSONObject byteToTransaction(String transactionHexStr) {
         try {
             byte[] transaction = Hex.decodeHex(transactionHexStr.toCharArray());
-            ProtocolModel.Transaction tranproto= Transaction.changeProtobuf(transaction);
-            Transaction tran=Transaction.fromProto(tranproto);
+            ProtocolModel.Transaction tranproto = Transaction.changeProtobuf(transaction);
+            Transaction tran = Transaction.fromProto(tranproto);
             APIResult apiResult = new APIResult();
             apiResult.setData(tran);
             String jsonString = JSON.toJSONString(apiResult);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
 
     /**
      * 根据事务哈希获得所在区块哈希以及高度
+     *
      * @param txid
      * @return
      */
-    public static JSONObject getTransactioninfo(String txid){
+    public static JSONObject getTransactioninfo(String txid) {
         try {
             APIResult apiResult = new APIResult();
             JSONObject dataresult = new JSONObject();
-            dataresult.put("blockHash","");
-            dataresult.put("height","");
+            dataresult.put("blockHash", "");
+            dataresult.put("height", "");
             apiResult.setData(dataresult);
             String jsonString = JSON.toJSONString(apiResult);
             JSONObject json = JSON.parseObject(jsonString);
-            return  json;
-        }catch (Exception e){
+            return json;
+        } catch (Exception e) {
             JSONObject json = JSON.parseObject("");
-            return  json;
+            return json;
         }
     }
-    public static String sendTransac(String path,String data) {
+
+    public static String sendTransac(String path, String data) {
         String str = "";
         try {
             URL url = new URL(path);
@@ -862,11 +889,12 @@ public class TxUtility extends Thread{
 
     /**
      * 计算gas单价
+     *
      * @param gas
      * @param total
      * @return
      */
-    public static Long obtainServiceCharge(Long gas,Long total){
+    public static Long obtainServiceCharge(Long gas, Long total) {
         BigDecimal a = new BigDecimal(gas.toString());
         BigDecimal b = new BigDecimal(total.toString());
         BigDecimal divide = b.divide(a, 0, RoundingMode.HALF_UP);
@@ -876,7 +904,7 @@ public class TxUtility extends Thread{
 
     public static void connect(String ip, String port) {
         HttpClient client = new HttpClient();
-        String url = "http://"+ip+":"+port;
+        String url = "http://" + ip + ":" + port;
         GetMethod getMethod = new GetMethod(url);
         int code = 0;
         try {
@@ -924,7 +952,7 @@ public class TxUtility extends Thread{
         while ((str = br.readLine()) != null) {
             System.out.println("1111");
             System.out.println(str);
-            Long timeConsuming = Duration.between(beginTime,LocalDateTime.now()).toMillis();
+            Long timeConsuming = Duration.between(beginTime, LocalDateTime.now()).toMillis();
             System.out.println(timeConsuming);
         }
         //关闭流
@@ -933,6 +961,7 @@ public class TxUtility extends Thread{
         //固定多线程的话，如果不disconnect，链接会增多，直到收发不出信息。写上disconnect后正常一些。
         conn.disconnect();
     }
+
     @SuppressWarnings("unchecked")
 
     static class MyCallable implements Callable {
@@ -986,4 +1015,365 @@ public class TxUtility extends Thread{
         }
     }
 
+
+    /**
+     * 构造规则部署的资产定义事务
+     *
+     * @param fromPubkeyStr
+     * @param nonce
+     * @param code
+     * @param offering
+     * @param totalamount
+     * @param createuser
+     * @param owner
+     * @param allowincrease
+     * @return
+     */
+    public static String CreateDeployforRule(String fromPubkeyStr, Long nonce, String code, BigDecimal offering, BigDecimal totalamount, byte[] createuser, byte[] owner, int allowincrease,byte[] info) {
+        try {
+            offering = offering.multiply(BigDecimal.valueOf(rate));
+            long offeringNew = Long.parseLong(isHave(offering));
+            totalamount = totalamount.multiply(BigDecimal.valueOf(rate));
+            long totalamountNew = Long.parseLong(isHave(totalamount));
+            Asset asset = new Asset(code, offeringNew, totalamountNew, createuser, owner, allowincrease,info);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0x07;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 32字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希
+            String toPubkeyHashStr = "0000000000000000000000000000000000000000";
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            //构造payload
+            byte[] payload = asset.RLPserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x00}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * 构造签名的规则部署的资产定义事务
+     *
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param nonce
+     * @return
+     */
+    public static JSONObject CreateSignToDeployforRule(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, byte[] createuser, byte[] owner, int allowincrease,byte[] info){
+        try {
+            BigDecimal totalamount = offering;
+            String RawTransactionHex = CreateDeployforRule(fromPubkeyStr, nonce, code, offering, totalamount, createuser, owner, allowincrease,info);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            JSONObject json = JSON.parseObject("");
+            return json;
+        }
+    }
+
+    /**
+     * 构造资产定义的规则调用事务
+     *
+     * @param fromPubkeyStr
+     * @param nonce
+     * @param newowner
+     * @return
+     */
+    public static String CreateCallforRule1(String fromPubkeyStr, String txHash, Long nonce, byte[] newowner) {
+        try {
+            AssetChangeowner assetChangeowner = new AssetChangeowner(newowner);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = (byte) 0X88;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希
+            byte[] txHash1 = Hex.decodeHex(txHash.toCharArray());
+            byte[] toPubkeyHash = RipemdUtility.ripemd160(txHash1);
+            //构造payload
+            byte[] payload = assetChangeowner.RLPdeserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x01}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * 构造签名的资产定义的规则调用事务
+     *
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param nonce
+     * @return
+     */
+    public static JSONObject CreateSignToDeployforRule1(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] newowner) {
+        try {
+            String RawTransactionHex = CreateCallforRule1(fromPubkeyStr, txHash1, nonce, newowner);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            JSONObject json = JSON.parseObject("");
+            return json;
+        }
+    }
+
+    /**
+     * 构造规则部署事务
+     *
+     * @param fromPubkeyStr
+     * @param nonce
+     * @param amount
+     * @return
+     */
+    public static String CreateCallforRule2(String fromPubkeyStr, String txHash, Long nonce, BigDecimal amount) {
+        try {
+            amount = amount.multiply(BigDecimal.valueOf(rate));
+            long amountNew = Long.parseLong(isHave(amount));
+            AssetIncreased assetIncreased = new AssetIncreased(amountNew);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0x08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希
+            byte[] txHash1 = Hex.decodeHex(txHash.toCharArray());
+            byte[] toPubkeyHash = RipemdUtility.ripemd160(txHash1);
+            //构造payload
+            byte[] payload = assetIncreased.RLPdeserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x02}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * 构造签名的规则部署事务
+     *
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param nonce
+     * @return
+     */
+    public static JSONObject CreateSignToDeployforRule2(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, BigDecimal amount) {
+        try {
+            String RawTransactionHex = CreateCallforRule2(fromPubkeyStr, txHash1, nonce, amount);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            JSONObject json = JSON.parseObject("");
+            return json;
+        }
+    }
+
+    /**
+     * 构造规则部署事务
+     *
+     * @param fromPubkeyStr
+     * @param nonce
+     * @return
+     */
+    public static String CreateDeployforRule3(String fromPubkeyStr, String txHash, Long nonce, byte[] from, byte[] to, BigDecimal value) {
+        try {
+            value = value.multiply(BigDecimal.valueOf(rate));
+            long valueNew = Long.parseLong(isHave(value));
+            AssetTransfer assetTransfer = new AssetTransfer(from, to, valueNew);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0x08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希
+            byte[] txHash1 = Hex.decodeHex(txHash.toCharArray());
+            byte[] toPubkeyHash = RipemdUtility.ripemd160(txHash1);
+            //构造payload
+            byte[] payload = assetTransfer.RLPdeserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x01}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * 构造签名的规则部署事务
+     *
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param nonce
+     * @return
+     */
+    public static JSONObject CreateSignToDeployforRule3(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] from, byte[] to, BigDecimal value) {
+        try {
+            String RawTransactionHex = CreateDeployforRule3(fromPubkeyStr, txHash1, nonce, from, to, value);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            JSONObject json = JSON.parseObject("");
+            return json;
+        }
+    }
+
+    /**
+     * 判断BigDecimal值是否有小数点或者超过long的最大值
+     *
+     * @param number
+     * @return
+     * @throws Exception
+     */
+    public static String isHave(BigDecimal number) throws Exception {
+        String numberNew = number.toString();
+        BigDecimal numberMax = new BigDecimal(Long.MAX_VALUE);
+        if (numberNew.contains(".")) {
+            throw new Exception("");
+        } else if (numberMax.compareTo(number) == -1) {
+            throw new Exception("");
+        }
+        {
+            return numberNew;
+        }
+    }
+
+    /**
+     * 获取Asset
+     * @param payload
+     * @return
+     */
+    public static Asset getAsset(byte[] payload) {
+        Asset asset = new Asset();
+        asset = asset.RLPdeserialization(payload);
+        return asset;
+    }
+
+    /**
+     * 获取AssetChangeowner
+     * @param payload
+     * @return
+     */
+    public static AssetIncreased getAssetIncreased(byte[] payload) {
+        AssetIncreased assetIncreased = new AssetIncreased();
+        assetIncreased = assetIncreased.RLPdeserialization(payload);
+        return assetIncreased;
+    }
+
+    /**
+     * 获取AssetIncreased
+     * @param payload
+     * @return
+     */
+    public static AssetChangeowner getAssetChangeowner(byte[] payload) {
+        AssetChangeowner assetChangeowner = new AssetChangeowner();
+        assetChangeowner = assetChangeowner.RLPdeserialization(payload);
+        return assetChangeowner;
+    }
+
+    /**
+     * 获取AssetTransfer
+     * @param payload
+     * @return
+     */
+    public static AssetTransfer getAssetTransfer(byte[] payload) {
+        AssetTransfer assetTransfer = new AssetTransfer();
+        assetTransfer = assetTransfer.RLPdeserialization(payload);
+        return assetTransfer;
+    }
 }

@@ -2,15 +2,15 @@ package com.company.contract.AssetDefinition;
 
 import lombok.*;
 import org.tdf.rlp.RLP;
+import org.tdf.rlp.RLPCodec;
 import org.tdf.rlp.RLPElement;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Asset {
 
-    public enum AssetRule{
-        changeowner,transfer,increased
+    public enum AssetRule {
+        changeowner, transfer, increased
     }
 
     @RLP(0)
@@ -25,16 +25,38 @@ public class Asset {
     private byte[] owner;
     @RLP(5)
     private int allowincrease;
+    @RLP(6)
+    private byte[] info;
 
 
     public byte[] RLPserialization() {
-        return RLPElement.readRLPTree(new Asset(
-                                        this.getCode(),
-                                        this.getOffering(),
-                                        this.getTotalamount(),
-                                        this.getCreateuser(),
-                                        this.getOwner(),
-                                        this.getAllowincrease()
-                                )).getEncoded();
+        return RLPElement.readRLPTree(this).getEncoded();
     }
+
+    public Asset RLPdeserialization(byte[] payload) {
+        try {
+            Asset asset = RLPCodec.decode(payload, Asset.class);
+            this.code = asset.getCode();
+            this.offering = asset.getOffering();
+            this.totalamount = asset.getTotalamount();
+            this.createuser = asset.getCreateuser();
+            this.owner = asset.getOwner();
+            this.allowincrease = asset.getAllowincrease();
+            this.info = info;
+            return asset;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public Asset(String code, long offering, long totalamount, byte[] createuser, byte[] owner, int allowincrease,byte[] info) {
+        this.code = code;
+        this.offering = offering;
+        this.totalamount = totalamount;
+        this.createuser = createuser;
+        this.owner = owner;
+        this.allowincrease = allowincrease;
+        this.info = info;
+    }
+
 }
