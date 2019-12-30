@@ -354,6 +354,126 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
+1.28构造签名的规则部署的资产定义事务
+```
+ TxUtility. CreateSignToDeployforRule()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、Nonce(Long)
+ 4）、code(String)
+ 5）、offering（BigDecimal)
+ 6）、createuser(十六进制字符串)
+ 5）、owner（十六进制字符串)
+ 6）、allowincrease(int)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.29构造签名的资产定义的规则调用事务1
+```
+ TxUtility. CreateSignToDeployforRule1()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、事务哈希（十六进制字符串)
+ 3）、私钥（十六进制字符串)
+ 4）、nonce(Long)
+ 5）、newowner(十六进制字符串)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.30构造签名的资产定义的规则调用事务2
+```
+ TxUtility. CreateSignToDeployforRule2()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、事务哈希（十六进制字符串)
+ 3）、私钥（十六进制字符串)
+ 4）、nonce(Long)
+ 5）、amount(BigDecimal)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.31构造签名的资产定义的规则调用事务3
+```
+ TxUtility. CreateSignToDeployforRule3()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、事务哈希（十六进制字符串)
+ 3）、私钥（十六进制字符串)
+ 3）、nonce(Long)
+ 6）、from(十六进制字符串)
+ 6）、to(十六进制字符串)
+ 6）、value(BigDecimal)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.0 获取Asset
+```
+*   方法：TxUtility.getAsset(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ code : String;
+ offering:long
+ totalamount:long
+ createuser:(十六进制字符串)
+ owner:(十六进制字符串)
+ allowincrease:int
+ }
+```
+1.0 获取AssetChangeowner
+```
+*   方法：TxUtility.getAssetChangeowner(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ newowner:(十六进制字符串)
+ }
+```
+1.0 获取AssetIncreased
+```
+*   方法：TxUtility.getAssetIncreased(POST)     
+*	参数：payload(十六进制字符串)   
+ 返回类型：Json
+ 返回值：
+ {
+ amount:long
+ }
+```
+1.0 获取AssetTransfer
+```
+*   方法：TxUtility.getAssetTransfer(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ from:(十六进制字符串)
+ to:(十六进制字符串)
+ value:long
+ }
+```
 ### 节点rpc
 1.0 获取Nonce
 ```
