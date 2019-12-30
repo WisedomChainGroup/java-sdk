@@ -1029,7 +1029,7 @@ public class TxUtility extends Thread {
      * @param allowincrease
      * @return
      */
-    public static String CreateDeployforRule(String fromPubkeyStr, Long nonce, String code, BigDecimal offering, BigDecimal totalamount, byte[] createuser, byte[] owner, int allowincrease,byte[] info) {
+    public static String CreateDeployforRuleAsset(String fromPubkeyStr, Long nonce, String code, BigDecimal offering, BigDecimal totalamount, byte[] createuser, byte[] owner, int allowincrease,byte[] info) {
         try {
             offering = offering.multiply(BigDecimal.valueOf(rate));
             long offeringNew = Long.parseLong(isHave(offering));
@@ -1077,10 +1077,10 @@ public class TxUtility extends Thread {
      * @param nonce
      * @return
      */
-    public static JSONObject CreateSignToDeployforRule(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, byte[] createuser, byte[] owner, int allowincrease,byte[] info){
+    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, byte[] createuser, byte[] owner, int allowincrease,byte[] info){
         try {
             BigDecimal totalamount = offering;
-            String RawTransactionHex = CreateDeployforRule(fromPubkeyStr, nonce, code, offering, totalamount, createuser, owner, allowincrease,info);
+            String RawTransactionHex = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuser, owner, allowincrease,info);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -1105,7 +1105,7 @@ public class TxUtility extends Thread {
      * @param newowner
      * @return
      */
-    public static String CreateCallforRule1(String fromPubkeyStr, String txHash, Long nonce, byte[] newowner) {
+    public static String CreateCallforRuleAssetChangeowner(String fromPubkeyStr, String txHash, Long nonce, byte[] newowner) {
         try {
             AssetChangeowner assetChangeowner = new AssetChangeowner(newowner);
             //版本号
@@ -1149,9 +1149,9 @@ public class TxUtility extends Thread {
      * @param nonce
      * @return
      */
-    public static JSONObject CreateSignToDeployforRule1(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] newowner) {
+    public static JSONObject CreateSignToDeployforAssetChangeowner(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] newowner) {
         try {
-            String RawTransactionHex = CreateCallforRule1(fromPubkeyStr, txHash1, nonce, newowner);
+            String RawTransactionHex = CreateCallforRuleAssetChangeowner(fromPubkeyStr, txHash1, nonce, newowner);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -1176,7 +1176,7 @@ public class TxUtility extends Thread {
      * @param amount
      * @return
      */
-    public static String CreateCallforRule2(String fromPubkeyStr, String txHash, Long nonce, BigDecimal amount) {
+    public static String CreateCallforRuleAssetIncreased(String fromPubkeyStr, String txHash, Long nonce, BigDecimal amount) {
         try {
             amount = amount.multiply(BigDecimal.valueOf(rate));
             long amountNew = Long.parseLong(isHave(amount));
@@ -1222,9 +1222,9 @@ public class TxUtility extends Thread {
      * @param nonce
      * @return
      */
-    public static JSONObject CreateSignToDeployforRule2(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, BigDecimal amount) {
+    public static JSONObject CreateSignToDeployforRuleAssetIncreased(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, BigDecimal amount) {
         try {
-            String RawTransactionHex = CreateCallforRule2(fromPubkeyStr, txHash1, nonce, amount);
+            String RawTransactionHex = CreateCallforRuleAssetIncreased(fromPubkeyStr, txHash1, nonce, amount);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -1248,7 +1248,7 @@ public class TxUtility extends Thread {
      * @param nonce
      * @return
      */
-    public static String CreateDeployforRule3(String fromPubkeyStr, String txHash, Long nonce, byte[] from, byte[] to, BigDecimal value) {
+    public static String CreateDeployforRuleAssetTransfer(String fromPubkeyStr, String txHash, Long nonce, byte[] from, byte[] to, BigDecimal value) {
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
             long valueNew = Long.parseLong(isHave(value));
@@ -1294,9 +1294,9 @@ public class TxUtility extends Thread {
      * @param nonce
      * @return
      */
-    public static JSONObject CreateSignToDeployforRule3(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] from, byte[] to, BigDecimal value) {
+    public static JSONObject CreateSignToDeployforRuleTransfer(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] from, byte[] to, BigDecimal value) {
         try {
-            String RawTransactionHex = CreateDeployforRule3(fromPubkeyStr, txHash1, nonce, from, to, value);
+            String RawTransactionHex = CreateDeployforRuleAssetTransfer(fromPubkeyStr, txHash1, nonce, from, to, value);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));

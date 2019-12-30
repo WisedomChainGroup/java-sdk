@@ -356,7 +356,7 @@ WalletUtility. importKeystore()
 ```
 1.28构造签名的规则部署的资产定义事务
 ```
- TxUtility. CreateSignToDeployforRule()
+ TxUtility. CreateSignToDeployforRuleAsset()
  参数：
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
@@ -366,6 +366,7 @@ WalletUtility. importKeystore()
  6）、createuser(十六进制字符串)
  5）、owner（十六进制字符串)
  6）、allowincrease(int)
+ 7）、info(十六进制字符串)
  返回类型：Json
  返回值：
  {
@@ -374,9 +375,9 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.29构造签名的资产定义的规则调用事务1
+1.29构造签名的资产定义的更换资产的规则调用事务
 ```
- TxUtility. CreateSignToDeployforRule1()
+ TxUtility. CreateSignToDeployforAssetChangeowner()
  参数：
  1）、发送者公钥（十六进制字符串)
  2）、事务哈希（十六进制字符串)
@@ -391,9 +392,9 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.30构造签名的资产定义的规则调用事务2
+1.30构造签名的资产定义的更换资产的增发的规则调用事务
 ```
- TxUtility. CreateSignToDeployforRule2()
+ TxUtility. CreateSignToDeployforRuleAssetIncreased()
  参数：
  1）、发送者公钥（十六进制字符串)
  2）、事务哈希（十六进制字符串)
@@ -408,9 +409,9 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.31构造签名的资产定义的规则调用事务3
+1.31构造签名的资产定义的转账的规则调用事务
 ```
- TxUtility. CreateSignToDeployforRule3()
+ TxUtility. CreateSignToDeployforRuleTransfer()
  参数：
  1）、发送者公钥（十六进制字符串)
  2）、事务哈希（十六进制字符串)
