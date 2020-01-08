@@ -47,6 +47,9 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  WalletUtility.addressToPubkeyHash()
  参数：
  1）、地址字符串（String)
+ 2）、type（int）
+ 	type: 1  不带“WX”前缀格式的地址 
+	      2  带有“WX”前缀格式的地址
  返回类型：String（十六进制字符串）
  返回值：pubkeyHash
 ```
