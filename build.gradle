@@ -23,9 +23,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
     compile fileTree(dir:'lib',include:['*.jar'])
-
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 task fatJar(type: Jar) {
