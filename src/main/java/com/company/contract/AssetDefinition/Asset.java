@@ -42,7 +42,7 @@ public class Asset {
             this.createuser = asset.getCreateuser();
             this.owner = asset.getOwner();
             this.allowincrease = asset.getAllowincrease();
-            this.info = info;
+            this.info = asset.getInfo();
             return asset;
         } catch (Exception e) {
             throw e;
