@@ -38,5 +38,6 @@ public class AssetTransfer {
     public AssetTransfer(byte[] from, byte[] to, long value) {
         this.from = from;
         this.to = to;
+        this.value = value;
     }
 }
