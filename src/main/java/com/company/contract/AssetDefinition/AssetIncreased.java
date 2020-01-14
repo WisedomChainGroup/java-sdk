@@ -1,5 +1,6 @@
 package com.company.contract.AssetDefinition;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.tdf.rlp.RLPElement;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class AssetIncreased {
     @RLP(0)
@@ -28,7 +30,4 @@ public class AssetIncreased {
         return RLPElement.readRLPTree(this).getEncoded();
     }
 
-    public AssetIncreased(long amount) {
-        this.amount = amount;
-    }
 }

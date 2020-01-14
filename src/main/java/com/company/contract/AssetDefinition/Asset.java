@@ -7,6 +7,8 @@ import org.tdf.rlp.RLPElement;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Asset {
 
     public enum AssetRule {
@@ -47,16 +49,6 @@ public class Asset {
         } catch (Exception e) {
             throw e;
         }
-    }
-
-    public Asset(String code, long offering, long totalamount, byte[] createuser, byte[] owner, int allowincrease,byte[] info) {
-        this.code = code;
-        this.offering = offering;
-        this.totalamount = totalamount;
-        this.createuser = createuser;
-        this.owner = owner;
-        this.allowincrease = allowincrease;
-        this.info = info;
     }
 
 }

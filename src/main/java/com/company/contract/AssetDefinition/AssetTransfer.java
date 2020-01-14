@@ -1,5 +1,6 @@
 package com.company.contract.AssetDefinition;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.tdf.rlp.RLPElement;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class AssetTransfer {
     @RLP(0)
@@ -35,9 +37,4 @@ public class AssetTransfer {
         return RLPElement.readRLPTree(this).getEncoded();
     }
 
-    public AssetTransfer(byte[] from, byte[] to, long value) {
-        this.from = from;
-        this.to = to;
-        this.value = value;
-    }
 }

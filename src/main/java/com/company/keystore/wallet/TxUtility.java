@@ -8,10 +8,13 @@ import com.company.contract.AssetDefinition.Asset;
 import com.company.contract.AssetDefinition.AssetChangeowner;
 import com.company.contract.AssetDefinition.AssetIncreased;
 import com.company.contract.AssetDefinition.AssetTransfer;
+import com.company.contract.MultipleDefinition.MultTransfer;
+import com.company.contract.MultipleDefinition.Multiple;
 import com.company.encoding.BigEndian;
 import com.company.keystore.crypto.RipemdUtility;
 import com.company.keystore.crypto.SHA3Utility;
 import com.company.keystore.crypto.ed25519.Ed25519PrivateKey;
+import com.company.keystore.crypto.ed25519.Ed25519PublicKey;
 import com.company.keystore.util.ByteUtil;
 import com.company.protobuf.HatchModel;
 import com.company.protobuf.ProtocolModel;
@@ -27,12 +30,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class TxUtility extends Thread {
     private static final Long rate = 100000000L;
     private static final Long serviceCharge = 200000L;
-
+    static final BigDecimal MAXIMUM_LONG = new BigDecimal(Long.MAX_VALUE);
 
     /**
      * 构造交易事务
@@ -1032,9 +1037,9 @@ public class TxUtility extends Thread {
     public static String CreateDeployforRuleAsset(String fromPubkeyStr, Long nonce, String code, BigDecimal offering, BigDecimal totalamount, byte[] createuser, byte[] owner, int allowincrease,byte[] info) {
         try {
             offering = offering.multiply(BigDecimal.valueOf(rate));
-            long offeringNew = Long.parseLong(isHave(offering));
+            long offeringNew = isValidPositiveLong(offering);
             totalamount = totalamount.multiply(BigDecimal.valueOf(rate));
-            long totalamountNew = Long.parseLong(isHave(totalamount));
+            long totalamountNew = isValidPositiveLong(totalamount);
             Asset asset = new Asset(code, offeringNew, totalamountNew, createuser, owner, allowincrease,info);
             //版本号
             byte[] version = new byte[1];
@@ -1077,6 +1082,7 @@ public class TxUtility extends Thread {
      * @param nonce
      * @return
      */
+    //
     public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, byte[] createuser, byte[] owner, int allowincrease,byte[] info){
         try {
             BigDecimal totalamount = offering;
@@ -1179,7 +1185,7 @@ public class TxUtility extends Thread {
     public static String CreateCallforRuleAssetIncreased(String fromPubkeyStr, String txHash, Long nonce, BigDecimal amount) {
         try {
             amount = amount.multiply(BigDecimal.valueOf(rate));
-            long amountNew = Long.parseLong(isHave(amount));
+            long amountNew = isValidPositiveLong(amount);
             AssetIncreased assetIncreased = new AssetIncreased(amountNew);
             //版本号
             byte[] version = new byte[1];
@@ -1251,7 +1257,7 @@ public class TxUtility extends Thread {
     public static String CreateDeployforRuleAssetTransfer(String fromPubkeyStr, String txHash, Long nonce, byte[] from, byte[] to, BigDecimal value) {
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
-            long valueNew = Long.parseLong(isHave(value));
+            long valueNew = isValidPositiveLong(value);
             AssetTransfer assetTransfer = new AssetTransfer(from, to, valueNew);
             //版本号
             byte[] version = new byte[1];
@@ -1320,17 +1326,14 @@ public class TxUtility extends Thread {
      * @return
      * @throws Exception
      */
-    public static String isHave(BigDecimal number) throws Exception {
-        String numberNew = number.toString();
-        BigDecimal numberMax = new BigDecimal(Long.MAX_VALUE);
-        if (numberNew.contains(".")) {
-            throw new Exception("");
-        } else if (numberMax.compareTo(number) == -1) {
-            throw new Exception("");
+    public static long isValidPositiveLong(BigDecimal number) throws Exception {
+        if (number.scale() != 0) {
+            throw new NumberFormatException("offering must be an integer");
         }
-        {
-            return numberNew;
+        if (number.compareTo(BigDecimal.ZERO) <= 0 || number.compareTo(MAXIMUM_LONG) > 0) {
+            throw new NumberFormatException("offering must be a positive long number");
         }
+        return number.longValue();
     }
 
     /**
@@ -1376,4 +1379,6 @@ public class TxUtility extends Thread {
         assetTransfer = assetTransfer.RLPdeserialization(payload);
         return assetTransfer;
     }
+
+
 }
