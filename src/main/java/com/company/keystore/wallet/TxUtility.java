@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -1119,7 +1120,7 @@ public class TxUtility extends Thread {
             version[0] = 0x01;
             //类型
             byte[] type = new byte[1];
-            type[0] = (byte) 0X88;
+            type[0] = 0X08;
             //Nonce 无符号64位
             byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
@@ -1138,7 +1139,7 @@ public class TxUtility extends Thread {
             byte[] payload = assetChangeowner.RLPdeserialization();
             //长度
             byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
-            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x01}, payload);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x00}, payload);
             byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
             String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
             return RawTransactionStr;
