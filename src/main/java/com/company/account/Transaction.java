@@ -239,4 +239,54 @@ public class Transaction {
         }
         return tran.build();
     }
+
+
+    public Transaction(){
+
+    }
+
+    public Transaction(byte[] msg){
+        //version
+        byte[] version = ByteUtil.bytearraycopy(msg, 0, 1);
+        this.version = version[0];
+        msg = ByteUtil.bytearraycopy(msg, 1, msg.length - 1);
+        //hash
+        byte[] hash = ByteUtil.bytearraycopy(msg, 0, 32);
+        msg = ByteUtil.bytearraycopy(msg, 32, msg.length - 32);
+        //type
+        byte[] type = ByteUtil.bytearraycopy(msg, 0, 1);
+        this.type = type[0];
+        msg = ByteUtil.bytearraycopy(msg, 1, msg.length - 1);
+        //nonce
+        byte[] nonce = ByteUtil.bytearraycopy(msg, 0, 8);
+        this.nonce = BigEndian.decodeUint64(nonce);
+        msg = ByteUtil.bytearraycopy(msg, 8, msg.length - 8);
+        //fromx
+        byte[] from =  ByteUtil.bytearraycopy(msg, 0, 32);
+        this.from = from;
+        msg = ByteUtil.bytearraycopy(msg, 32, msg.length - 32);
+        //gasprice
+        byte[] gasprice = ByteUtil.bytearraycopy(msg, 0, 8);
+        this.gasPrice = BigEndian.decodeUint64(gasprice);
+        msg = ByteUtil.bytearraycopy(msg, 8, msg.length - 8);
+        //amount
+        byte[] amount = ByteUtil.bytearraycopy(msg, 0, 8);
+        this.amount = BigEndian.decodeUint64(amount);
+        msg = ByteUtil.bytearraycopy(msg, 8, msg.length - 8);
+        //sig
+        byte[] signature = ByteUtil.bytearraycopy(msg, 0, 64);
+        this.signature = signature;
+        msg = ByteUtil.bytearraycopy(msg, 64, msg.length - 64);
+        //to
+        byte[] to = ByteUtil.bytearraycopy(msg, 0, 20);
+        this.to = to;
+        msg = ByteUtil.bytearraycopy(msg, 20, msg.length - 20);
+        //payloadlen
+        byte[] payloadlen= ByteUtil.bytearraycopy(msg, 0, 4);
+        msg = ByteUtil.bytearraycopy(msg, 4, msg.length - 4);
+        //payload
+        byte[] payload = ByteUtil.bytearraycopy(msg, 0, ByteUtil.byteArrayToInt(payloadlen));
+        this.payload = payload;
+    }
+
 }
