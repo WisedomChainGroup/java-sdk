@@ -22,6 +22,7 @@ import com.company.keystore.util.Base58Utility;
 import com.company.keystore.util.ByteUtil;
 import com.company.protobuf.HatchModel;
 import com.company.protobuf.ProtocolModel;
+import com.google.gson.JsonObject;
 import com.google.protobuf.ByteString;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -1043,13 +1044,21 @@ public class TxUtility extends Thread {
      * @param allowincrease
      * @return
      */
-    public static String CreateDeployforRuleAsset(String fromPubkeyStr, Long nonce, String code, BigDecimal offering, BigDecimal totalamount, byte[] createuser, byte[] owner, int allowincrease,byte[] info) {
+    public static JSONObject CreateDeployforRuleAsset(String fromPubkeyStr, Long nonce, String code, BigDecimal offering, BigDecimal totalamount, byte[] createuser, byte[] owner, int allowincrease,byte[] info) {
         try {
             offering = offering.multiply(BigDecimal.valueOf(rate));
-            long offeringNew = isValidPositiveLong(offering);
+            JSONObject jsonObjectOffering = new JSONObject();
+            jsonObjectOffering  = isValidPositiveLong(offering);
+            if(jsonObjectOffering.getInteger("code") == 5000){
+                return jsonObjectOffering;
+            }
             totalamount = totalamount.multiply(BigDecimal.valueOf(rate));
-            long totalamountNew = isValidPositiveLong(totalamount);
-            Asset asset = new Asset(code, offeringNew, totalamountNew, createuser, owner, allowincrease,info);
+            JSONObject jsonObjectTotal = new JSONObject();
+            jsonObjectTotal = isValidPositiveLong(totalamount);
+            if(jsonObjectTotal.getInteger("code") == 5000){
+                return jsonObjectTotal;
+            }
+            Asset asset = new Asset(code, offering.longValue(), totalamount.longValue(), createuser, owner, allowincrease,info);
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -1077,25 +1086,41 @@ public class TxUtility extends Thread {
             byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x00}, payload);
             byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
             String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
-            return RawTransactionStr;
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
         } catch (Exception e) {
-            return "";
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
         }
     }
 
     /**
      * 构造签名的部署资产定义事务
-     *
      * @param fromPubkeyStr
      * @param prikeyStr
      * @param nonce
+     * @param code
+     * @param offering
+     * @param createuser
+     * @param owner
+     * @param allowincrease
+     * @param info
      * @return
      */
-    //
     public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, byte[] createuser, byte[] owner, int allowincrease,byte[] info){
         try {
             BigDecimal totalamount = offering;
-            String RawTransactionHex = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuser, owner, allowincrease,info);
+            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuser, owner, allowincrease,info);
+            if(jsonObject.getInteger("code") == 5000){
+                return  jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -1114,8 +1139,8 @@ public class TxUtility extends Thread {
 
     /**
      * 构造资产定义的更换所有者事务
-     *
      * @param fromPubkeyStr
+     * @param txHash
      * @param nonce
      * @param newowner
      * @return
@@ -1158,10 +1183,11 @@ public class TxUtility extends Thread {
 
     /**
      * 构造签名的资产定义的更换所有者事务
-     *
      * @param fromPubkeyStr
+     * @param txHash1
      * @param prikeyStr
      * @param nonce
+     * @param newowner
      * @return
      */
     public static JSONObject CreateSignToDeployforAssetChangeowner(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] newowner) {
@@ -1185,17 +1211,21 @@ public class TxUtility extends Thread {
 
     /**
      * 构造资产定义的增发事务
-     *
      * @param fromPubkeyStr
+     * @param txHash
      * @param nonce
      * @param amount
      * @return
      */
-    public static String CreateCallforRuleAssetIncreased(String fromPubkeyStr, String txHash, Long nonce, BigDecimal amount) {
+    public static JSONObject CreateCallforRuleAssetIncreased(String fromPubkeyStr, String txHash, Long nonce, BigDecimal amount) {
         try {
             amount = amount.multiply(BigDecimal.valueOf(rate));
-            long amountNew = isValidPositiveLong(amount);
-            AssetIncreased assetIncreased = new AssetIncreased(amountNew);
+            JSONObject jsonObjectAmount = new JSONObject();
+            jsonObjectAmount = isValidPositiveLong(amount);
+            if(jsonObjectAmount.getInteger("code") == 5000){
+                return jsonObjectAmount;
+            }
+            AssetIncreased assetIncreased = new AssetIncreased(amount.longValue());
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -1223,23 +1253,36 @@ public class TxUtility extends Thread {
             byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x02}, payload);
             byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
             String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
-            return RawTransactionStr;
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
         } catch (Exception e) {
-            return "";
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
         }
     }
 
     /**
      * 构造签名的资产定义的增发事务
-     *
      * @param fromPubkeyStr
+     * @param txHash1
      * @param prikeyStr
      * @param nonce
+     * @param amount
      * @return
      */
     public static JSONObject CreateSignToDeployforRuleAssetIncreased(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, BigDecimal amount) {
         try {
-            String RawTransactionHex = CreateCallforRuleAssetIncreased(fromPubkeyStr, txHash1, nonce, amount);
+            JSONObject jsonObject = CreateCallforRuleAssetIncreased(fromPubkeyStr, txHash1, nonce, amount);
+            if(jsonObject.getInteger("code") == 5000){
+                return  jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -1258,16 +1301,22 @@ public class TxUtility extends Thread {
 
     /**
      * 构造资产定义的转账事务
-     *
      * @param fromPubkeyStr
+     * @param txHash
      * @param nonce
+     * @param from
+     * @param to
+     * @param value
      * @return
      */
-    public static String CreateDeployforRuleAssetTransfer(String fromPubkeyStr, String txHash, Long nonce, byte[] from, byte[] to, BigDecimal value) {
+    public static JSONObject CreateDeployforRuleAssetTransfer(String fromPubkeyStr, String txHash, Long nonce, byte[] from, byte[] to, BigDecimal value) {
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
-            long valueNew = isValidPositiveLong(value);
-            AssetTransfer assetTransfer = new AssetTransfer(from, to, valueNew);
+            JSONObject jsonObjectValue = isValidPositiveLong(value);
+            if(jsonObjectValue.getInteger("code") == 5000){
+                return jsonObjectValue;
+            }
+            AssetTransfer assetTransfer = new AssetTransfer(from, to, value.longValue());
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -1295,23 +1344,38 @@ public class TxUtility extends Thread {
             byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x01}, payload);
             byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
             String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
-            return RawTransactionStr;
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
         } catch (Exception e) {
-            return "";
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
         }
     }
 
     /**
      * 构造签名的资产定义的转账事务
-     *
      * @param fromPubkeyStr
+     * @param txHash1
      * @param prikeyStr
      * @param nonce
+     * @param from
+     * @param to
+     * @param value
      * @return
      */
     public static JSONObject CreateSignToDeployforRuleTransfer(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] from, byte[] to, BigDecimal value) {
         try {
-            String RawTransactionHex = CreateDeployforRuleAssetTransfer(fromPubkeyStr, txHash1, nonce, from, to, value);
+            JSONObject jsonObject = CreateDeployforRuleAssetTransfer(fromPubkeyStr, txHash1, nonce, from, to, value);
+            if(jsonObject.getInteger("code") == 5000){
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -1338,11 +1402,14 @@ public class TxUtility extends Thread {
      * @param amount
      * @return
      */
-    public static String CreateMultipleForRule(String fromPubkeyStr,  byte[] assetHash,int min, int max, List<byte[]> pubList, BigDecimal amount){
+    public static JSONObject CreateMultipleForRule(String fromPubkeyStr,  byte[] assetHash,int min, int max, List<byte[]> pubList, BigDecimal amount){
         try {
             amount = amount.multiply(BigDecimal.valueOf(rate));
-            long amountNew = isValidPositiveLong(amount);
-            Multiple multiple = new Multiple(assetHash, min, max,pubList,amountNew);
+            JSONObject jsonObjectAmount = isValidPositiveLong(amount);
+            if(jsonObjectAmount.getInteger("code") == 5000){
+                return jsonObjectAmount;
+            }
+            Multiple multiple = new Multiple(assetHash, min, max,pubList,amount.longValue());
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -1370,9 +1437,17 @@ public class TxUtility extends Thread {
             byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x01}, payload);
             byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
             String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
-            return RawTransactionStr;
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
         } catch (Exception e) {
-            return "";
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
         }
     }
 
@@ -1389,7 +1464,11 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateMultipleToDeployforRule(String fromPubkeyStr, String prikeyStr,  byte[] assetHash,int min, int max, List<byte[]> pubList, BigDecimal amount) {
         try {
-            String RawTransactionHex = CreateMultipleForRule(fromPubkeyStr, assetHash, min, max,pubList,amount);
+            JSONObject jsonObject = CreateMultipleForRule(fromPubkeyStr, assetHash, min, max,pubList,amount);
+            if(jsonObject.getInteger("code") == 5000){
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -1417,11 +1496,15 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static String CreateMultisignatureForTransferFirst(String fromPubkeyStr,String txHash, int origin, int dest, List<byte[]> pubhash, List<byte[]> signaturesList, byte[] to, BigDecimal value){
+    public static JSONObject CreateMultisignatureForTransferFirst(String fromPubkeyStr,String txHash, int origin, int dest, List<byte[]> pubhash, List<byte[]> signaturesList, byte[] to, BigDecimal value){
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
-            long valueNew = isValidPositiveLong(value);
-            MultTransfer multTransfer = new MultTransfer(origin,dest,pubhash,signaturesList,to,valueNew);
+            JSONObject jsonObjectValue = new JSONObject();
+            jsonObjectValue = isValidPositiveLong(value);
+            if(jsonObjectValue.getInteger("code") == 5000){
+                return jsonObjectValue;
+            }
+            MultTransfer multTransfer = new MultTransfer(origin,dest,pubhash,signaturesList,to,value.longValue());
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -1449,9 +1532,17 @@ public class TxUtility extends Thread {
             byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x03},payload);
             byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
             String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
-            return RawTransactionStr;
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
         } catch (Exception e) {
-            return "";
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
         }
     }
 
@@ -1473,7 +1564,11 @@ public class TxUtility extends Thread {
             jsonObjectResult = new JSONObject();
             pubkeyList = new ArrayList<>();
             signList = new ArrayList<>();
-            String RawTransactionHex = CreateMultisignatureForTransferFirst(fromPubkeyStr,txHashRule,origin, dest, pubhash,signaturesList,to,value);
+            JSONObject jsonObjectOld = CreateMultisignatureForTransferFirst(fromPubkeyStr,txHashRule,origin, dest, pubhash,signaturesList,to,value);
+            if(jsonObjectOld.getInteger("code") == 5000){
+                return jsonObjectOld;
+            }
+            String RawTransactionHex = jsonObjectOld.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransactionAndIsSign(RawTransactionHex, prikeyStr,isPutSign).toCharArray());
             String signHas = new String(Hex.encodeHex(signRawBasicTransaction));
             //将公钥放进from公钥数组
@@ -1485,7 +1580,11 @@ public class TxUtility extends Thread {
             signList.add(signRawBasicTransaction);
 
             //payload sign
-            String RawTransactionHexNew = CreateMultisignatureForTransferFirst(fromPubkeyStr,txHashRule, origin, dest, pubhash,signaturesList,to,value);
+            JSONObject jsonObjectNew = CreateMultisignatureForTransferFirst(fromPubkeyStr,txHashRule, origin, dest, pubhash,signaturesList,to,value);
+            if(jsonObjectNew.getInteger("code") == 5000){
+                return jsonObjectNew;
+            }
+            String RawTransactionHexNew = jsonObjectNew.getString("RawTransactionHex");
             byte[] signRawBasicTransactionNew = Hex.decodeHex(signRawBasicTransactionAndIsSign(RawTransactionHexNew, prikeyStr,isPutSign).toCharArray());
 
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransactionNew, 1, 32);
@@ -1523,11 +1622,15 @@ public class TxUtility extends Thread {
      * @param signHas
      * @return
      */
-    public static String CreateMultisignatureForTransferLast(String fromPubkeyStr, String txHash, int origin, int dest, List<byte[]> pubhash, List<byte[]> signaturesList, byte[] to, BigDecimal value,String signHas){
+    public static JSONObject CreateMultisignatureForTransferLast(String fromPubkeyStr, String txHash, int origin, int dest, List<byte[]> pubhash, List<byte[]> signaturesList, byte[] to, BigDecimal value,String signHas){
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
-            long valueNew = isValidPositiveLong(value);
-            MultTransfer multTransfer = new MultTransfer(origin,dest,pubhash,signaturesList,to,valueNew);
+            JSONObject jsonObjectValue = new JSONObject();
+            jsonObjectValue = isValidPositiveLong(value);
+            if(jsonObjectValue.getInteger("code") == 5000){
+                return jsonObjectValue;
+            }
+            MultTransfer multTransfer = new MultTransfer(origin,dest,pubhash,signaturesList,to,value.longValue());
             byte[] msg = Hex.decodeHex(signHas.toCharArray());
             Transaction transaction = new Transaction(msg);
             //版本号
@@ -1557,9 +1660,17 @@ public class TxUtility extends Thread {
             byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x03}, payload);
             byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
             String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
-            return RawTransactionStr;
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
         } catch (Exception e) {
-            return "";
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
         }
     }
 
@@ -1593,7 +1704,11 @@ public class TxUtility extends Thread {
 
             List<byte[]> pubhash = new ArrayList();
             List<byte[]> signaturesList = new ArrayList();
-            String RawTransactionHex = CreateMultisignatureForTransferLast(fromPubkeyStr, txHashRule,origin, dest, pubhash, signaturesList, to, value,signHas);
+            JSONObject jsonObject = CreateMultisignatureForTransferLast(fromPubkeyStr, txHashRule,origin, dest, pubhash, signaturesList, to, value,signHas);
+            if(jsonObject.getInteger("code") == 5000){
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransactionAndIsSign(RawTransactionHex, prikeyStr,isPutSign).toCharArray());
             String signHasNew = new String(Hex.encodeHex(signRawBasicTransaction));
             //将公钥放进from公钥数组
@@ -1603,7 +1718,11 @@ public class TxUtility extends Thread {
             signList.add(signRawBasicTransaction);
 
             //payload sign
-            String RawTransactionHexNew = CreateMultisignatureForTransferLast(fromPubkeyStr, txHashRule,origin, dest, pubkeyList,signList,to,value,signHas);
+            JSONObject jsonObjectNew = CreateMultisignatureForTransferLast(fromPubkeyStr, txHashRule,origin, dest, pubkeyList,signList,to,value,signHas);
+            if(jsonObjectNew.getInteger("code") == 5000){
+                return jsonObjectNew;
+            }
+            String RawTransactionHexNew = jsonObjectNew.getString("RawTransactionHex");
             byte[] signRawBasicTransactionNew = Hex.decodeHex(signRawBasicTransactionAndIsSign(RawTransactionHexNew, prikeyStr,isPutSign).toCharArray());
 
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransactionNew, 1, 32);
@@ -1783,13 +1902,21 @@ public class TxUtility extends Thread {
      * @param timestamp
      * @return
      */
-    public static String hashTimeBlockTransferForDeploy(String fromPubkeyStr,String txHash,long nonce,BigDecimal value,byte[] hashresult,BigDecimal timestamp){
+    public static JSONObject hashTimeBlockTransferForDeploy(String fromPubkeyStr,String txHash,long nonce,BigDecimal value,byte[] hashresult,BigDecimal timestamp){
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
-            long valueNew = isValidPositiveLong(value);
+            JSONObject jsonObjectValue = new JSONObject();
+            jsonObjectValue = isValidPositiveLong(value);
+            if(jsonObjectValue.getInteger("code") == 5000){
+                return jsonObjectValue;
+            }
             timestamp = timestamp.multiply(BigDecimal.valueOf(rate));
-            long timestampNew = isValidPositiveLong(timestamp);
-            HashtimeblockTransfer hashtimeblockTransfer = new HashtimeblockTransfer(valueNew,hashresult,timestampNew);
+            JSONObject jsonObjectTimestamp = new JSONObject();
+            jsonObjectTimestamp = isValidPositiveLong(value);
+            if(jsonObjectTimestamp.getInteger("code") == 5000){
+                return jsonObjectTimestamp;
+            }
+            HashtimeblockTransfer hashtimeblockTransfer = new HashtimeblockTransfer(value.longValue(),hashresult,timestamp.longValue());
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -1817,9 +1944,17 @@ public class TxUtility extends Thread {
             byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x04}, payload);
             byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
             String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
-            return RawTransactionStr;
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
         } catch (Exception e) {
-            return "";
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
         }
     }
 
@@ -1836,7 +1971,11 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateHashTimeBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,byte[] hashresult,BigDecimal timestamp) {
         try {
-            String RawTransactionHex = hashTimeBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresult, timestamp);
+            JSONObject jsonObject = hashTimeBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresult, timestamp);
+            if(jsonObject.getInteger("code") == 5000){
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -2009,13 +2148,21 @@ public class TxUtility extends Thread {
      * @param timestamp
      * @return
      */
-    public static String HashHeightBlockTransferForDeploy(String fromPubkeyStr,String txHash,long nonce,BigDecimal value,byte[] hashresult,BigDecimal timestamp){
+    public static JSONObject HashHeightBlockTransferForDeploy(String fromPubkeyStr,String txHash,long nonce,BigDecimal value,byte[] hashresult,BigDecimal timestamp){
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
-            long valueNew = isValidPositiveLong(value);
+            JSONObject jsonObjectValue = new JSONObject();
+            jsonObjectValue = isValidPositiveLong(value);
+            if(jsonObjectValue.getInteger("code") == 5000){
+                return jsonObjectValue;
+            }
             timestamp = timestamp.multiply(BigDecimal.valueOf(rate));
-            long timestampNew = isValidPositiveLong(timestamp);
-            HashtimeblockTransfer hashtimeblockTransfer = new HashtimeblockTransfer(valueNew,hashresult,timestampNew);
+            JSONObject jsonObjectTimestamp = new JSONObject();
+            jsonObjectTimestamp = isValidPositiveLong(value);
+            if(jsonObjectTimestamp.getInteger("code") == 5000){
+                return jsonObjectTimestamp;
+            }
+            HashtimeblockTransfer hashtimeblockTransfer = new HashtimeblockTransfer(value.longValue(),hashresult,timestamp.longValue());
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -2043,9 +2190,17 @@ public class TxUtility extends Thread {
             byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x06}, payload);
             byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
             String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
-            return RawTransactionStr;
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",5000);
+            return jsonObject;
         } catch (Exception e) {
-            return "";
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
         }
     }
 
@@ -2062,7 +2217,11 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateHashHeightBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,byte[] hashresult,BigDecimal timestamp) {
         try {
-            String RawTransactionHex = HashHeightBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresult, timestamp);
+            JSONObject jsonObject = HashHeightBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresult, timestamp);
+            if(jsonObject.getInteger("code") == 5000){
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -2136,14 +2295,26 @@ public class TxUtility extends Thread {
      * @return
      * @throws Exception
      */
-    public static long isValidPositiveLong(BigDecimal number) throws Exception {
+    public static JSONObject isValidPositiveLong(BigDecimal number){
         if (number.scale() != 0) {
-            throw new NumberFormatException("offering must be an integer");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", "offering must be an integer");
+            jsonObject.put("data", "");
+            jsonObject.put("code", "5000");
+            return jsonObject;
         }
         if (number.compareTo(BigDecimal.ZERO) <= 0 || number.compareTo(MAXIMUM_LONG) > 0) {
-            throw new NumberFormatException("offering must be a positive long number");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", "offering must be a positive long number");
+            jsonObject.put("data", "");
+            jsonObject.put("code", "5000");
+            return jsonObject;
         }
-        return number.longValue();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("message", number);
+        jsonObject.put("data", "");
+        jsonObject.put("code", "2000");
+        return jsonObject;
     }
 
     /**
