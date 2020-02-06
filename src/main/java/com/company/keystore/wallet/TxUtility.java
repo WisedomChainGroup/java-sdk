@@ -2331,7 +2331,7 @@ public class TxUtility extends Thread {
         byte[] b4 = ByteUtil.bytearraycopy(r3, 0, 4);
         byte[] b5 = ByteUtil.byteMerger(r2, b4);
         String s6 = Base58Utility.encode(b5);
-        return "WX"+s6;
+        return "WR"+s6;
     }
 
 

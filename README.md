@@ -431,7 +431,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.0 获取Asset
+1.32 获取Asset
 ```
 *   方法：TxUtility.getAsset(POST)     
 *	参数：payload(十六进制字符串)  
@@ -446,7 +446,7 @@ WalletUtility. importKeystore()
  allowincrease:int
  }
 ```
-1.0 获取AssetChangeowner
+1.33 获取AssetChangeowner
 ```
 *   方法：TxUtility.getAssetChangeowner(POST)     
 *	参数：payload(十六进制字符串)  
@@ -456,7 +456,7 @@ WalletUtility. importKeystore()
  newowner:(十六进制字符串)
  }
 ```
-1.0 获取AssetIncreased
+1.34 获取AssetIncreased
 ```
 *   方法：TxUtility.getAssetIncreased(POST)     
 *	参数：payload(十六进制字符串)   
@@ -466,7 +466,7 @@ WalletUtility. importKeystore()
  amount:long
  }
 ```
-1.0 获取AssetTransfer
+1.35 获取AssetTransfer
 ```
 *   方法：TxUtility.getAssetTransfer(POST)     
 *	参数：payload(十六进制字符串)  
@@ -476,6 +476,16 @@ WalletUtility. importKeystore()
  from:(十六进制字符串)
  to:(十六进制字符串)
  value:long
+ }
+```
+1.36 通过事务哈希得到合约地址
+``` 
+*   方法：TxUtility.contractAddress(POST)     
+*	参数：事务哈希(十六进制字符串)  
+ 返回类型：String
+ 返回值：
+ {
+ 合约地址：String
  }
 ```
 ### 节点rpc
