@@ -431,51 +431,52 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.32 获取Asset
+1.32 获取Asset的详细信息
 ```
 *   方法：TxUtility.getAsset(POST)     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
  {
- code : String;
- offering:long
- totalamount:long
- createuser:(十六进制字符串)
- owner:(十六进制字符串)
- allowincrease:int
+  data : Transaction;
+ (int)statusCode:2000
+ (String)message::对象的所有参数
  }
 ```
-1.33 获取AssetChangeowner
+1.33 获取AssetChangeowner的详细信息
 ```
 *   方法：TxUtility.getAssetChangeowner(POST)     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
  {
- newowner:(十六进制字符串)
+  data : Transaction;
+ (int)statusCode:2000
+ (String)message::对象的所有参数
  }
 ```
-1.34 获取AssetIncreased
+1.34 获取AssetIncreased的详细信息
 ```
 *   方法：TxUtility.getAssetIncreased(POST)     
 *	参数：payload(十六进制字符串)   
  返回类型：Json
  返回值：
  {
- amount:long
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message::对象的所有参数
  }
 ```
-1.35 获取AssetTransfer
+1.35 获取AssetTransfer的详细信息
 ```
 *   方法：TxUtility.getAssetTransfer(POST)     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
  {
- from:(十六进制字符串)
- to:(十六进制字符串)
- value:long
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
  }
 ```
 1.36 通过事务哈希得到合约地址
