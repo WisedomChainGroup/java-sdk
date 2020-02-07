@@ -28,6 +28,7 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.tdf.rlp.RLPElement;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -2336,63 +2337,87 @@ public class TxUtility extends Thread {
 
 
     /**
-     * 获取Asset
+     * 获取Asset的详细信息
      * @param payload
      * @return
      */
-    public static Asset getAsset(byte[] payload) {
+    public static APIResult getAsset(byte[] payload) {
+        APIResult apiResult = new APIResult();
         Asset asset = new Asset();
-        byte[] payloadNew = new byte[64];
-        for(int i = 1 ;i<payload.length;i++){
-            payloadNew[i-1] = payload[i];
+        asset = RLPElement.fromEncoded(payload).as(Asset.class);
+        if(asset == null){
+            return APIResult.newFailResult(5000,"Invalid Asset Rules");
         }
-        asset = asset.RLPdeserialization(payloadNew);
-        return asset;
+        asset = asset.RLPdeserialization(payload);
+        JSONObject json = (JSONObject) JSONObject.toJSON(asset);
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
     }
 
     /**
-     * 获取AssetChangeowner
+     * 获取AssetChangeowner的详细信息
      * @param payload
      * @return
      */
-    public static AssetIncreased getAssetIncreased(byte[] payload) {
+    public static APIResult getAssetIncreased(byte[] payload) {
         AssetIncreased assetIncreased = new AssetIncreased();
-        byte[] payloadNew = new byte[64];
-        for(int i = 1 ;i<payload.length;i++){
-            payloadNew[i-1] = payload[i];
+        APIResult apiResult = new APIResult();
+        assetIncreased = RLPElement.fromEncoded(payload).as(AssetIncreased.class);
+        if(assetIncreased == null){
+            return APIResult.newFailResult(5000,"Invalid AssetIncreased Rules");
         }
-        assetIncreased = assetIncreased.RLPdeserialization(payloadNew);
-        return assetIncreased;
+        assetIncreased = assetIncreased.RLPdeserialization(payload);
+        JSONObject json = (JSONObject) JSONObject.toJSON(assetIncreased);
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
     }
 
     /**
-     * 获取AssetIncreased
+     * 获取AssetIncreased的详细信息
      * @param payload
      * @return
      */
-    public static AssetChangeowner getAssetChangeowner(byte[] payload) {
+    public static APIResult getAssetChangeowner(byte[] payload) {
+        APIResult apiResult = new APIResult();
         AssetChangeowner assetChangeowner = new AssetChangeowner();
-        byte[] payloadNew = new byte[64];
-        for(int i = 1 ;i<payload.length;i++){
-            payloadNew[i-1] = payload[i];
+        assetChangeowner = RLPElement.fromEncoded(payload).as(AssetChangeowner.class);
+        if(assetChangeowner == null){
+            return APIResult.newFailResult(5000,"Invalid AssetChangeowner Rules");
         }
-        assetChangeowner = assetChangeowner.RLPdeserialization(payloadNew);
-        return assetChangeowner;
+        assetChangeowner = assetChangeowner.RLPdeserialization(payload);
+        JSONObject json = (JSONObject) JSONObject.toJSON(assetChangeowner);
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
     }
 
     /**
-     * 获取AssetTransfer
+     * 获取AssetTransfer的详细信息
      * @param payload
      * @return
      */
-    public static AssetTransfer getAssetTransfer(byte[] payload) {
+    public static APIResult getAssetTransfer(byte[] payload) {
         AssetTransfer assetTransfer = new AssetTransfer();
-        byte[] payloadNew = new byte[64];
-        for(int i = 1 ;i<payload.length;i++){
-            payloadNew[i-1] = payload[i];
+        APIResult apiResult = new APIResult();
+        assetTransfer = RLPElement.fromEncoded(payload).as(AssetTransfer.class);
+        if(assetTransfer == null){
+            return APIResult.newFailResult(5000,"Invalid AssetTransfer Rules");
         }
-        assetTransfer = assetTransfer.RLPdeserialization(payloadNew);
-        return assetTransfer;
+        assetTransfer = assetTransfer.RLPdeserialization(payload);
+        JSONObject json = (JSONObject) JSONObject.toJSON(assetTransfer);
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
     }
 
 
