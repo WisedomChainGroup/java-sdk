@@ -489,6 +489,66 @@ WalletUtility. importKeystore()
  合约地址：String
  }
 ```
+1.37构造签名的规则部署的资产定义事务(判断参数是否错误)
+```
+ TxUtility. CreateSignToDeployforRuleAssetIsJudge()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、Nonce(Long)
+ 4）、code(String)
+ 5）、offering（BigDecimal)
+ 6）、createuser(十六进制字符串)
+ 5）、owner（十六进制字符串)
+ 6）、allowincrease(int)
+ 7）、info(十六进制字符串)
+ 8）、judge(boolean)true：判断   false：不判断
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.38构造签名的资产定义的更换资产的增发的规则调用事务(判断参是否数错误)
+```
+ TxUtility. CreateSignToDeployforRuleAssetIncreased()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、事务哈希（十六进制字符串)
+ 3）、私钥（十六进制字符串)
+ 4）、nonce(Long)
+ 5）、amount(BigDecimal)
+ 6）、judge(boolean)true：判断   false：不判断
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.39构造签名的资产定义的转账的规则调用事务(判断参数是否错误)
+```
+ TxUtility. CreateSignToDeployforRuleTransfer()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、事务哈希（十六进制字符串)
+ 3）、私钥（十六进制字符串)
+ 3）、nonce(Long)
+ 6）、from(十六进制字符串)
+ 6）、to(十六进制字符串)
+ 6）、value(BigDecimal)
+ 7）、judge(boolean)true：判断   false：不判断
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
 ### 节点rpc
 1.0 获取Nonce
 ```
