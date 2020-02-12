@@ -1114,10 +1114,13 @@ public class TxUtility extends Thread {
      * @param info
      * @return
      */
-    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, byte[] createuser, byte[] owner, int allowincrease,byte[] info){
+    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,String info){
         try {
+            byte[] createuserBy = Hex.decodeHex(createuser.toCharArray());
+            byte[] ownerBy = Hex.decodeHex(owner.toCharArray());
+            byte[] infoBy = Hex.decodeHex(info.toCharArray());
             BigDecimal totalamount = offering;
-            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuser, owner, allowincrease,info);
+            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,infoBy);
             if(jsonObject.getInteger("code") == 5000){
                 return  jsonObject;
             }
@@ -1191,9 +1194,10 @@ public class TxUtility extends Thread {
      * @param newowner
      * @return
      */
-    public static JSONObject CreateSignToDeployforAssetChangeowner(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] newowner) {
+    public static JSONObject CreateSignToDeployforAssetChangeowner(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, String newowner) {
         try {
-            String RawTransactionHex = CreateCallforRuleAssetChangeowner(fromPubkeyStr, txHash1, nonce, newowner);
+            byte[] newownerBy = Hex.decodeHex(newowner.toCharArray());
+            String RawTransactionHex = CreateCallforRuleAssetChangeowner(fromPubkeyStr, txHash1, nonce, newownerBy);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -1366,9 +1370,11 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static JSONObject CreateSignToDeployforRuleTransfer(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] from, byte[] to, BigDecimal value) {
+    public static JSONObject CreateSignToDeployforRuleTransfer(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, String from, String to, BigDecimal value) {
         try {
-            JSONObject jsonObject = CreateDeployforRuleAssetTransfer(fromPubkeyStr, txHash1, nonce, from, to, value);
+            byte[] fromBy = Hex.decodeHex(from.toCharArray());
+            byte[] toBy = Hex.decodeHex(to.toCharArray());
+            JSONObject jsonObject = CreateDeployforRuleAssetTransfer(fromPubkeyStr, txHash1, nonce, fromBy, toBy, value);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
@@ -1473,10 +1479,13 @@ public class TxUtility extends Thread {
      * @param info
      * @return
      */
-    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, byte[] createuser, byte[] owner, int allowincrease,byte[] info,boolean judge){
+    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,String info,boolean judge){
         try {
+            byte[] createuserBy = Hex.decodeHex(createuser.toCharArray());
+            byte[] ownerBy = Hex.decodeHex(owner.toCharArray());
+            byte[] infoBy = Hex.decodeHex(info.toCharArray());
             BigDecimal totalamount = offering;
-            JSONObject jsonObject = CreateDeployforRuleAssetIsJudge(fromPubkeyStr, nonce, code, offering, totalamount, createuser, owner, allowincrease,info,judge);
+            JSONObject jsonObject = CreateDeployforRuleAssetIsJudge(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,infoBy,judge);
             if(jsonObject.getInteger("code") == 5000){
                 return  jsonObject;
             }
@@ -1661,9 +1670,11 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static JSONObject CreateSignToDeployforRuleTransferIsJudge(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, byte[] from, byte[] to, BigDecimal value,boolean judge) {
+    public static JSONObject CreateSignToDeployforRuleTransferIsJudge(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, String from, String to, BigDecimal value,boolean judge) {
         try {
-            JSONObject jsonObject = CreateDeployforRuleAssetTransferIsJudge(fromPubkeyStr, txHash1, nonce, from, to, value,judge);
+            byte[] fromBy = Hex.decodeHex(from.toCharArray());
+            byte[] toBy = Hex.decodeHex(to.toCharArray());
+            JSONObject jsonObject = CreateDeployforRuleAssetTransferIsJudge(fromPubkeyStr, txHash1, nonce, fromBy, toBy, value,judge);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
@@ -1754,9 +1765,14 @@ public class TxUtility extends Thread {
      * @param amount
      * @return
      */
-    public static JSONObject CreateMultipleToDeployforRule(String fromPubkeyStr, String prikeyStr,  byte[] assetHash,int min, int max, List<byte[]> pubList, BigDecimal amount) {
+    public static JSONObject CreateMultipleToDeployforRule(String fromPubkeyStr, String prikeyStr,  String assetHash,int min, int max, List<String> pubList, BigDecimal amount) {
         try {
-            JSONObject jsonObject = CreateMultipleForRule(fromPubkeyStr, assetHash, min, max,pubList,amount);
+            byte[] assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            List<byte[]> publishBy = new ArrayList<>();
+            for (int i = 0 ;i<pubList.size();i++){
+                publishBy.add(Hex.decodeHex(pubList.get(i).toCharArray()));
+            }
+            JSONObject jsonObject = CreateMultipleForRule(fromPubkeyStr, assetHashBy, min, max,publishBy,amount);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
@@ -1850,13 +1866,22 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static JSONObject CreateMultisignatureToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr,String txHashRule,int origin, int dest, List<byte[]> pubhash, List<byte[]> signaturesList, byte[] to, BigDecimal value , boolean isPutSign) {
+    public static JSONObject CreateMultisignatureToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr,String txHashRule,int origin, int dest, List<String> pubhash, List<String> signaturesList, String to, BigDecimal value , boolean isPutSign) {
         try {
+            List<byte[]> pubListBy = new ArrayList<>();
+            for (int i = 0 ;i<pubhash.size();i++){
+                pubListBy.add(Hex.decodeHex(pubhash.get(i).toCharArray()));
+            }
+            List<byte[]> signaturesListBy = new ArrayList<>();
+            for (int i = 0 ;i<signaturesList.size();i++){
+                signaturesListBy.add(Hex.decodeHex(signaturesList.get(i).toCharArray()));
+            }
+            byte[] toBy = Hex.decodeHex(to.toCharArray());
             //初始化jsonObjectResult,pubkeyList,signList
             jsonObjectResult = new JSONObject();
             pubkeyList = new ArrayList<>();
             signList = new ArrayList<>();
-            JSONObject jsonObjectOld = CreateMultisignatureForTransferFirst(fromPubkeyStr,txHashRule,origin, dest, pubhash,signaturesList,to,value);
+            JSONObject jsonObjectOld = CreateMultisignatureForTransferFirst(fromPubkeyStr,txHashRule,origin, dest, pubListBy,signaturesListBy,toBy,value);
             if(jsonObjectOld.getInteger("code") == 5000){
                 return jsonObjectOld;
             }
@@ -1865,14 +1890,14 @@ public class TxUtility extends Thread {
             String signHas = new String(Hex.encodeHex(signRawBasicTransaction));
             //将公钥放进from公钥数组
             byte[] frompubkey = Hex.decodeHex(fromPubkeyStr.toCharArray());
-            pubhash.add(frompubkey);
+            pubhash.add(fromPubkeyStr);
             pubkeyList.add(frompubkey);
             //签名放入签名数组
-            signaturesList.add(signRawBasicTransaction);
+            signaturesList.add(signHas);
             signList.add(signRawBasicTransaction);
 
             //payload sign
-            JSONObject jsonObjectNew = CreateMultisignatureForTransferFirst(fromPubkeyStr,txHashRule, origin, dest, pubhash,signaturesList,to,value);
+            JSONObject jsonObjectNew = CreateMultisignatureForTransferFirst(fromPubkeyStr,txHashRule, origin, dest, pubListBy,signaturesListBy,toBy,value);
             if(jsonObjectNew.getInteger("code") == 5000){
                 return jsonObjectNew;
             }
@@ -1923,8 +1948,7 @@ public class TxUtility extends Thread {
                 return jsonObjectValue;
             }
             MultTransfer multTransfer = new MultTransfer(origin,dest,pubhash,signaturesList,to,value.longValue());
-            byte[] msg = Hex.decodeHex(signHas.toCharArray());
-            Transaction transaction = new Transaction(msg);
+            Transaction transaction = new Transaction(signHas);
             //版本号
             byte[] version = new byte[1];
             version[0] = (byte)transaction.version;
@@ -1976,14 +2000,14 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static JSONObject CreateMultisignatureToDeployforRuleLast(String fromPubkeyStr, String prikeyStr, String txHashRule, int origin, int dest, byte[] to, BigDecimal value,boolean isPutSign){
+    public static JSONObject CreateMultisignatureToDeployforRuleLast(String fromPubkeyStr, String prikeyStr, String txHashRule, int origin, int dest, String to, BigDecimal value,boolean isPutSign){
         try {
+            byte[] toBy = Hex.decodeHex(to.toCharArray());
             String signHas = jsonObjectResult.getString("signHas");
             String signNoHas = jsonObjectResult.getString("signNoHas");
-            byte[] signHasB = Hex.decodeHex(signHas.toCharArray());
             byte[] signNoHasB = Hex.decodeHex(signNoHas.toCharArray());
             String fromPubkey = jsonObjectResult.getString("fromPubkey");
-            Transaction transaction = new Transaction(signHasB);
+            Transaction transaction = new Transaction(signHas);
             byte[] sig = transaction.signature;
             byte[] Pubkey = Hex.decodeHex(fromPubkey.toCharArray());
             Ed25519PublicKey ed25519PublicKey = new Ed25519PublicKey(Pubkey);
@@ -1996,7 +2020,7 @@ public class TxUtility extends Thread {
 
             List<byte[]> pubhash = new ArrayList();
             List<byte[]> signaturesList = new ArrayList();
-            JSONObject jsonObject = CreateMultisignatureForTransferLast(fromPubkeyStr, txHashRule,origin, dest, pubhash, signaturesList, to, value,signHas);
+            JSONObject jsonObject = CreateMultisignatureForTransferLast(fromPubkeyStr, txHashRule,origin, dest, pubhash, signaturesList, toBy, value,signHas);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
@@ -2010,7 +2034,7 @@ public class TxUtility extends Thread {
             signList.add(signRawBasicTransaction);
 
             //payload sign
-            JSONObject jsonObjectNew = CreateMultisignatureForTransferLast(fromPubkeyStr, txHashRule,origin, dest, pubkeyList,signList,to,value,signHas);
+            JSONObject jsonObjectNew = CreateMultisignatureForTransferLast(fromPubkeyStr, txHashRule,origin, dest, pubkeyList,signList,toBy,value,signHas);
             if(jsonObjectNew.getInteger("code") == 5000){
                 return jsonObjectNew;
             }
