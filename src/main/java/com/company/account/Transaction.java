@@ -6,6 +6,7 @@ import com.company.keystore.util.ByteUtil;
 import com.company.protobuf.ProtocolModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.protobuf.ByteString;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.util.Arrays;
 
@@ -245,7 +246,8 @@ public class Transaction {
 
     }
 
-    public Transaction(byte[] msg){
+    public Transaction(String message) throws Exception {
+        byte[] msg =  Hex.decodeHex((message.toCharArray()));
         //version
         byte[] version = ByteUtil.bytearraycopy(msg, 0, 1);
         this.version = version[0];
