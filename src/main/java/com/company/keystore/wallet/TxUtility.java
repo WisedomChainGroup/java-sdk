@@ -1114,13 +1114,12 @@ public class TxUtility extends Thread {
      * @param info
      * @return
      */
-    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,String info){
+    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,byte[] info){
         try {
             byte[] createuserBy = Hex.decodeHex(createuser.toCharArray());
             byte[] ownerBy = Hex.decodeHex(owner.toCharArray());
-            byte[] infoBy = Hex.decodeHex(info.toCharArray());
             BigDecimal totalamount = offering;
-            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,infoBy);
+            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,info);
             if(jsonObject.getInteger("code") == 5000){
                 return  jsonObject;
             }
