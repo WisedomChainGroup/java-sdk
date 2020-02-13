@@ -1407,7 +1407,7 @@ public class TxUtility extends Thread {
      * @param allowincrease
      * @return
      */
-    public static JSONObject CreateDeployforRuleAssetIsJudge(String fromPubkeyStr, Long nonce, String code, BigDecimal offering, BigDecimal totalamount, byte[] createuser, byte[] owner, int allowincrease,byte[] info,boolean judge) {
+    public static JSONObject CreateDeployforRuleAsset(String fromPubkeyStr, Long nonce, String code, BigDecimal offering, BigDecimal totalamount, byte[] createuser, byte[] owner, int allowincrease,byte[] info,boolean judge) {
         try {
             offering = offering.multiply(BigDecimal.valueOf(rate));
             totalamount = totalamount.multiply(BigDecimal.valueOf(rate));
@@ -1484,7 +1484,7 @@ public class TxUtility extends Thread {
             byte[] ownerBy = Hex.decodeHex(owner.toCharArray());
             byte[] infoBy = Hex.decodeHex(info.toCharArray());
             BigDecimal totalamount = offering;
-            JSONObject jsonObject = CreateDeployforRuleAssetIsJudge(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,infoBy,judge);
+            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,infoBy,judge);
             if(jsonObject.getInteger("code") == 5000){
                 return  jsonObject;
             }
@@ -1513,7 +1513,7 @@ public class TxUtility extends Thread {
      * @param amount
      * @return
      */
-    public static JSONObject CreateCallforRuleAssetIncreasedIsJudge(String fromPubkeyStr, String txHash, Long nonce, BigDecimal amount,boolean judge) {
+    public static JSONObject CreateCallforRuleAssetIncreased(String fromPubkeyStr, String txHash, Long nonce, BigDecimal amount,boolean judge) {
         try {
             amount = amount.multiply(BigDecimal.valueOf(rate));
             if(judge) {
@@ -1574,9 +1574,9 @@ public class TxUtility extends Thread {
      * @param amount
      * @return
      */
-    public static JSONObject CreateSignToDeployforRuleAssetIncreasedIsJudge(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, BigDecimal amount,boolean judge) {
+    public static JSONObject CreateSignToDeployforRuleAssetIncreased(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, BigDecimal amount,boolean judge) {
         try {
-            JSONObject jsonObject = CreateCallforRuleAssetIncreasedIsJudge(fromPubkeyStr, txHash1, nonce, amount,judge);
+            JSONObject jsonObject = CreateCallforRuleAssetIncreased(fromPubkeyStr, txHash1, nonce, amount,judge);
             if(jsonObject.getInteger("code") == 5000){
                 return  jsonObject;
             }
@@ -1607,7 +1607,7 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static JSONObject CreateDeployforRuleAssetTransferIsJudge(String fromPubkeyStr, String txHash, Long nonce, byte[] from, byte[] to, BigDecimal value,boolean judge) {
+    public static JSONObject CreateDeployforRuleAssetTransfer(String fromPubkeyStr, String txHash, Long nonce, byte[] from, byte[] to, BigDecimal value,boolean judge) {
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
             if(judge) {
@@ -1669,11 +1669,11 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static JSONObject CreateSignToDeployforRuleTransferIsJudge(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, String from, String to, BigDecimal value,boolean judge) {
+    public static JSONObject CreateSignToDeployforRuleTransfer(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, String from, String to, BigDecimal value,boolean judge) {
         try {
             byte[] fromBy = Hex.decodeHex(from.toCharArray());
             byte[] toBy = Hex.decodeHex(to.toCharArray());
-            JSONObject jsonObject = CreateDeployforRuleAssetTransferIsJudge(fromPubkeyStr, txHash1, nonce, fromBy, toBy, value,judge);
+            JSONObject jsonObject = CreateDeployforRuleAssetTransfer(fromPubkeyStr, txHash1, nonce, fromBy, toBy, value,judge);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
@@ -2611,7 +2611,7 @@ public class TxUtility extends Thread {
      * @throws Exception
      */
     public static JSONObject isValidPositiveLong(BigDecimal number){
-        if (number.scale() != 0) {
+        if (new BigDecimal(number.intValue()).compareTo(number) != 0) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", "offering must be an integer");
             jsonObject.put("data", "");
