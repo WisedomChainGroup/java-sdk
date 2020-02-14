@@ -1478,13 +1478,12 @@ public class TxUtility extends Thread {
      * @param info
      * @return
      */
-    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,String info,boolean judge){
+    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,byte[] info,boolean judge){
         try {
             byte[] createuserBy = Hex.decodeHex(createuser.toCharArray());
             byte[] ownerBy = Hex.decodeHex(owner.toCharArray());
-            byte[] infoBy = Hex.decodeHex(info.toCharArray());
             BigDecimal totalamount = offering;
-            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,infoBy,judge);
+            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,info,judge);
             if(jsonObject.getInteger("code") == 5000){
                 return  jsonObject;
             }
@@ -2611,7 +2610,7 @@ public class TxUtility extends Thread {
      * @throws Exception
      */
     public static JSONObject isValidPositiveLong(BigDecimal number){
-        if (new BigDecimal(number.intValue()).compareTo(number) != 0) {
+        if (new BigDecimal(number.longValue()).compareTo(number) != 0) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", "offering must be an integer");
             jsonObject.put("data", "");
