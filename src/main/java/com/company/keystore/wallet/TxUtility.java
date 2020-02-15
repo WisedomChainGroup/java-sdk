@@ -2730,7 +2730,18 @@ public class TxUtility extends Thread {
             return APIResult.newFailResult(5000,"Invalid Asset Rules");
         }
         asset = asset.RLPdeserialization(payloadNew);
-        JSONObject json = (JSONObject) JSONObject.toJSON(asset);
+        String createuser = new String(Hex.encodeHex(asset.getCreateuser()));
+        String owner = new String(Hex.encodeHex(asset.getOwner()));
+        String info = new String(Hex.encodeHex(asset.getInfo()));
+        JSONObject json = new JSONObject();
+        json.put("code",asset.getCode());
+        json.put("offering",asset.getOffering());
+        json.put("totalamount",asset.getTotalamount());
+        json.put("createuser",createuser);
+        json.put("owner",owner);
+        json.put("allowincrease",asset.getAllowincrease());
+        json.put("info",info);
+//        JSONObject json = (JSONObject) JSONObject.toJSON(asset);
         String message = json.toString();
         apiResult.setMessage(message);
         apiResult.setStatusCode(2000);
@@ -2780,7 +2791,10 @@ public class TxUtility extends Thread {
             return APIResult.newFailResult(5000,"Invalid AssetChangeowner Rules");
         }
         assetChangeowner = assetChangeowner.RLPdeserialization(payloadNew);
-        JSONObject json = (JSONObject) JSONObject.toJSON(assetChangeowner);
+        String newowner = new String(Hex.encodeHex(assetChangeowner.getNewowner()));
+        JSONObject json = new JSONObject();
+        json.put("newowner",newowner);
+//        JSONObject json = (JSONObject) JSONObject.toJSON(assetChangeowner);
         String message = json.toString();
         apiResult.setMessage(message);
         apiResult.setStatusCode(2000);
@@ -2805,7 +2819,13 @@ public class TxUtility extends Thread {
             return APIResult.newFailResult(5000,"Invalid AssetTransfer Rules");
         }
         assetTransfer = assetTransfer.RLPdeserialization(payloadNew);
-        JSONObject json = (JSONObject) JSONObject.toJSON(assetTransfer);
+        String from = new String(Hex.encodeHex(assetTransfer.getFrom()));
+        String to = new String(Hex.encodeHex(assetTransfer.getTo()));
+        JSONObject json = new JSONObject();
+        json.put("from",from);
+        json.put("to",to);
+        json.put("value",assetTransfer.getValue());
+//        JSONObject json = (JSONObject) JSONObject.toJSON(assetTransfer);
         String message = json.toString();
         apiResult.setMessage(message);
         apiResult.setStatusCode(2000);
