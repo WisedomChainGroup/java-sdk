@@ -1135,7 +1135,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -1208,7 +1212,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -1298,7 +1306,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -1389,7 +1401,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -1499,7 +1515,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -1591,7 +1611,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -1688,7 +1712,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -1786,7 +1814,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -1919,7 +1951,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -2055,7 +2091,11 @@ public class TxUtility extends Thread {
             return json;
 
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -2127,7 +2167,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -2201,7 +2245,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -2301,7 +2349,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -2373,7 +2425,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -2447,7 +2503,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -2547,7 +2607,11 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -2657,11 +2721,15 @@ public class TxUtility extends Thread {
     public static APIResult getAsset(byte[] payload) {
         APIResult apiResult = new APIResult();
         Asset asset = new Asset();
-        asset = RLPElement.fromEncoded(payload).as(Asset.class);
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        asset = RLPElement.fromEncoded(payloadNew).as(Asset.class);
         if(asset == null){
             return APIResult.newFailResult(5000,"Invalid Asset Rules");
         }
-        asset = asset.RLPdeserialization(payload);
+        asset = asset.RLPdeserialization(payloadNew);
         JSONObject json = (JSONObject) JSONObject.toJSON(asset);
         String message = json.toString();
         apiResult.setMessage(message);
@@ -2678,11 +2746,15 @@ public class TxUtility extends Thread {
     public static APIResult getAssetIncreased(byte[] payload) {
         AssetIncreased assetIncreased = new AssetIncreased();
         APIResult apiResult = new APIResult();
-        assetIncreased = RLPElement.fromEncoded(payload).as(AssetIncreased.class);
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        assetIncreased = RLPElement.fromEncoded(payloadNew).as(AssetIncreased.class);
         if(assetIncreased == null){
             return APIResult.newFailResult(5000,"Invalid AssetIncreased Rules");
         }
-        assetIncreased = assetIncreased.RLPdeserialization(payload);
+        assetIncreased = assetIncreased.RLPdeserialization(payloadNew);
         JSONObject json = (JSONObject) JSONObject.toJSON(assetIncreased);
         String message = json.toString();
         apiResult.setMessage(message);
@@ -2699,11 +2771,15 @@ public class TxUtility extends Thread {
     public static APIResult getAssetChangeowner(byte[] payload) {
         APIResult apiResult = new APIResult();
         AssetChangeowner assetChangeowner = new AssetChangeowner();
-        assetChangeowner = RLPElement.fromEncoded(payload).as(AssetChangeowner.class);
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        assetChangeowner = RLPElement.fromEncoded(payloadNew).as(AssetChangeowner.class);
         if(assetChangeowner == null){
             return APIResult.newFailResult(5000,"Invalid AssetChangeowner Rules");
         }
-        assetChangeowner = assetChangeowner.RLPdeserialization(payload);
+        assetChangeowner = assetChangeowner.RLPdeserialization(payloadNew);
         JSONObject json = (JSONObject) JSONObject.toJSON(assetChangeowner);
         String message = json.toString();
         apiResult.setMessage(message);
@@ -2720,11 +2796,15 @@ public class TxUtility extends Thread {
     public static APIResult getAssetTransfer(byte[] payload) {
         AssetTransfer assetTransfer = new AssetTransfer();
         APIResult apiResult = new APIResult();
-        assetTransfer = RLPElement.fromEncoded(payload).as(AssetTransfer.class);
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        assetTransfer = RLPElement.fromEncoded(payloadNew).as(AssetTransfer.class);
         if(assetTransfer == null){
             return APIResult.newFailResult(5000,"Invalid AssetTransfer Rules");
         }
-        assetTransfer = assetTransfer.RLPdeserialization(payload);
+        assetTransfer = assetTransfer.RLPdeserialization(payloadNew);
         JSONObject json = (JSONObject) JSONObject.toJSON(assetTransfer);
         String message = json.toString();
         apiResult.setMessage(message);
