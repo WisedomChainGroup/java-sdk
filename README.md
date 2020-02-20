@@ -431,7 +431,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.32 获取Asset的详细信息
+1.32 获取Asset资产部署的详细信息
 ```
 *   方法：TxUtility.getAsset(POST)     
 *	参数：payload(十六进制字符串)  
@@ -443,7 +443,7 @@ WalletUtility. importKeystore()
  (String)message::对象的所有参数
  }
 ```
-1.33 获取AssetChangeowner的详细信息
+1.33 获取AssetChangeowner资产更换所有者的详细信息
 ```
 *   方法：TxUtility.getAssetChangeowner(POST)     
 *	参数：payload(十六进制字符串)  
@@ -455,7 +455,7 @@ WalletUtility. importKeystore()
  (String)message::对象的所有参数
  }
 ```
-1.34 获取AssetIncreased的详细信息
+1.34 获取AssetIncreased资产增发的详细信息
 ```
 *   方法：TxUtility.getAssetIncreased(POST)     
 *	参数：payload(十六进制字符串)   
@@ -467,7 +467,7 @@ WalletUtility. importKeystore()
  (String)message::对象的所有参数
  }
 ```
-1.35 获取AssetTransfer的详细信息
+1.35 获取AssetTransfer资产转账的详细信息
 ```
 *   方法：TxUtility.getAssetTransfer(POST)     
 *	参数：payload(十六进制字符串)  
@@ -549,6 +549,203 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
+1.40构造签名的多重规则部署
+```
+ TxUtility. CreateMultipleForRule()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、assetHash(十六进制字符串)
+ 4）、min(int)
+ 5）、max(int)
+ 6）、publist(十六进制字符串的集合)
+ 7）、signatures(十六进制字符串的集合)
+ 8）、amount(BigDecimal)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.41构造签名的多重签名（发布者签名）
+```
+ TxUtility. CreateMultisignatureToDeployforRuleFirst()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、事务哈希（十六进制字符串)
+ 4）、origin(int)
+ 5）、dest(int)
+ 6）、pubhash(十六进制字符串的集合)
+ 7）、signaturesList(十六进制字符串的集)
+ 8）、to（十六进制字符串)
+ 9）、value(BigDecimal)
+ 10）、isPutSign(boolean   是否签名)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.42构造签名的多重签名（其他人签名）
+```
+ TxUtility. CreateMultisignatureToDeployforRuleLast()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、事务哈希（十六进制字符串)
+ 4）、origin(int)
+ 5）、dest(int)
+ 6）、pubhash(十六进制字符串的集合)
+ 7）、signaturesList(十六进制字符串的集)
+ 8）、to（十六进制字符串)
+ 9）、value(BigDecimal)
+ 10）、isPutSign(boolean   是否签名)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.43 获取Multiple多签部署的详细信息
+```
+*   方法：TxUtility.getMultiple(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
+ }
+```
+1.44 获取MultTransfer多签规则调用的详细信息
+```
+*   方法：TxUtility.getMultTransfer(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
+ }
+```
+1.45 构造签名的时间锁定的事务
+```
+ TxUtility. CreateHashTimeBlockForDeploy()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、nonce（long)
+ 4）、assetHash(十六进制字符串)
+ 5）、pubkeyHash(十六进制字符串)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.46 构造签名的获得锁定资产事务
+```
+ TxUtility. CreateHashTimeBlockGetForDeploy()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、事务哈希（十六进制字符串)
+ 4）、nonce(int)
+ 5）、assetHash(十六进制字符串)
+ 6）、origintext(十六进制字符串)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.47 构造签名的时间锁定的转发资产事务
+```
+ TxUtility. CreateHashTimeBlockTransferForDeploy()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、事务哈希（十六进制字符串)
+ 4）、nonce(int)
+ 5）、value(BigDecimal)
+ 6）、hashresult(十六进制字符串)
+ 7）、timestamp(时间戳)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.48 构造签名的区块高度锁定支付事务
+```
+ TxUtility. CreateHashHeightBlockForDeploy()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、nonce（long)
+ 4）、assetHash(十六进制字符串)
+ 5）、pubkeyHash(十六进制字符串)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.49 构造签名的获得锁定资产事务
+```
+ TxUtility. CreateHashHeightBlockGetForDeploy()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、事务哈希（十六进制字符串)
+ 4）、nonce(int)
+ 5）、assetHash(十六进制字符串)
+ 6）、origintext(十六进制字符串)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.50 构造签名的时间锁定的转发资产事务
+```
+ TxUtility. CreateHashHeightBlockTransferForDeploy()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、事务哈希（十六进制字符串)
+ 4）、nonce(int)
+ 5）、value(BigDecimal)
+ 6）、hashresult(十六进制字符串)
+ 7）、timestamp(时间戳)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+ 
 ### 节点rpc
 1.0 获取Nonce
 ```
