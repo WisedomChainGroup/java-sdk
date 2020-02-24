@@ -8,6 +8,9 @@ import com.company.contract.AssetDefinition.Asset;
 import com.company.contract.AssetDefinition.AssetChangeowner;
 import com.company.contract.AssetDefinition.AssetIncreased;
 import com.company.contract.AssetDefinition.AssetTransfer;
+import com.company.contract.HashheightblockDefinition.Hashheightblock;
+import com.company.contract.HashheightblockDefinition.HashheightblockGet;
+import com.company.contract.HashheightblockDefinition.HashheightblockTransfer;
 import com.company.contract.HashtimeblockDefinition.Hashtimeblock;
 import com.company.contract.HashtimeblockDefinition.HashtimeblockGet;
 import com.company.contract.HashtimeblockDefinition.HashtimeblockTransfer;
@@ -1115,7 +1118,7 @@ public class TxUtility extends Thread {
     public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,byte[] info){
         try {
             byte[] createuserBy = Hex.decodeHex(createuser.toCharArray());
-            byte[] ownerBy = Hex.decodeHex(owner.toCharArray());
+            byte[] ownerBy = Hex.decodeHex(WalletUtility.addressToPubkeyHash(owner).toCharArray());
             BigDecimal totalamount = offering;
             JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,info);
             if(jsonObject.getInteger("code") == 5000){
@@ -1197,7 +1200,7 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateSignToDeployforAssetChangeowner(String fromPubkeyStr, String txHash1, String prikeyStr, Long nonce, String newowner) {
         try {
-            byte[] newownerBy = Hex.decodeHex(newowner.toCharArray());
+            byte[] newownerBy = Hex.decodeHex(WalletUtility.addressToPubkeyHash(newowner).toCharArray());
             String RawTransactionHex = CreateCallforRuleAssetChangeowner(fromPubkeyStr, txHash1, nonce, newownerBy);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
@@ -1495,7 +1498,7 @@ public class TxUtility extends Thread {
     public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,byte[] info,boolean judge){
         try {
             byte[] createuserBy = Hex.decodeHex(createuser.toCharArray());
-            byte[] ownerBy = Hex.decodeHex(owner.toCharArray());
+            byte[] ownerBy = Hex.decodeHex(WalletUtility.addressToPubkeyHash(owner).toCharArray());
             BigDecimal totalamount = offering;
             JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,info,judge);
             if(jsonObject.getInteger("code") == 5000){
@@ -2396,7 +2399,7 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateHashTimeBlockForDeploy(String fromPubkeyStr,String prikeyStr,long nonce, String assetHash,String pubkeyHash) {
         try {
-            byte[] assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            byte[] assetHashBy = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
             byte[] pubkeyHashBy = Hex.decodeHex(pubkeyHash.toCharArray());
             String RawTransactionHex = hashTimeBlockForDeploy(fromPubkeyStr, nonce,assetHashBy, pubkeyHashBy);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
@@ -2470,13 +2473,13 @@ public class TxUtility extends Thread {
      * @param prikeyStr
      * @param txGetHash
      * @param nonce
-     * @param assetHash
+     * @param transferhash
      * @param origintext
      * @return
      */
-    public static JSONObject CreateHashTimeBlockGetForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce, String assetHash,String origintext) {
+    public static JSONObject CreateHashTimeBlockGetForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce, String transferhash,String origintext) {
         try {
-            byte[] assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            byte[] assetHashBy = Hex.decodeHex(transferhash.toCharArray());
             String RawTransactionHex = hashTimeBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,assetHashBy,origintext);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
@@ -2571,7 +2574,7 @@ public class TxUtility extends Thread {
      */
         public static JSONObject CreateHashTimeBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,String hashresult,BigDecimal timestamp) {
         try {
-            byte[] hashresultBy = Hex.decodeHex(hashresult.toCharArray());
+            byte[] hashresultBy = SHA3Utility.sha3256(Hex.decodeHex(hashresult.toCharArray()));
             JSONObject jsonObject = hashTimeBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresultBy, timestamp);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
@@ -2652,7 +2655,7 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateHashHeightBlockForDeploy(String fromPubkeyStr,String prikeyStr,long nonce, String assetHash,String pubkeyHash) {
         try {
-            byte[] assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            byte[] assetHashBy = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
             byte[] pubkeyHashBy = Hex.decodeHex(pubkeyHash.toCharArray());
             String RawTransactionHex = hashTimeBlockForDeploy(fromPubkeyStr, nonce,assetHashBy, pubkeyHashBy);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
@@ -2726,14 +2729,14 @@ public class TxUtility extends Thread {
      * @param prikeyStr
      * @param txGetHash
      * @param nonce
-     * @param assetHash
+     * @param transferhash
      * @param origintext
      * @return
      */
-    public static JSONObject CreateHashHeightBlockGetForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce, String assetHash,String origintext) {
+    public static JSONObject CreateHashHeightBlockGetForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce, String transferhash,String origintext) {
         try {
-            byte[] assetHashBy = Hex.decodeHex(assetHash.toCharArray());
-            String RawTransactionHex = hashTimeBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,assetHashBy,origintext);
+            byte[] transferhashBy = Hex.decodeHex(transferhash.toCharArray());
+            String RawTransactionHex = hashTimeBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,transferhashBy,origintext);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -2827,7 +2830,7 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateHashHeightBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,String hashresult,BigDecimal timestamp) {
         try {
-            byte[] hashresultBy = Hex.decodeHex(hashresult.toCharArray());
+            byte[] hashresultBy = SHA3Utility.sha3256(Hex.decodeHex(hashresult.toCharArray()));
             JSONObject jsonObject = HashHeightBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresultBy, timestamp);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
@@ -3145,6 +3148,180 @@ public class TxUtility extends Thread {
         json.put("to",to);
         json.put("value",multTransfer.getValue());
 //        JSONObject json = (JSONObject) JSONObject.toJSON(assetTransfer);
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
+    }
+
+    /**
+     * 获取Hashtimeblock的详细信息
+     * @param payload
+     * @return
+     */
+    public static APIResult getHashtimeblock(byte[] payload) {
+        Hashtimeblock hashtimeblock = new Hashtimeblock();
+        APIResult apiResult = new APIResult();
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        hashtimeblock = RLPElement.fromEncoded(payloadNew).as(Hashtimeblock.class);
+        if(hashtimeblock == null){
+            return APIResult.newFailResult(5000,"Invalid Hashtimeblock Rules");
+        }
+        hashtimeblock = hashtimeblock.RLPdeserialization(payloadNew);
+        String assetHash = new String(Hex.encodeHex(hashtimeblock.getAssetHash()));
+        String pubkeyHash = new String(Hex.encodeHex(hashtimeblock.getPubkeyHash()));
+        JSONObject json = new JSONObject();
+        json.put("assetHash",assetHash);
+        json.put("pubkeyHash",pubkeyHash);
+//        JSONObject json = (JSONObject) JSONObject.toJSON(assetTransfer);
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
+    }
+
+    /**
+     * 获得HashtimeblockGet的详细信息
+     * @param payload
+     * @return
+     */
+    public static APIResult getHashtimeblockGet(byte[] payload) {
+        HashtimeblockGet hashtimeblockGet = new HashtimeblockGet();
+        APIResult apiResult = new APIResult();
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        hashtimeblockGet = RLPElement.fromEncoded(payloadNew).as(HashtimeblockGet.class);
+        if(hashtimeblockGet == null){
+            return APIResult.newFailResult(5000,"Invalid HashtimeblockGet Rules");
+        }
+        hashtimeblockGet = hashtimeblockGet.RLPdeserialization(payloadNew);
+        String transferhash = new String(Hex.encodeHex(hashtimeblockGet.getTransferhash()));
+        JSONObject json = new JSONObject();
+        json.put("transferhash",transferhash);
+        json.put("origintext",hashtimeblockGet.getOrigintext());
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
+    }
+
+    /**
+     * 获得HashtimeblockTransfer的详细信息
+     * @param payload
+     * @return
+     */
+    public static APIResult getHashtimeblockTransfer(byte[] payload) {
+        HashtimeblockTransfer hashtimeblockTransfer = new HashtimeblockTransfer();
+        APIResult apiResult = new APIResult();
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        hashtimeblockTransfer = RLPElement.fromEncoded(payloadNew).as(HashtimeblockTransfer.class);
+        if(hashtimeblockTransfer == null){
+            return APIResult.newFailResult(5000,"Invalid HashtimeblockTransfer Rules");
+        }
+        hashtimeblockTransfer = hashtimeblockTransfer.RLPdeserialization(payloadNew);
+        String hashresult = new String(Hex.encodeHex(hashtimeblockTransfer.getHashresult()));
+        JSONObject json = new JSONObject();
+        json.put("value",hashtimeblockTransfer.getValue());
+        json.put("hashresult",hashresult);
+        json.put("timestamp",hashtimeblockTransfer.getTimestamp());
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
+    }
+
+    /**
+     * 获取Hashheightblock的详细信息
+     * @param payload
+     * @return
+     */
+    public static APIResult getHashheightblock(byte[] payload) {
+        Hashheightblock hashheightblock = new Hashheightblock();
+        APIResult apiResult = new APIResult();
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        hashheightblock = RLPElement.fromEncoded(payloadNew).as(Hashheightblock.class);
+        if(hashheightblock == null){
+            return APIResult.newFailResult(5000,"Invalid Hashheightblock Rules");
+        }
+        hashheightblock = hashheightblock.RLPdeserialization(payloadNew);
+        String assetHash = new String(Hex.encodeHex(hashheightblock.getAssetHash()));
+        String pubkeyHash = new String(Hex.encodeHex(hashheightblock.getPubkeyHash()));
+        JSONObject json = new JSONObject();
+        json.put("assetHash",assetHash);
+        json.put("pubkeyHash",pubkeyHash);
+//        JSONObject json = (JSONObject) JSONObject.toJSON(assetTransfer);
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
+    }
+
+    /**
+     * 获得HashheightblockGet的详细信息
+     * @param payload
+     * @return
+     */
+    public static APIResult getHashheightblockGet(byte[] payload) {
+        HashheightblockGet hashheightblockGet = new HashheightblockGet();
+        APIResult apiResult = new APIResult();
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        hashheightblockGet = RLPElement.fromEncoded(payloadNew).as(HashheightblockGet.class);
+        if(hashheightblockGet == null){
+            return APIResult.newFailResult(5000,"Invalid HashheightblockGet Rules");
+        }
+        hashheightblockGet = hashheightblockGet.RLPdeserialization(payloadNew);
+        String transferhash = new String(Hex.encodeHex(hashheightblockGet.getTransferhash()));
+        JSONObject json = new JSONObject();
+        json.put("transferhash",transferhash);
+        json.put("origintext",hashheightblockGet.getOrigintext());
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
+    }
+
+    /**
+     * 获得HashheightblockTransfer的详细信息
+     * @param payload
+     * @return
+     */
+    public static APIResult getHashheightblockTransfer(byte[] payload) {
+        HashheightblockTransfer hashheightblockTransfer = new HashheightblockTransfer();
+        APIResult apiResult = new APIResult();
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        hashheightblockTransfer = RLPElement.fromEncoded(payloadNew).as(HashheightblockTransfer.class);
+        if(hashheightblockTransfer == null){
+            return APIResult.newFailResult(5000,"Invalid HashheightblockTransfer Rules");
+        }
+        hashheightblockTransfer = hashheightblockTransfer.RLPdeserialization(payloadNew);
+        String hashresult = new String(Hex.encodeHex(hashheightblockTransfer.getHashresult()));
+        JSONObject json = new JSONObject();
+        json.put("value",hashheightblockTransfer.getValue());
+        json.put("hashresult",hashresult);
+        json.put("height",hashheightblockTransfer.getHeight());
         String message = json.toString();
         apiResult.setMessage(message);
         apiResult.setStatusCode(2000);

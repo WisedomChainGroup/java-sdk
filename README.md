@@ -713,7 +713,7 @@ WalletUtility. importKeystore()
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
  3）、nonce（long)
- 4）、assetHash(十六进制字符串)
+ 4）、assetHash(十六进制字符串)资产哈希
  5）、pubkeyHash(十六进制字符串)
  返回类型：Json
  返回值：
@@ -731,7 +731,7 @@ WalletUtility. importKeystore()
  2）、私钥（十六进制字符串)
  3）、事务哈希（十六进制字符串)
  4）、nonce(int)
- 5）、assetHash(十六进制字符串)
+ 5）、transferhash(十六进制字符串)
  6）、origintext(十六进制字符串)
  返回类型：Json
  返回值：
@@ -750,7 +750,7 @@ WalletUtility. importKeystore()
  3）、事务哈希（十六进制字符串)
  4）、nonce(int)
  5）、value(BigDecimal)
- 6）、hashresult(十六进制字符串)
+ 6）、hashresult(十六进制字符串)原文
  7）、timestamp(时间戳)
  返回类型：Json
  返回值：
@@ -767,7 +767,7 @@ WalletUtility. importKeystore()
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
  3）、nonce（long)
- 4）、assetHash(十六进制字符串)
+ 4）、assetHash(十六进制字符串)资产哈希
  5）、pubkeyHash(十六进制字符串)
  返回类型：Json
  返回值：
@@ -785,7 +785,7 @@ WalletUtility. importKeystore()
  2）、私钥（十六进制字符串)
  3）、事务哈希（十六进制字符串)
  4）、nonce(int)
- 5）、assetHash(十六进制字符串)
+ 5）、transferhash(十六进制字符串)
  6）、origintext(十六进制字符串)
  返回类型：Json
  返回值：
@@ -804,7 +804,7 @@ WalletUtility. importKeystore()
  3）、事务哈希（十六进制字符串)
  4）、nonce(int)
  5）、value(BigDecimal)
- 6）、hashresult(十六进制字符串)
+ 6）、hashresult(十六进制字符串)原文
  7）、timestamp(时间戳)
  返回类型：Json
  返回值：
@@ -812,6 +812,78 @@ WalletUtility. importKeystore()
  data : Transaction;
  (int)statusCode:0
  (String)message:null
+ }
+```
+1.54 获取Hashtimeblock时间锁定支付的详细信息
+```
+*   方法：TxUtility.getHashtimeblock(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
+ }
+```
+1.55 获得HashtimeblockGet时间锁定支付获得锁定资产的详细信息
+```
+*   方法：TxUtility.getHashtimeblockGet(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
+ }
+```
+1.56 获得HashtimeblockTransfer时间锁定支付转发资产的详细信息
+```
+*   方法：TxUtility.getHashtimeblockTransfer(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
+ }
+```
+1.57 获取Hashheightblock区块高度锁定的详细信息
+```
+*   方法：TxUtility.getHashheightblock(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
+ }
+```
+1.58 获取HashheightblockGet区块高度锁定获得锁定资产的详细信息
+```
+*   方法：TxUtility.getHashheightblockGet(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
+ }
+```
+1.59 获得HashheightblockTransfer区块高度锁定转发资产的详细信息
+```
+*   方法：TxUtility.getHashheightblockTransfer(POST)     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
  }
 ```
  
