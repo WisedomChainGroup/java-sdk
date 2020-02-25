@@ -2277,7 +2277,7 @@ public class TxUtility extends Thread {
      * @param signOther
      * @return
      */
-    public static JSONObject CreateMultisignatureToDeployforRuleSignSplice(String prikeyStr,String txHashRule, String frompubkey, int origin, int dest,List<String> pubhash, List<String> signaturesList, String to, BigDecimal value,String signFirst,String pubkeyOther,String signOther){
+    public static JSONObject CreateMultisignatureToDeployforRuleSignSplice(String prikeyStr, String frompubkey,String txHashRule, int origin, int dest,List<String> pubhash, List<String> signaturesList, String to, BigDecimal value,String signFirst,String pubkeyOther,String signOther){
         try {
             byte[] toBy = Hex.decodeHex(to.toCharArray());
             List<byte[]> pubListBy = new ArrayList<>();
