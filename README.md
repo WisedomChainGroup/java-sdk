@@ -599,6 +599,7 @@ WalletUtility. importKeystore()
  TxUtility. CreateMultipleToDeployforRuleSignSplice()
  参数：
  1）、发布者私钥（十六进制字符串)
+ 2）、发布者公钥（十六进制字符串)
  3）、assetHash(十六进制字符串)
  4）、min(int)
  5）、max(int)
@@ -664,16 +665,17 @@ WalletUtility. importKeystore()
  TxUtility. CreateMultisignatureToDeployforRuleSignSplice()
  参数：
  1）、发布者私钥（十六进制字符串)
- 2）、事务哈希（十六进制字符串)
- 3）、origin(int)
- 4）、dest(int)
- 5）、publist(十六进制字符串的集合)
- 6）、signatures(十六进制字符串的集合)
- 7）、to（十六进制字符串)
- 8）、value(BigDecimal)
- 9）、 signFirst(十六进制字符串，签名)
- 10）、 pubkeyOther(十六进制字符串，公钥)
- 11）、 signOther(十六进制字符串，签名)
+ 2）、发布者公钥（十六进制字符串)
+ 3）、事务哈希（十六进制字符串)
+ 4）、origin(int)
+ 5）、dest(int)
+ 6）、publist(十六进制字符串的集合)
+ 7）、signatures(十六进制字符串的集合)
+ 8）、to（十六进制字符串)
+ 9）、value(BigDecimal)
+ 10）、 signFirst(十六进制字符串，签名)
+ 11）、 pubkeyOther(十六进制字符串，公钥)
+ 12）、 signOther(十六进制字符串，签名)
  返回类型：Json
  返回值：
  {
@@ -731,8 +733,8 @@ WalletUtility. importKeystore()
  2）、私钥（十六进制字符串)
  3）、事务哈希（十六进制字符串)
  4）、nonce(int)
- 5）、transferhash(十六进制字符串)
- 6）、origintext(十六进制字符串)
+ 5）、transferhash(十六进制字符串)签发事务的哈希
+ 6）、origintext(十六进制字符串)原文
  返回类型：Json
  返回值：
  {
@@ -785,8 +787,8 @@ WalletUtility. importKeystore()
  2）、私钥（十六进制字符串)
  3）、事务哈希（十六进制字符串)
  4）、nonce(int)
- 5）、transferhash(十六进制字符串)
- 6）、origintext(十六进制字符串)
+ 5）、transferhash(十六进制字符串)签发事务的哈希
+ 6）、origintext(十六进制字符串)原文
  返回类型：Json
  返回值：
  {

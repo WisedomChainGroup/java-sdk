@@ -40,6 +40,7 @@ import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -1958,7 +1959,7 @@ public class TxUtility extends Thread {
      * @param signOther
      * @return
      */
-    public static JSONObject CreateMultipleToDeployforRuleSignSplice( String prikeyStr,  String assetHash,int min, int max, List<String> pubList,List<String> signatures,BigDecimal amount,String signFirst,String pubkeyOther,String signOther){
+    public static JSONObject CreateMultipleToDeployforRuleSignSplice( String prikeyStr, String frompubkey, String assetHash,int min, int max, List<String> pubList,List<String> signatures,BigDecimal amount,String signFirst,String pubkeyOther,String signOther){
         try {
             byte[] assetHashBy = Hex.decodeHex(assetHash.toCharArray());
             List<byte[]> pubListBy = new ArrayList<>();
@@ -2002,7 +2003,7 @@ public class TxUtility extends Thread {
                 list.add(multiple.getSignatures().get(i));
             }
             list.add(Hex.decodeHex(signOther.toCharArray()));
-            JSONObject jsonObjectRes = CreateMultipleForRuleOther(pubkeyOther, assetHashBy, min, max,pubListBy,list,amount);
+            JSONObject jsonObjectRes = CreateMultipleForRuleOther(frompubkey, assetHashBy, min, max,pubListBy,list,amount);
             String RawTransactionHex = jsonObjectRes.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
@@ -2276,7 +2277,7 @@ public class TxUtility extends Thread {
      * @param signOther
      * @return
      */
-    public static JSONObject CreateMultisignatureToDeployforRuleSignSplice(String prikeyStr,String txHashRule, int origin, int dest,List<String> pubhash, List<String> signaturesList, String to, BigDecimal value,String signFirst,String pubkeyOther,String signOther){
+    public static JSONObject CreateMultisignatureToDeployforRuleSignSplice(String prikeyStr,String txHashRule, String frompubkey, int origin, int dest,List<String> pubhash, List<String> signaturesList, String to, BigDecimal value,String signFirst,String pubkeyOther,String signOther){
         try {
             byte[] toBy = Hex.decodeHex(to.toCharArray());
             List<byte[]> pubListBy = new ArrayList<>();
@@ -2320,7 +2321,7 @@ public class TxUtility extends Thread {
                 list.add(multTransfer.getSignaturesList().get(i));
             }
             list.add(Hex.decodeHex(signOther.toCharArray()));
-            JSONObject jsonObjectRes = CreateMultisignatureForTransferOther(pubkeyOther,txHashRule,origin,dest,pubListBy,list,toBy,value );
+            JSONObject jsonObjectRes = CreateMultisignatureForTransferOther(frompubkey,txHashRule,origin,dest,pubListBy,list,toBy,value );
             String RawTransactionHex = jsonObjectRes.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
@@ -2479,8 +2480,19 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateHashTimeBlockGetForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce, String transferhash,String origintext) {
         try {
+            byte[] origintext_utf8 = origintext.getBytes(StandardCharsets.UTF_8);
+            if(origintext_utf8.length > 512){
+                APIResult apiResult = new APIResult();
+                apiResult.setMessage("origintext length is too large");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] origintextByte = SHA3Utility.sha3256(origintext_utf8);
+            String origintextStr = new String(Hex.encodeHex(origintextByte));
             byte[] assetHashBy = Hex.decodeHex(transferhash.toCharArray());
-            String RawTransactionHex = hashTimeBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,assetHashBy,origintext);
+            String RawTransactionHex = hashTimeBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,assetHashBy,origintextStr);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -2574,8 +2586,17 @@ public class TxUtility extends Thread {
      */
         public static JSONObject CreateHashTimeBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,String hashresult,BigDecimal timestamp) {
         try {
-            byte[] hashresultBy = SHA3Utility.sha3256(Hex.decodeHex(hashresult.toCharArray()));
-            JSONObject jsonObject = hashTimeBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresultBy, timestamp);
+            byte[] hashresult_utf8 = hashresult.getBytes(StandardCharsets.UTF_8);
+            if(hashresult_utf8.length > 512){
+                APIResult apiResult = new APIResult();
+                apiResult.setMessage("hashresult length is too large");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] hashresultByte = SHA3Utility.sha3256(hashresult_utf8);
+            JSONObject jsonObject = hashTimeBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresultByte, timestamp);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
@@ -2735,8 +2756,19 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateHashHeightBlockGetForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce, String transferhash,String origintext) {
         try {
+            byte[] origintext_utf8 = origintext.getBytes(StandardCharsets.UTF_8);
+            if(origintext_utf8.length > 512){
+                APIResult apiResult = new APIResult();
+                apiResult.setMessage("origintext length is too large");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] origintextByte = SHA3Utility.sha3256(origintext_utf8);
+            String origintextStr = new String(Hex.encodeHex(origintextByte));
             byte[] transferhashBy = Hex.decodeHex(transferhash.toCharArray());
-            String RawTransactionHex = hashTimeBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,transferhashBy,origintext);
+            String RawTransactionHex = hashTimeBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,transferhashBy,origintextStr);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -2830,8 +2862,17 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateHashHeightBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,String hashresult,BigDecimal timestamp) {
         try {
-            byte[] hashresultBy = SHA3Utility.sha3256(Hex.decodeHex(hashresult.toCharArray()));
-            JSONObject jsonObject = HashHeightBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresultBy, timestamp);
+            byte[] hashresult_utf8 = hashresult.getBytes(StandardCharsets.UTF_8);
+            if(hashresult_utf8.length > 512){
+                APIResult apiResult = new APIResult();
+                apiResult.setMessage("hashresult length is too large");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] hashresultByte = SHA3Utility.sha3256(hashresult_utf8);
+            JSONObject jsonObject = HashHeightBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresultByte, timestamp);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
@@ -3329,4 +3370,16 @@ public class TxUtility extends Thread {
         return apiResult;
     }
 
+    public static void main(String[] args) throws DecoderException {
+        String a = "啊";
+        byte[] aaa1 = Hex.decodeHex(a.toCharArray());
+        byte[] aaa = a.getBytes(StandardCharsets.UTF_8);
+        System.out.println(aaa.length);
+        if(aaa.length>512){
+            System.out.println(aaa.length);
+        }
+       // String hashresultStr = new String(Hex.decodeHex(a.toCharAraray()),StandardCharsets.UTF_8);
+      // byte[] aa = Hex.decodeHex(a.toCharArray());
+        System.out.println(aaa);
+    }
 }
