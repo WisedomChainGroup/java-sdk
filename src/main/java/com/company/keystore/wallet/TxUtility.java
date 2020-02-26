@@ -1792,7 +1792,12 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateMultipleToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr, long nonce, String assetHash,int min, int max, List<String> pubList,List<String> signatures,BigDecimal amount) {
         try {
-            byte[] assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            byte[] assetHashBy;
+            if(assetHash.equals("0000000000000000000000000000000000000000") || assetHash == "0000000000000000000000000000000000000000"){
+                assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            }else{
+                assetHashBy = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
+            }
             List<byte[]> publishBy = new ArrayList<>();
             for (int i = 0 ;i<pubList.size();i++){
                 publishBy.add(Hex.decodeHex(pubList.get(i).toCharArray()));
@@ -1909,7 +1914,12 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateMultipleToDeployforRuleOther(String fromPubkeyStr, String prikeyStr, long nonce, String assetHash,int min, int max, List<String> pubList,List<String> signatures,BigDecimal amount,boolean isPutSign) {
         try {
-            byte[] assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            byte[] assetHashBy;
+            if(assetHash.equals("0000000000000000000000000000000000000000") || assetHash == "0000000000000000000000000000000000000000"){
+                assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            }else{
+                assetHashBy = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
+            }
             List<byte[]> publishBy = new ArrayList<>();
             for (int i = 0 ;i<pubList.size();i++){
                 publishBy.add(Hex.decodeHex(pubList.get(i).toCharArray()));
@@ -1961,7 +1971,12 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateMultipleToDeployforRuleSignSplice( String prikeyStr, String frompubkey, long nonce,String assetHash,int min, int max, List<String> pubList,List<String> signatures,BigDecimal amount,String signFirst,String pubkeyOther,String signOther){
         try {
-            byte[] assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            byte[] assetHashBy;
+            if(assetHash.equals("0000000000000000000000000000000000000000") || assetHash == "0000000000000000000000000000000000000000"){
+                assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            }else{
+                assetHashBy = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
+            }
             List<byte[]> pubListBy = new ArrayList<>();
             for (int i = 0 ;i<pubList.size();i++){
                 pubListBy.add(Hex.decodeHex(pubList.get(i).toCharArray()));
@@ -2400,7 +2415,12 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateHashTimeBlockForDeploy(String fromPubkeyStr,String prikeyStr,long nonce, String assetHash,String pubkeyHash) {
         try {
-            byte[] assetHashBy = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
+            byte[] assetHashBy;
+            if(assetHash.equals("0000000000000000000000000000000000000000") || assetHash == "0000000000000000000000000000000000000000"){
+                assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            }else{
+                assetHashBy = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
+            }
             byte[] pubkeyHashBy = Hex.decodeHex(pubkeyHash.toCharArray());
             String RawTransactionHex = hashTimeBlockForDeploy(fromPubkeyStr, nonce,assetHashBy, pubkeyHashBy);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
@@ -2676,7 +2696,12 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateHashHeightBlockForDeploy(String fromPubkeyStr,String prikeyStr,long nonce, String assetHash,String pubkeyHash) {
         try {
-            byte[] assetHashBy = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
+            byte[] assetHashBy;
+            if(assetHash.equals("0000000000000000000000000000000000000000") || assetHash == "0000000000000000000000000000000000000000"){
+                assetHashBy = Hex.decodeHex(assetHash.toCharArray());
+            }else{
+                assetHashBy = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
+            }
             byte[] pubkeyHashBy = Hex.decodeHex(pubkeyHash.toCharArray());
             String RawTransactionHex = hashTimeBlockForDeploy(fromPubkeyStr, nonce,assetHashBy, pubkeyHashBy);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
@@ -3368,18 +3393,5 @@ public class TxUtility extends Thread {
         apiResult.setStatusCode(2000);
         apiResult.setData("");
         return apiResult;
-    }
-
-    public static void main(String[] args) throws DecoderException {
-        String a = "啊";
-        byte[] aaa1 = Hex.decodeHex(a.toCharArray());
-        byte[] aaa = a.getBytes(StandardCharsets.UTF_8);
-        System.out.println(aaa.length);
-        if(aaa.length>512){
-            System.out.println(aaa.length);
-        }
-       // String hashresultStr = new String(Hex.decodeHex(a.toCharAraray()),StandardCharsets.UTF_8);
-      // byte[] aa = Hex.decodeHex(a.toCharArray());
-        System.out.println(aaa);
     }
 }
