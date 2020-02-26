@@ -1853,11 +1853,6 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateMultipleForRuleOther(String fromPubkeyStr, long nonce, byte[] assetHash,int min, int max, List<byte[]> pubList, List<byte[]> signatures,BigDecimal amount){
         try {
-            amount = amount.multiply(BigDecimal.valueOf(rate));
-            JSONObject jsonObjectAmount = isValidPositiveLong(amount);
-            if(jsonObjectAmount.getInteger("code") == 5000){
-                return jsonObjectAmount;
-            }
             Multiple multiple = new Multiple(assetHash, min, max,pubList,signatures,amount.longValue());
             //版本号
             byte[] version = new byte[1];
