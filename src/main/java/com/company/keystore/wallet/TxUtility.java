@@ -1988,7 +1988,6 @@ public class TxUtility extends Thread {
             }
             Transaction transactionOther = new Transaction(signOther);
             byte[] sign = transactionOther.signature;
-            String a = new String(Hex.encodeHex(sign));
             list.add(sign);
             JSONObject jsonObjectRes = CreateMultipleForRuleSplice(frompubkey, nonce,assetHashBy, max, min,pubListBy,amount,list);
             String RawTransactionHex = jsonObjectRes.getString("RawTransactionHex");
@@ -2136,8 +2135,6 @@ public class TxUtility extends Thread {
             return json;
         }
     }
-
-
 
     /**
      * 构造签名的多重签名（其他人签名）
@@ -2812,7 +2809,7 @@ public class TxUtility extends Thread {
             String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("RawTransactionHex",RawTransactionStr);
-            jsonObject.put("code",5000);
+            jsonObject.put("code",2000);
             return jsonObject;
         } catch (Exception e) {
             APIResult apiResult = new APIResult();
