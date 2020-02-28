@@ -2025,7 +2025,7 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static JSONObject CreateMultisignatureForTransferFirst(String fromPubkeyStr,String txHash,long nonce, int origin, int dest, List<byte[]> pubhash, List<byte[]> signaturesList, byte[] to, BigDecimal value){
+    public static JSONObject CreateMultisignatureForTransferFirst(String fromPubkeyStr,String txHash, int origin, int dest, List<byte[]> pubhash, List<byte[]> signaturesList, byte[] to, BigDecimal value){
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
             JSONObject jsonObjectValue = new JSONObject();
@@ -2041,7 +2041,7 @@ public class TxUtility extends Thread {
             byte[] type = new byte[1];
             type[0] = 0x08;
             //Nonce 无符号64位
-            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            byte[] nonece = BigEndian.encodeUint64(0);
             //签发者公钥哈希 32字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
@@ -2088,7 +2088,7 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static JSONObject CreateMultisignatureToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr,String txHashRule,long nonce,int origin, int dest, List<String> pubhash, List<String> signaturesList, String to, BigDecimal value) {
+    public static JSONObject CreateMultisignatureToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr,String txHashRule,int origin, int dest, List<String> pubhash, List<String> signaturesList, String to, BigDecimal value) {
         try {
             List<byte[]> pubListBy = new ArrayList<>();
             for(int i = 0 ;i<pubhash.size() ; i++){
@@ -2100,14 +2100,17 @@ public class TxUtility extends Thread {
                 signaturesListBy.add(Hex.decodeHex(signaturesList.get(i).toCharArray()));
             }
             List<byte[]> list = new ArrayList<>();
-            JSONObject jsonObjectFirst = CreateMultisignatureForTransferFirst(fromPubkeyStr, txHashRule,nonce,origin, dest, pubListBy, list, toBy, value);
+            JSONObject jsonObjectFirst = CreateMultisignatureForTransferFirst(fromPubkeyStr, txHashRule,origin, dest, pubListBy, list, toBy, value);
             if(jsonObjectFirst.getInteger("code") == 5000){
                 return  jsonObjectFirst;
             }
             String RawTransactionHexFirst = jsonObjectFirst.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHexFirst, prikeyStr).toCharArray());
-            signaturesListBy.add(signRawBasicTransaction);
-            JSONObject jsonObjectFirstSign = CreateMultisignatureForTransferFirst(fromPubkeyStr, txHashRule,nonce,origin, dest, pubListBy, signaturesListBy, toBy, value);
+            String signRawBasicTransactionS = new String(Hex.encodeHex(signRawBasicTransaction));
+            Transaction transaction = new Transaction(signRawBasicTransactionS);;
+            byte[] sign = transaction.signature;
+            signaturesListBy.add(sign);
+            JSONObject jsonObjectFirstSign = CreateMultisignatureForTransferFirst(fromPubkeyStr, txHashRule,origin, dest, pubListBy, signaturesListBy, toBy, value);
             if(jsonObjectFirstSign.getInteger("code") == 5000){
                 return  jsonObjectFirstSign;
             }
@@ -2117,8 +2120,49 @@ public class TxUtility extends Thread {
             String txHash = new String(Hex.encodeHex(hash));
             String traninfo = new String(Hex.encodeHex(signRawBasicTransactionSign));
             JSONObject jsonObject = new JSONObject();
+            jsonObject.put("pubkeyFirstSign",RawTransactionHexFirst);
             jsonObject.put("pubkeyFirst",fromPubkeyStr);
             jsonObject.put("signFirst",traninfo);
+            jsonObject.put("data",txHash);
+            String jsonString = JSON.toJSONString(jsonObject);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+
+
+    /**
+     * 构造签名的多重签名（其他人签名）
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param txHashRule
+     * @param origin
+     * @param dest
+     * @param pubhash
+     * @param signaturesList
+     * @param to
+     * @param value
+     * @param isPutSign
+     * @return
+     */
+    public static JSONObject CreateMultisignatureToDeployforRuleOther(String fromPubkeyStr,String pubkeyFirstSign, String prikeyStr, String txHashRule, long nonce,int origin, int dest,List<String> pubhash, List<String> signaturesList, String to, BigDecimal value,boolean isPutSign){
+        try {
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransactionAndIsSign(pubkeyFirstSign, prikeyStr,isPutSign).toCharArray());
+            String signRawBasicTransactionS = new String(Hex.encodeHex(signRawBasicTransaction));
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("pubkeyOther",fromPubkeyStr);
+            jsonObject.put("signOther",signRawBasicTransactionS);
             jsonObject.put("data",txHash);
             jsonObject.put("message",traninfo);
             String jsonString = JSON.toJSONString(jsonObject);
@@ -2135,7 +2179,7 @@ public class TxUtility extends Thread {
     }
 
     /**
-     * 构造多重签名（其他人签名）
+     * 构造多重签名（拼接签名）
      * @param fromPubkeyStr
      * @param txHash
      * @param origin
@@ -2146,7 +2190,7 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static JSONObject CreateMultisignatureForTransferOther(String fromPubkeyStr, String txHash, long nonce,int origin, int dest, List<byte[]> pubhash, List<byte[]> signaturesList, byte[] to, BigDecimal value){
+    public static JSONObject CreateMultisignatureForTransferSplice(String fromPubkeyStr, String txHash, long nonce,int origin, int dest, List<byte[]> pubhash, List<byte[]> signaturesList, byte[] to, BigDecimal value){
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
             JSONObject jsonObjectValue = new JSONObject();
@@ -2197,59 +2241,6 @@ public class TxUtility extends Thread {
     }
 
     /**
-     * 构造签名的多重签名（其他人签名）
-     * @param fromPubkeyStr
-     * @param prikeyStr
-     * @param txHashRule
-     * @param origin
-     * @param dest
-     * @param pubhash
-     * @param signaturesList
-     * @param to
-     * @param value
-     * @param isPutSign
-     * @return
-     */
-    public static JSONObject CreateMultisignatureToDeployforRuleOther(String fromPubkeyStr, String prikeyStr, String txHashRule, long nonce,int origin, int dest,List<String> pubhash, List<String> signaturesList, String to, BigDecimal value,boolean isPutSign){
-        try {
-            byte[] toBy = Hex.decodeHex(to.toCharArray());
-            List<byte[]> pubListBy = new ArrayList<>();
-                for (int i = 0 ;i<pubhash.size();i++){
-                pubListBy.add(Hex.decodeHex(pubhash.get(i).toCharArray()));
-            }
-            List<byte[]> signaturesListBy = new ArrayList<>();
-            for (int i = 0 ;i<signaturesList.size();i++){
-                signaturesListBy.add(Hex.decodeHex(signaturesList.get(i).toCharArray()));
-            }
-            JSONObject jsonObjectRes = CreateMultisignatureForTransferOther(fromPubkeyStr, txHashRule,nonce,origin, dest, pubListBy, signaturesListBy, toBy, value);
-            if(jsonObjectRes.getInteger("code") == 5000){
-                return jsonObjectRes;
-            }
-            String RawTransactionHex = jsonObjectRes.getString("RawTransactionHex");
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransactionAndIsSign(RawTransactionHex, prikeyStr,isPutSign).toCharArray());
-            String signRawBasicTransactionS = new String(Hex.encodeHex(signRawBasicTransaction));
-            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
-            String txHash = new String(Hex.encodeHex(hash));
-            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("pubkeyOther",fromPubkeyStr);
-            jsonObject.put("signOther",signRawBasicTransactionS);
-            jsonObject.put("data",txHash);
-            jsonObject.put("message",traninfo);
-            String jsonString = JSON.toJSONString(jsonObject);
-            JSONObject json = JSON.parseObject(jsonString);
-            return json;
-        } catch (Exception e) {
-            APIResult apiResult = new APIResult();
-            apiResult.setMessage("事务构造有问题");
-            apiResult.setStatusCode(5000);
-            String jsonString = JSON.toJSONString(apiResult);
-            JSONObject json = JSON.parseObject(jsonString);
-            return json;
-        }
-    }
-
-    /**
      * 构造签名的多重签名(拼接签名)
      * @param prikeyStr
      * @param txHashRule
@@ -2264,7 +2255,7 @@ public class TxUtility extends Thread {
      * @param signOther
      * @return
      */
-    public static JSONObject CreateMultisignatureToDeployforRuleSignSplice(String prikeyStr, String frompubkey,String txHashRule,long nonce, int origin, int dest,List<String> pubhash, List<String> signaturesList, String to, BigDecimal value,String signFirst,String pubkeyOther,String signOther){
+    public static JSONObject CreateMultisignatureToDeployforRuleSignSplice(String prikeyStr, String pubkeyFirstSign,String frompubkey,String txHashRule,long nonce, int origin, int dest,List<String> pubhash, List<String> signaturesList, String to, BigDecimal value,String signFirst,String pubkeyOther,String signOther){
         try {
             byte[] toBy = Hex.decodeHex(to.toCharArray());
             List<byte[]> pubListBy = new ArrayList<>();
@@ -2275,28 +2266,19 @@ public class TxUtility extends Thread {
             for (int i = 0 ;i<signaturesList.size();i++){
                 signaturesListBy.add(Hex.decodeHex(signaturesList.get(i).toCharArray()));
             }
-            JSONObject jsonObject = CreateMultisignatureForTransferOther(pubkeyOther,txHashRule,nonce,origin,dest,pubListBy,signaturesListBy,toBy,value );
-            if(jsonObject.getInteger("code") == 2000){
-                String signNo = jsonObject.getString("RawTransactionHex");
-                Transaction transaction = new Transaction(signOther);
-                byte[] sig = transaction.signature;
-                byte[] pubkey = Hex.decodeHex(pubkeyOther.toCharArray());
-                Ed25519PublicKey ed25519PublicKey = new Ed25519PublicKey(pubkey);
-                boolean isTrue =ed25519PublicKey.verify(Hex.decodeHex(signNo.toCharArray()),sig);
-                if(!isTrue){
-                    JSONObject jsonObjectSign = new JSONObject();
-                    jsonObjectSign.put("code",5000);
-                    jsonObjectSign.put("message","others sign is wrong");
-                    return jsonObjectSign;
-                }
-            }else{
-                JSONObject json = new JSONObject();
-                json.put("code",5000);
-                json.put("message","事务构造有问题");
-                return json;
+            Transaction transaction = new Transaction(signOther);
+            byte[] sig = transaction.signature;
+            byte[] pubkey = Hex.decodeHex(pubkeyOther.toCharArray());
+            Ed25519PublicKey ed25519PublicKey = new Ed25519PublicKey(pubkey);
+            boolean isTrue =ed25519PublicKey.verify(Hex.decodeHex(pubkeyFirstSign.toCharArray()),sig);
+            if(!isTrue){
+                JSONObject jsonObjectSign = new JSONObject();
+                jsonObjectSign.put("code",5000);
+                jsonObjectSign.put("message","others sign is wrong");
+                return jsonObjectSign;
             }
-            Transaction transaction = new Transaction(signFirst);
-            byte[] payload = transaction.payload;
+            Transaction transactionPay = new Transaction(signFirst);
+            byte[] payload = transactionPay.payload;
             MultTransfer multTransfer = new MultTransfer();
             byte[] payloadNew = new byte[payload.length-1];
             for (int i = 1 ; i < payload.length ; i++){
@@ -2307,8 +2289,8 @@ public class TxUtility extends Thread {
             for(int i = 0 ;i<multTransfer.getSignaturesList().size();i++){
                 list.add(multTransfer.getSignaturesList().get(i));
             }
-            list.add(Hex.decodeHex(signOther.toCharArray()));
-            JSONObject jsonObjectRes = CreateMultisignatureForTransferOther(frompubkey,txHashRule,nonce,origin,dest,pubListBy,list,toBy,value );
+            list.add(sig);
+            JSONObject jsonObjectRes = CreateMultisignatureForTransferSplice(frompubkey,txHashRule,nonce,origin,dest,pubListBy,list,toBy,value );
             String RawTransactionHex = jsonObjectRes.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
@@ -2426,7 +2408,7 @@ public class TxUtility extends Thread {
      */
     public static String hashTimeBlockGetForDeploy(String fromPubkeyStr,String txHash,long nonce, byte[] transferhash,String origintext){
         try {
-            HashtimeblockGet hashtimeblock = new HashtimeblockGet(transferhash,origintext);
+            HashtimeblockGet hashtimeblockGet = new HashtimeblockGet(transferhash,origintext);
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -2448,7 +2430,7 @@ public class TxUtility extends Thread {
             byte[] txHash1 = Hex.decodeHex(txHash.toCharArray());
             byte[] toPubkeyHash = RipemdUtility.ripemd160(txHash1);
             //构造payload
-            byte[] payload = hashtimeblock.RLPserialization();
+            byte[] payload = hashtimeblockGet.RLPserialization();
             //长度
             byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
             byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x05},payload);
@@ -2621,7 +2603,7 @@ public class TxUtility extends Thread {
      */
     public static String HashHeightBlockForDeploy(String fromPubkeyStr,long nonce, byte[] assetHash,byte[] pubkeyHash){
         try {
-            Hashtimeblock hashtimeblock = new Hashtimeblock(assetHash,pubkeyHash);
+            Hashheightblock hashheightblock = new Hashheightblock(assetHash,pubkeyHash);
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -2643,7 +2625,7 @@ public class TxUtility extends Thread {
             String toPubkeyHashStr = "0000000000000000000000000000000000000000";
             byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
             //构造payload
-            byte[] payload = hashtimeblock.RLPserialization();
+            byte[] payload = hashheightblock.RLPserialization();
             //长度
             byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
             byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x03}, payload);
@@ -2705,7 +2687,7 @@ public class TxUtility extends Thread {
      */
     public static String HashHeightBlockGetForDeploy(String fromPubkeyStr,String txHash,long nonce, byte[] transferhash,String origintext){
         try {
-            HashtimeblockGet hashtimeblock = new HashtimeblockGet(transferhash,origintext);
+            HashheightblockGet hashheightblockGet = new HashheightblockGet(transferhash,origintext);
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -2727,7 +2709,7 @@ public class TxUtility extends Thread {
             byte[] txHash1 = Hex.decodeHex(txHash.toCharArray());
             byte[] toPubkeyHash = RipemdUtility.ripemd160(txHash1);
             //构造payload
-            byte[] payload = hashtimeblock.RLPserialization();
+            byte[] payload = hashheightblockGet.RLPserialization();
             //长度
             byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
             byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x07},payload);
@@ -2800,7 +2782,7 @@ public class TxUtility extends Thread {
             if(jsonObjectValue.getInteger("code") == 5000){
                 return jsonObjectValue;
             }
-            HashtimeblockTransfer hashtimeblockTransfer = new HashtimeblockTransfer(value.longValue(),hashresult,timestamp.longValue());
+            HashheightblockTransfer hashheightblockTransfer = new HashheightblockTransfer(value.longValue(),hashresult,timestamp.longValue());
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -2822,7 +2804,7 @@ public class TxUtility extends Thread {
             byte[] txHash1 = Hex.decodeHex(txHash.toCharArray());
             byte[] toPubkeyHash = RipemdUtility.ripemd160(txHash1);
             //构造payload
-            byte[] payload = hashtimeblockTransfer.RLPserialization();
+            byte[] payload = hashheightblockTransfer.RLPserialization();
             //长度
             byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
             byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x06}, payload);
@@ -3168,13 +3150,15 @@ public class TxUtility extends Thread {
         }
         multTransfer = multTransfer.RLPdeserialization(payloadNew);
         String to = new String(Hex.encodeHex(multTransfer.getTo()));
-        List  listPublist = new ArrayList();
+        List<String>  listPublist = new ArrayList();
         for(int i = 0;i<multTransfer.getPubhash().size();i++){
-            listPublist.add(multTransfer.getPubhash().get(i));
+            String a = new String(Hex.encodeHex(multTransfer.getPubhash().get(i)));
+            listPublist.add(a);
         }
-        List  listSignList = new ArrayList();
+        List<String>  listSignList = new ArrayList();
         for(int i = 0;i<multTransfer.getSignaturesList().size();i++){
-            listSignList.add(multTransfer.getSignaturesList().get(i));
+            String a = new String(Hex.encodeHex(multTransfer.getSignaturesList().get(i)));
+            listSignList.add(a);
         }
         JSONObject json = new JSONObject();
         json.put("origin",multTransfer.getOrigin());
