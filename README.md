@@ -364,11 +364,11 @@ WalletUtility. importKeystore()
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
  3）、Nonce(Long)
- 4）、code(String)
- 5）、offering（BigDecimal)
- 6）、createuser(十六进制字符串)
- 5）、owner（十六进制字符串)
- 6）、allowincrease(int)
+ 4）、code(String，资产代码)
+ 5）、offering（BigDecimal，期初发行额度)
+ 6）、createuser(十六进制字符串，规则创建者的公钥)
+ 5）、owner（十六进制字符串，规则所有者的公钥)
+ 6）、allowincrease(int 是否允许增发 1表示允许，0表示不允许)
  7）、info(十六进制字符串)
  返回类型：Json
  返回值：
@@ -386,7 +386,7 @@ WalletUtility. importKeystore()
  2）、事务哈希（十六进制字符串)
  3）、私钥（十六进制字符串)
  4）、nonce(Long)
- 5）、newowner(十六进制字符串)
+ 5）、newowner(十六进制字符串，目标地址对应的公钥)
  返回类型：Json
  返回值：
  {
@@ -395,7 +395,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.30构造签名的资产定义的更换资产的增发的规则调用事务
+1.30构造签名的资产定义的资产增发的规则调用事务
 ```
  TxUtility. CreateSignToDeployforRuleAssetIncreased()
  参数：
@@ -403,7 +403,7 @@ WalletUtility. importKeystore()
  2）、事务哈希（十六进制字符串)
  3）、私钥（十六进制字符串)
  4）、nonce(Long)
- 5）、amount(BigDecimal)
+ 5）、amount(BigDecimal，增发的金额)
  返回类型：Json
  返回值：
  {
@@ -419,10 +419,10 @@ WalletUtility. importKeystore()
  1）、发送者公钥（十六进制字符串)
  2）、事务哈希（十六进制字符串)
  3）、私钥（十六进制字符串)
- 3）、nonce(Long)
- 6）、from(十六进制字符串)
- 6）、to(十六进制字符串)
- 6）、value(BigDecimal)
+ 4）、nonce(Long)
+ 5）、from(十六进制字符串，公钥)
+ 6）、to(十六进制字符串，目标地址的公钥哈希)
+ 7）、value(BigDecimal，转发金额，必须大于0，整数)
  返回类型：Json
  返回值：
  {
@@ -496,11 +496,11 @@ WalletUtility. importKeystore()
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
  3）、Nonce(Long)
- 4）、code(String)
- 5）、offering（BigDecimal)
- 6）、createuser(十六进制字符串)
- 5）、owner（十六进制字符串)
- 6）、allowincrease(int)
+ 4）、code(String，资产代码)
+ 5）、offering（BigDecimal，期初发行额度)
+ 6）、createuser(十六进制字符串，规则创建者的公钥)
+ 5）、owner（十六进制字符串，规则所有者的公钥)
+ 6）、allowincrease(int 是否允许增发 1表示允许，0表示不允许)
  7）、info(十六进制字符串)
  8）、judge(boolean)true：判断   false：不判断
  返回类型：Json
@@ -511,7 +511,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.38构造签名的资产定义的更换资产的增发的规则调用事务(判断参是否数错误)
+1.38构造签名的资产定义资产增发的规则调用事务(判断参是否数错误)
 ```
  TxUtility. CreateSignToDeployforRuleAssetIncreased()
  参数：
@@ -519,7 +519,7 @@ WalletUtility. importKeystore()
  2）、事务哈希（十六进制字符串)
  3）、私钥（十六进制字符串)
  4）、nonce(Long)
- 5）、amount(BigDecimal)
+ 5）、amount(BigDecimal，增发的金额)
  6）、judge(boolean)true：判断   false：不判断
  返回类型：Json
  返回值：
@@ -536,11 +536,11 @@ WalletUtility. importKeystore()
  1）、发送者公钥（十六进制字符串)
  2）、事务哈希（十六进制字符串)
  3）、私钥（十六进制字符串)
- 3）、nonce(Long)
- 6）、from(十六进制字符串)
- 6）、to(十六进制字符串)
- 6）、value(BigDecimal)
- 7）、judge(boolean)true：判断   false：不判断
+ 4）、nonce(Long)
+ 5）、from(十六进制字符串，公钥)
+ 6）、to(十六进制字符串，目标地址的公钥哈希)
+ 7）、value(BigDecimal，转发金额，必须大于0，整数)
+ 8）、judge(boolean 是否签名  true：签名   false：不签名)
  返回类型：Json
  返回值：
  {
@@ -555,13 +555,11 @@ WalletUtility. importKeystore()
  参数：
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
- 3）、nonce(Long)
- 4）、assetHash(十六进制字符串)
- 5）、min(int)
- 6）、max(int)
- 7）、publist(十六进制字符串的集合)
- 8）、signatures(十六进制字符串的集合)
- 9）、amount(BigDecimal)
+ 3）、assetHash(十六进制字符串  资产的哈希值)
+ 4）、max(int   总计可以具备的签名数)
+ 5）、min(int   最少需要达到的签名数)
+ 6）、publist(十六进制字符串的集合  公钥数组)
+ 7）、amount(BigDecimal   总额)
  返回类型：Json
  返回值：
  {
@@ -578,14 +576,13 @@ WalletUtility. importKeystore()
  参数：
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
- 3）、nonce(Long)
- 4）、assetHash(十六进制字符串)
- 5）、min(int)
- 6）、max(int)
- 7）、publist(十六进制字符串的集合)
- 8）、signatures(十六进制字符串的集合)
- 9）、amount(BigDecimal)
- 10）、isPutSign(boolean 是否签名)
+ 3）、assetHash(十六进制字符串   资产的哈希值)
+ 4）、max(int   总计可以具备的签名数)
+ 5）、min(int   最少需要达到的签名数)
+ 6）、publist(十六进制字符串的集合   公钥数组)
+ 7）、signatures(十六进制字符串的集合  签名数组)
+ 8）、amount(BigDecimal  总额)
+ 9）、isPutSign(boolean 是否签名   true:签名  false:不签名)
  返回类型：Json
  返回值：
  {
@@ -602,16 +599,10 @@ WalletUtility. importKeystore()
  参数：
  1）、发布者私钥（十六进制字符串)
  2）、发布者公钥（十六进制字符串)
- 3）、nonce(Long)
- 4）、assetHash(十六进制字符串)
- 5）、min(int)
- 6）、max(int)
- 7）、publist(十六进制字符串的集合)
- 8）、signatures(十六进制字符串的集合)
- 9）、amount(BigDecimal)
- 10）、 signFirst(十六进制字符串，签名)
- 11）、 pubkeyOther(十六进制字符串，公钥)
- 12）、 signOther(十六进制字符串，签名)
+ 3）、nonce(Long    发布者得到当前nonce)
+ 4）、 signFirst(十六进制字符串， 发布者签名或者拼接后的签名)
+ 5）、 pubkeyOther(十六进制字符串， 公钥)
+ 6）、 signOther(十六进制字符串，  其他人的签名)
  返回类型：Json
  返回值：
  {
@@ -627,13 +618,12 @@ WalletUtility. importKeystore()
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
  3）、事务哈希（十六进制字符串)
- 4）、nonce(Long)
- 5）、origin(int)
- 6）、dest(int)
- 7）、pubhash(十六进制字符串的集合)
- 8）、signaturesList(十六进制字符串的集)
- 9）、to（十六进制字符串)
- 10）、value(BigDecimal)
+ 4）、origin(int   来源账户类型，1表示多签地址，0表示普通账户地址)
+ 5）、dest(int   目标账户类型，1表示多签地址，0表示普通账户地址)
+ 6）、pubhash(十六进制字符串的集合   公钥数组)
+ 7）、signaturesList(十六进制字符串的集合  签名数组 )
+ 8）、to（十六进制字符串   目标地址所对应的公钥哈希)
+ 9）、value(BigDecimal   转账金额)
  返回类型：Json
  返回值：
  {
@@ -649,14 +639,13 @@ WalletUtility. importKeystore()
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
  3）、事务哈希（十六进制字符串)
- 4）、nonce(Long)
- 5）、origin(int)
- 6）、dest(int)
- 7）、pubhash(十六进制字符串的集合)
- 8）、signaturesList(十六进制字符串的集)
- 9）、to（十六进制字符串)
- 10）、value(BigDecimal)
- 11）、isPutSign(boolean   是否签名)
+ 4）、origin(int   来源账户类型，1表示多签地址，0表示普通账户地址)
+ 5）、dest(int   目标账户类型，1表示多签地址，0表示普通账户地址)
+ 6）、pubhash(十六进制字符串的集合   公钥数组)
+ 7）、signaturesList(十六进制字符串的集合  签名数组 )
+ 8）、to（十六进制字符串   目标地址所对应的公钥哈希)
+ 9）、value(BigDecimal   转账金额)
+ 10）、isPutSign(boolean   是否签名)
  返回类型：Json
  返回值：
  {
@@ -671,17 +660,12 @@ WalletUtility. importKeystore()
  参数：
  1）、发布者私钥（十六进制字符串)
  2）、发布者公钥（十六进制字符串)
- 3）、nonce(Long)
+ 3）、nonce(Long    发布者当前的nonce)
  4）、事务哈希（十六进制字符串)
- 5）、origin(int)
- 6）、dest(int)
- 7）、publist(十六进制字符串的集合)
- 8）、signatures(十六进制字符串的集合)
- 9）、to（十六进制字符串)
- 10）、value(BigDecimal)
- 11）、 signFirst(十六进制字符串，签名)
- 12）、 pubkeyOther(十六进制字符串，公钥)
- 13）、 signOther(十六进制字符串，签名)
+ 5）、 signFirst(十六进制字符串，  发布者签名或者拼接后的签名)
+ 6）、 pubkeyOther(十六进制字符串，公钥)
+ 7）、 signOther(十六进制字符串，   其他人的签名)
+ 8）、 type(int，   1为单对多   2为多对单或者多对多)
  返回类型：Json
  返回值：
  {
@@ -721,8 +705,8 @@ WalletUtility. importKeystore()
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
  3）、nonce（long)
- 4）、assetHash(十六进制字符串)资产哈希
- 5）、pubkeyHash(十六进制字符串)
+ 4）、assetHash(十六进制字符串    资产哈希)
+ 5）、pubkeyHash(十六进制字符串   公钥哈希)
  返回类型：Json
  返回值：
  {
@@ -739,8 +723,8 @@ WalletUtility. importKeystore()
  2）、私钥（十六进制字符串)
  3）、事务哈希（十六进制字符串)
  4）、nonce(int)
- 5）、transferhash(十六进制字符串)签发事务的哈希
- 6）、origintext(十六进制字符串)原文
+ 5）、transferhash(十六进制字符串   签发事务的哈希)
+ 6）、origintext(十六进制字符串   原文)
  返回类型：Json
  返回值：
  {
@@ -757,8 +741,8 @@ WalletUtility. importKeystore()
  2）、私钥（十六进制字符串)
  3）、事务哈希（十六进制字符串)
  4）、nonce(int)
- 5）、value(BigDecimal)
- 6）、hashresult(十六进制字符串)原文
+ 5）、value(BigDecimal   金额)
+ 6）、hashresult(十六进制字符串   原文)
  7）、timestamp(时间戳)
  返回类型：Json
  返回值：
@@ -775,8 +759,8 @@ WalletUtility. importKeystore()
  1）、发送者公钥（十六进制字符串)
  2）、私钥（十六进制字符串)
  3）、nonce（long)
- 4）、assetHash(十六进制字符串)资产哈希
- 5）、pubkeyHash(十六进制字符串)
+ 4）、assetHash(十六进制字符串   资产哈希)
+ 5）、pubkeyHash(十六进制字符串  公钥哈希)
  返回类型：Json
  返回值：
  {
@@ -793,8 +777,8 @@ WalletUtility. importKeystore()
  2）、私钥（十六进制字符串)
  3）、事务哈希（十六进制字符串)
  4）、nonce(int)
- 5）、transferhash(十六进制字符串)签发事务的哈希
- 6）、origintext(十六进制字符串)原文
+ 5）、transferhash(十六进制字符串  转账事务的哈希)
+ 6）、origintext(十六进制字符串  原文)
  返回类型：Json
  返回值：
  {
@@ -811,8 +795,8 @@ WalletUtility. importKeystore()
  2）、私钥（十六进制字符串)
  3）、事务哈希（十六进制字符串)
  4）、nonce(int)
- 5）、value(BigDecimal)
- 6）、hashresult(十六进制字符串)原文
+ 5）、value(BigDecimal   金额)
+ 6）、hashresult(十六进制字符串  原文)
  7）、timestamp(时间戳)
  返回类型：Json
  返回值：
