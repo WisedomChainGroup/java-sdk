@@ -3011,6 +3011,17 @@ public class TxUtility extends Thread {
         return "WR"+s6;
     }
 
+    /**
+     * 事务哈希转公钥哈希
+     * @param txHash
+     * @return
+     * @throws Exception
+     */
+    public static String txhashTopubhash(String txHash) throws Exception {
+        String contractAdd = RipemdUtility.HexStringRipemd160(Hex.decodeHex(txHash.toCharArray()));
+        return contractAdd;
+    }
+
 
     /**
      * 获取Asset资产部署的详细信息
