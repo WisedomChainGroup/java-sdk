@@ -2433,10 +2433,18 @@ public class TxUtility extends Thread {
      * @return
      */
     public static JSONObject CreateHashTimeBlockGetForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce, String transferhash,String origintext) {
+        APIResult apiResult = new APIResult();
         try {
-            byte[] origintext_utf8 = origintext.getBytes(StandardCharsets.UTF_8);
+            if(origintext == null ){
+                apiResult.setMessage("origintext can not be null");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            String origintextNew = origintext.replace(" ","");
+            byte[] origintext_utf8 = origintextNew.getBytes(StandardCharsets.UTF_8);
             if(origintext_utf8.length > 512){
-                APIResult apiResult = new APIResult();
                 apiResult.setMessage("origintext length is too large");
                 apiResult.setStatusCode(5000);
                 String jsonString = JSON.toJSONString(apiResult);
@@ -2456,7 +2464,6 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            APIResult apiResult = new APIResult();
             apiResult.setMessage("事务构造有问题");
             apiResult.setStatusCode(5000);
             String jsonString = JSON.toJSONString(apiResult);
@@ -2536,11 +2543,26 @@ public class TxUtility extends Thread {
      * @param timestamp
      * @return
      */
-        public static JSONObject CreateHashTimeBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,String hashresult,BigDecimal timestamp) {
+    public static JSONObject CreateHashTimeBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,String hashresult,BigDecimal timestamp) {
+        APIResult apiResult = new APIResult();
         try {
-            byte[] hashresult_utf8 = hashresult.getBytes(StandardCharsets.UTF_8);
+            if(hashresult == null){
+                apiResult.setMessage("hashresult can not be null");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            String hashresultNew = hashresult.replace(" ","");
+            if(hashresultNew == "" || "".equals(hashresultNew)){
+                apiResult.setMessage("hashresult can not be empty");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] hashresult_utf8 = hashresultNew.getBytes(StandardCharsets.UTF_8);
             if(hashresult_utf8.length > 512){
-                APIResult apiResult = new APIResult();
                 apiResult.setMessage("hashresult length is too large");
                 apiResult.setStatusCode(5000);
                 String jsonString = JSON.toJSONString(apiResult);
@@ -2564,7 +2586,6 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            APIResult apiResult = new APIResult();
             apiResult.setMessage("事务构造有问题");
             apiResult.setStatusCode(5000);
             String jsonString = JSON.toJSONString(apiResult);
@@ -2712,10 +2733,18 @@ public class TxUtility extends Thread {
      * @return
      */
     public static JSONObject CreateHashHeightBlockGetForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce, String transferhash,String origintext) {
+        APIResult apiResult = new APIResult();
         try {
-            byte[] origintext_utf8 = origintext.getBytes(StandardCharsets.UTF_8);
+            if(origintext == null){
+                apiResult.setMessage("origintext can not be null");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            String origintextNew = origintext.replace(" ","");
+            byte[] origintext_utf8 = origintextNew.getBytes(StandardCharsets.UTF_8);
             if(origintext_utf8.length > 512){
-                APIResult apiResult = new APIResult();
                 apiResult.setMessage("origintext length is too large");
                 apiResult.setStatusCode(5000);
                 String jsonString = JSON.toJSONString(apiResult);
@@ -2735,7 +2764,6 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            APIResult apiResult = new APIResult();
             apiResult.setMessage("事务构造有问题");
             apiResult.setStatusCode(5000);
             String jsonString = JSON.toJSONString(apiResult);
@@ -2816,10 +2844,25 @@ public class TxUtility extends Thread {
      * @return
      */
     public static JSONObject CreateHashHeightBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,String hashresult,BigDecimal blockheight) {
+        APIResult apiResult = new APIResult();
         try {
-            byte[] hashresult_utf8 = hashresult.getBytes(StandardCharsets.UTF_8);
+            if(hashresult == null){
+                apiResult.setMessage("hashresult can not be null");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            String hashresultNew = hashresult.replace(" ","");
+            if(hashresultNew == "" || "".equals(hashresultNew)){
+                apiResult.setMessage("hashresult can not be empty");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] hashresult_utf8 = hashresultNew.getBytes(StandardCharsets.UTF_8);
             if(hashresult_utf8.length > 512){
-                APIResult apiResult = new APIResult();
                 apiResult.setMessage("hashresult length is too large");
                 apiResult.setStatusCode(5000);
                 String jsonString = JSON.toJSONString(apiResult);
@@ -2843,7 +2886,6 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            APIResult apiResult = new APIResult();
             apiResult.setMessage("事务构造有问题");
             apiResult.setStatusCode(5000);
             String jsonString = JSON.toJSONString(apiResult);
