@@ -1117,12 +1117,13 @@ public class TxUtility extends Thread {
      * @param info
      * @return
      */
-    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,byte[] info){
+    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,String info){
         try {
+            byte[] info_utf8 = info.getBytes(StandardCharsets.UTF_8);
             byte[] createuserBy = Hex.decodeHex(createuser.toCharArray());
             byte[] ownerBy = Hex.decodeHex(WalletUtility.addressToPubkeyHash(owner).toCharArray());
             BigDecimal totalamount = offering;
-            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,info);
+            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,info_utf8);
             if(jsonObject.getInteger("code") == 5000){
                 return  jsonObject;
             }
@@ -1502,12 +1503,13 @@ public class TxUtility extends Thread {
      * @param info
      * @return
      */
-    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,byte[] info,boolean judge){
+    public static JSONObject CreateSignToDeployforRuleAsset(String fromPubkeyStr, String prikeyStr, Long nonce, String code, BigDecimal offering, String createuser, String owner, int allowincrease,String info,boolean judge){
         try {
+            byte[] info_utf8 = info.getBytes(StandardCharsets.UTF_8);
             byte[] createuserBy = Hex.decodeHex(createuser.toCharArray());
             byte[] ownerBy = Hex.decodeHex(WalletUtility.addressToPubkeyHash(owner).toCharArray());
             BigDecimal totalamount = offering;
-            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,info,judge);
+            JSONObject jsonObject = CreateDeployforRuleAsset(fromPubkeyStr, nonce, code, offering, totalamount, createuserBy, ownerBy, allowincrease,info_utf8,judge);
             if(jsonObject.getInteger("code") == 5000){
                 return  jsonObject;
             }
@@ -1803,6 +1805,7 @@ public class TxUtility extends Thread {
             }else{
                 assetHashBy = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
             }
+            String a = new String(Hex.encodeHex(assetHashBy));
             List<byte[]> publishBy = new ArrayList<>();
             for (int i = 0 ;i<pubList.size();i++){
                 String pubkey = pubList.get(i);
@@ -1967,13 +1970,6 @@ public class TxUtility extends Thread {
             }
             multiple = multiple.RLPdeserialization(payloadNew);
             byte[] assethash = multiple.getAssetHash();
-            String assethashS = new String(Hex.encodeHex(assethash));
-            byte[] assetHashBy;
-            if(assethashS.equals("0000000000000000000000000000000000000000") || assethashS == "0000000000000000000000000000000000000000"){
-                assetHashBy = assethash;
-            }else{
-                assetHashBy = RipemdUtility.ripemd160(assethash);
-            }
             int max = multiple.getMax();
             int min = multiple.getMin();
             long amount = multiple.getAmount();
@@ -1989,7 +1985,7 @@ public class TxUtility extends Thread {
             Transaction transactionOther = new Transaction(signOther);
             byte[] sign = transactionOther.signature;
             list.add(sign);
-            JSONObject jsonObjectRes = CreateMultipleForRuleSplice(frompubkey, nonce,assetHashBy, max, min,pubListBy,amountBig,list);
+            JSONObject jsonObjectRes = CreateMultipleForRuleSplice(frompubkey, nonce,assethash, max, min,pubListBy,amountBig,list);
             String RawTransactionHex = jsonObjectRes.getString("RawTransactionHex");
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
@@ -2755,10 +2751,10 @@ public class TxUtility extends Thread {
      * @param nonce
      * @param value
      * @param hashresult
-     * @param timestamp
+     * @param blockheight
      * @return
      */
-    public static JSONObject HashHeightBlockTransferForDeploy(String fromPubkeyStr,String txHash,long nonce,BigDecimal value,byte[] hashresult,BigDecimal timestamp){
+    public static JSONObject HashHeightBlockTransferForDeploy(String fromPubkeyStr,String txHash,long nonce,BigDecimal value,byte[] hashresult,BigDecimal blockheight){
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
             JSONObject jsonObjectValue = new JSONObject();
@@ -2766,7 +2762,7 @@ public class TxUtility extends Thread {
             if(jsonObjectValue.getInteger("code") == 5000){
                 return jsonObjectValue;
             }
-            HashheightblockTransfer hashheightblockTransfer = new HashheightblockTransfer(value.longValue(),hashresult,timestamp.longValue());
+            HashheightblockTransfer hashheightblockTransfer = new HashheightblockTransfer(value.longValue(),hashresult,blockheight.longValue());
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;
@@ -2809,17 +2805,17 @@ public class TxUtility extends Thread {
     }
 
     /**
-     * 构造签名的时间锁定的转发资产事务
+     * 构造签名的区块高度锁定的转发资产事务
      * @param fromPubkeyStr
      * @param prikeyStr
      * @param txGetHash
      * @param nonce
      * @param value
      * @param hashresult
-     * @param timestamp
+     * @param blockheight
      * @return
      */
-    public static JSONObject CreateHashHeightBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,String hashresult,BigDecimal timestamp) {
+    public static JSONObject CreateHashHeightBlockTransferForDeploy(String fromPubkeyStr,String prikeyStr,String txGetHash,long nonce,BigDecimal value,String hashresult,BigDecimal blockheight) {
         try {
             byte[] hashresult_utf8 = hashresult.getBytes(StandardCharsets.UTF_8);
             if(hashresult_utf8.length > 512){
@@ -2831,7 +2827,7 @@ public class TxUtility extends Thread {
                 return json;
             }
             byte[] hashresultByte = SHA3Utility.sha3256(hashresult_utf8);
-            JSONObject jsonObject = HashHeightBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresultByte, timestamp);
+            JSONObject jsonObject = HashHeightBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresultByte, blockheight);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
