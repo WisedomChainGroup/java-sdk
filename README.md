@@ -566,8 +566,11 @@ WalletUtility. importKeystore()
  data : Transaction;
  (int)statusCode:0
  (String)message:null
- (String)pubkeyFirst:(十六进制字符串，公钥)
- (String)signFirst:(十六进制字符串，签名)
+ (String)pubkeyFirstSign:(十六进制字符串，发布者未签名的事务构造)
+ (String)pubkeyFirst:(十六进制字符串，发布者公钥)
+ (String)signFirst:(十六进制字符串，发布者签名的事务构造)
+ (String)data:(十六进制字符串)
+ (String)message:(十六进制字符串)
  }
 ```
 1.41构造签名的多重签名的部署（其他人签名）
@@ -575,22 +578,17 @@ WalletUtility. importKeystore()
  TxUtility. CreateMultipleToDeployforRuleOther()
  参数：
  1）、发送者公钥（十六进制字符串)
- 2）、私钥（十六进制字符串)
- 3）、assetHash(十六进制字符串   资产的哈希值)
- 4）、max(int   总计可以具备的签名数)
- 5）、min(int   最少需要达到的签名数)
- 6）、publist(十六进制字符串的集合   公钥数组)
- 7）、signatures(十六进制字符串的集合  签名数组)
- 8）、amount(BigDecimal  总额)
- 9）、isPutSign(boolean 是否签名   true:签名  false:不签名)
+ 2）、pubFirstSign（十六进制字符串，发布者签名返回的pubkeyFirstSign字段)
+ 3）、私钥（十六进制字符串)
+ 4）、isPutSign(boolean 是否签名   true:签名  false:不签名)
  返回类型：Json
  返回值：
  {
  data : Transaction;
  (int)statusCode:0
  (String)message:null
- (String)pubkeyOther:(十六进制字符串，公钥)
- (String)signOther:(十六进制字符串，签名)
+ (String)pubkeyOther:(十六进制字符串，其他人的公钥)
+ (String)signOther:(十六进制字符串，其他人的签名)
  }
 ```
 1.42构造签名的多重规则部署(拼接签名)
@@ -598,17 +596,18 @@ WalletUtility. importKeystore()
  TxUtility. CreateMultipleToDeployforRuleSignSplice()
  参数：
  1）、发布者私钥（十六进制字符串)
- 2）、发布者公钥（十六进制字符串)
- 3）、nonce(Long    发布者得到当前nonce)
- 4）、 signFirst(十六进制字符串， 发布者签名或者拼接后的签名)
- 5）、 pubkeyOther(十六进制字符串， 公钥)
- 6）、 signOther(十六进制字符串，  其他人的签名)
+ 2）、pubFirstSign（十六进制字符串，发布者签名返回的pubkeyFirstSign字段)
+ 3）、发布者公钥（十六进制字符串)
+ 4）、nonce(Long    发布者当前的nonce)
+ 5）、signFirst(十六进制字符串， 发布者签名返回的signFirst或者拼接后的签名返回的message)
+ 6）、pubkeyOther(十六进制字符串， 其他人签名返回的pubkeyOther字段)
+ 7）、signOther(十六进制字符串，  其他人签名返回的signOther字段)
  返回类型：Json
  返回值：
  {
  data : Transaction;
  (int)statusCode:0
- (String)message:null
+ (String)message:(十六位进制字符串  拼接完之后签名)
  }
 ```
 1.43构造签名的多重签名（发布者签名）
@@ -631,6 +630,10 @@ WalletUtility. importKeystore()
  data : Transaction;
  (int)statusCode:0
  (String)message:null
+ (String)pubkeyFirstSign:(十六进制字符串，发布者未签名的事务构造)
+ (String)pubkeyFirst:(十六进制字符串，发布者公钥)
+ (String)signFirst:(十六进制字符串，发布者签名的事务构造)
+ (String)data:(十六进制字符串)
  }
 ```
 1.44构造签名的多重签名（其他人签名）
@@ -638,21 +641,17 @@ WalletUtility. importKeystore()
  TxUtility. CreateMultisignatureToDeployforRuleOther()
  参数：
  1）、发送者公钥（十六进制字符串)
- 2）、私钥（十六进制字符串)
- 3）、事务哈希（十六进制字符串)
- 4）、origin(int   来源账户类型，1表示多签地址，0表示普通账户地址)
- 5）、dest(int   目标账户类型，1表示多签地址，0表示普通账户地址)
- 6）、pubhash(十六进制字符串的集合   公钥数组)
- 7）、signaturesList(十六进制字符串的集合  签名数组 )
- 8）、to（十六进制字符串   目标地址所对应的公钥哈希)
- 9）、value(BigDecimal   转账金额)
- 10）、isPutSign(boolean   是否签名)
+ 2）、pubFirstSign（十六进制字符串，发布者签名返回的pubkeyFirstSign字段)
+ 3）、私钥（十六进制字符串)
+ 4）、isPutSign(boolean   是否签名)
  返回类型：Json
  返回值：
  {
  data : Transaction;
  (int)statusCode:0
  (String)message:null
+ (String)pubkeyOther:(十六进制字符串，其他人的公钥)
+ (String)signOther:(十六进制字符串，其他人的签名)
  }
 ```
 1.45 构造签名的多重签名(拼接签名)
@@ -660,19 +659,20 @@ WalletUtility. importKeystore()
  TxUtility. CreateMultisignatureToDeployforRuleSignSplice()
  参数：
  1）、发布者私钥（十六进制字符串)
- 2）、发布者公钥（十六进制字符串)
- 3）、nonce(Long    发布者当前的nonce)
+ 2）、pubFirstSign（十六进制字符串，发布者签名返回的pubkeyFirstSign字段)
+ 3）、发布者公钥（十六进制字符串)
  4）、事务哈希（十六进制字符串)
- 5）、 signFirst(十六进制字符串，  发布者签名或者拼接后的签名)
- 6）、 pubkeyOther(十六进制字符串，公钥)
- 7）、 signOther(十六进制字符串，   其他人的签名)
- 8）、 type(int，   1为单对多   2为多对单  3为多对多)
+ 5）、nonce(Long    发布者当前的nonce)
+ 6）、 signFirst(十六进制字符串，  发布者签名或者拼接后的签名)
+ 7）、 pubkeyOther(十六进制字符串，公钥)
+ 8）、 signOther(十六进制字符串，   其他人的签名)
+ 9）、 type(int，   1为单对多   2为多对单  3为多对多)
  返回类型：Json
  返回值：
  {
  data : Transaction;
  (int)statusCode:0
- (String)message:null
+ (String)message:(拼接后的签名)
  }
 ```
 1.46 获取Multiple多签部署的详细信息
