@@ -624,6 +624,7 @@ WalletUtility. importKeystore()
  7）、signaturesList(十六进制字符串的集合  签名数组 )
  8）、to（十六进制字符串   目标地址所对应的公钥哈希)
  9）、value(BigDecimal   转账金额)
+ 10）、type(int，   1为单对多   2为多对单  3为多对多)
  返回类型：Json
  返回值：
  {
@@ -665,7 +666,7 @@ WalletUtility. importKeystore()
  5）、 signFirst(十六进制字符串，  发布者签名或者拼接后的签名)
  6）、 pubkeyOther(十六进制字符串，公钥)
  7）、 signOther(十六进制字符串，   其他人的签名)
- 8）、 type(int，   1为单对多   2为多对单或者多对多)
+ 8）、 type(int，   1为单对多   2为多对单  3为多对多)
  返回类型：Json
  返回值：
  {
