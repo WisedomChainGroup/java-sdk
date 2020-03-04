@@ -24,8 +24,6 @@ public class Multiple{
     @RLP(3)
     private List<byte[]> pubList;//公钥数组
     @RLP(4)
-    private long amount;
-    @RLP(5)
     private List<byte[]> signatures;//签名数组
 
     public Multiple RLPdeserialization(byte[] payload) {
@@ -35,7 +33,6 @@ public class Multiple{
             this.max=multiple.getMax();
             this.min=multiple.getMin();
             this.pubList=multiple.getPubList();
-            this.amount=multiple.getAmount();
             this.signatures=multiple.getSignatures();
             return multiple;
         }catch (Exception e){
@@ -46,12 +43,11 @@ public class Multiple{
         return RLPElement.readRLPTree(this).getEncoded();
     }
 
-    public Multiple(byte[] assetHash, int max, int min, List<byte[]> pubList ,long amount,List<byte[]> signatures) {
+    public Multiple(byte[] assetHash, int max, int min, List<byte[]> pubList ,List<byte[]> signatures) {
         this.assetHash = assetHash;
         this.max = max;
         this.min = min;
         this.pubList = pubList;
-        this.amount = amount;
         this.signatures = signatures;
     }
 }
