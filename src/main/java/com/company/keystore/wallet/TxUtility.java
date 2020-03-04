@@ -2450,16 +2450,15 @@ public class TxUtility extends Thread {
             }
             String origintextNew = origintext.replace(" ","");
             byte[] origintext_utf8 = origintextNew.getBytes(StandardCharsets.UTF_8);
-            if(origintext_utf8.length > 512){
-                apiResult.setMessage("origintext length is too large");
+            if(origintext_utf8.length > 512 || origintext_utf8.length < 0){
+                apiResult.setMessage("origintext length is too large or too short");
                 apiResult.setStatusCode(5000);
                 String jsonString = JSON.toJSONString(apiResult);
                 JSONObject json = JSON.parseObject(jsonString);
                 return json;
             }
-            String origintextNewStr = new String(Hex.encodeHex(origintext_utf8));
             byte[] transferhashBy = Hex.decodeHex(transferhash.toCharArray());
-            String RawTransactionHex = hashTimeBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,transferhashBy,origintextNewStr);
+            String RawTransactionHex = hashTimeBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,transferhashBy,origintextNew);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -2569,8 +2568,8 @@ public class TxUtility extends Thread {
                 return json;
             }
             byte[] hashresult_utf8 = hashresultNew.getBytes(StandardCharsets.UTF_8);
-            if(hashresult_utf8.length > 512){
-                apiResult.setMessage("hashresult length is too large");
+            if(hashresult_utf8.length > 512 || hashresult_utf8.length < 0){
+                apiResult.setMessage("hashresult length is too large or too short");
                 apiResult.setStatusCode(5000);
                 String jsonString = JSON.toJSONString(apiResult);
                 JSONObject json = JSON.parseObject(jsonString);
@@ -2751,16 +2750,15 @@ public class TxUtility extends Thread {
             }
             String origintextNew = origintext.replace(" ","");
             byte[] origintext_utf8 = origintextNew.getBytes(StandardCharsets.UTF_8);
-            if(origintext_utf8.length > 512){
-                apiResult.setMessage("origintext length is too large");
+            if(origintext_utf8.length > 512 || origintext_utf8.length <0){
+                apiResult.setMessage("origintext length is too large or too short");
                 apiResult.setStatusCode(5000);
                 String jsonString = JSON.toJSONString(apiResult);
                 JSONObject json = JSON.parseObject(jsonString);
                 return json;
             }
-            String origintextNewStr = new String(Hex.encodeHex(origintext_utf8));
             byte[] transferhashBy = Hex.decodeHex(transferhash.toCharArray());
-            String RawTransactionHex = HashHeightBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,transferhashBy,origintextNewStr);
+            String RawTransactionHex = HashHeightBlockGetForDeploy(fromPubkeyStr, txGetHash,nonce,transferhashBy,origintextNew);
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
@@ -2870,8 +2868,8 @@ public class TxUtility extends Thread {
                 return json;
             }
             byte[] hashresult_utf8 = hashresultNew.getBytes(StandardCharsets.UTF_8);
-            if(hashresult_utf8.length > 512){
-                apiResult.setMessage("hashresult length is too large");
+            if(hashresult_utf8.length > 512 || hashresult_utf8.length < 0){
+                apiResult.setMessage("hashresult length is too large or to short");
                 apiResult.setStatusCode(5000);
                 String jsonString = JSON.toJSONString(apiResult);
                 JSONObject json = JSON.parseObject(jsonString);
