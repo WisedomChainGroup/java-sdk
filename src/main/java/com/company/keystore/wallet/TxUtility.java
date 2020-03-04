@@ -2089,23 +2089,13 @@ public class TxUtility extends Thread {
      * @param value
      * @return
      */
-    public static JSONObject CreateMultisignatureToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr,String txHashRule,int origin, int dest, List<String> pubhash, List<String> signaturesList, String to, BigDecimal value,int type) {
+    public static JSONObject CreateMultisignatureToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr,String txHashRule,int origin, int dest, List<String> pubhash, List<String> signaturesList, String to, BigDecimal value) {
         try {
             List<byte[]> pubListBy = new ArrayList<>();
             for(int i = 0 ;i<pubhash.size() ; i++){
                 pubListBy.add(Hex.decodeHex(pubhash.get(i).toCharArray()));
             }
-            byte[] toBy;
-            if(type == 1 || type == 3){
-                toBy = RipemdUtility.ripemd160(Hex.decodeHex(to.toCharArray()));
-            }else if (type == 2){
-                toBy = Hex.decodeHex(to.toCharArray());
-            }else {
-                JSONObject jsonObjectType = new JSONObject();
-                jsonObjectType.put("code",5000);
-                jsonObjectType.put("message","type can only be 1 or 2 or 3");
-                return jsonObjectType;
-            }
+            byte[] toBy = Hex.decodeHex(to.toCharArray());
             List<byte[]> signaturesListBy = new ArrayList<>();
             for (int i = 0 ;i<signaturesList.size();i++){
                 signaturesListBy.add(Hex.decodeHex(signaturesList.get(i).toCharArray()));
