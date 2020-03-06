@@ -2972,7 +2972,7 @@ public class TxUtility extends Thread {
             jsonObject.put("code", "5000");
             return jsonObject;
         }
-        if (number.compareTo(BigDecimal.ZERO) < 0 || number.compareTo(MAXIMUM_LONG) > 0) {
+        if (number.compareTo(BigDecimal.ZERO) <= 0 || number.compareTo(MAXIMUM_LONG) > 0) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", "offering must be a positive long number");
             jsonObject.put("data", "");
