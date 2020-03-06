@@ -2796,6 +2796,13 @@ public class TxUtility extends Thread {
             if(jsonObjectValue.getInteger("code") == 5000){
                 return jsonObjectValue;
             }
+            if (new BigDecimal(blockheight.longValue()).compareTo(blockheight) != 0 || blockheight.compareTo(BigDecimal.ZERO) < 0 ) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("message", "blockheight must be a positive long number");
+                jsonObject.put("data", "");
+                jsonObject.put("code", "5000");
+                return jsonObject;
+            }
             HashheightblockTransfer hashheightblockTransfer = new HashheightblockTransfer(value.longValue(),hashresult,blockheight.longValue());
             //版本号
             byte[] version = new byte[1];
@@ -2965,7 +2972,7 @@ public class TxUtility extends Thread {
             jsonObject.put("code", "5000");
             return jsonObject;
         }
-        if (number.compareTo(BigDecimal.ZERO) <= 0 || number.compareTo(MAXIMUM_LONG) > 0) {
+        if (number.compareTo(BigDecimal.ZERO) < 0 || number.compareTo(MAXIMUM_LONG) > 0) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", "offering must be a positive long number");
             jsonObject.put("data", "");
