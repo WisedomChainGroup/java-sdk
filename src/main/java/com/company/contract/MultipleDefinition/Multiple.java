@@ -12,6 +12,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Multiple{
 
@@ -25,6 +26,8 @@ public class Multiple{
     private List<byte[]> pubList;//公钥数组
     @RLP(4)
     private List<byte[]> signatures;//签名数组
+    @RLP(5)
+    private List<byte[]> pubkeyHashList;//公钥哈希数组
 
     public Multiple RLPdeserialization(byte[] payload) {
         try{
@@ -34,6 +37,7 @@ public class Multiple{
             this.min=multiple.getMin();
             this.pubList=multiple.getPubList();
             this.signatures=multiple.getSignatures();
+            this.pubkeyHashList = multiple.getPubkeyHashList();
             return multiple;
         }catch (Exception e){
             throw e;
@@ -43,11 +47,4 @@ public class Multiple{
         return RLPElement.readRLPTree(this).getEncoded();
     }
 
-    public Multiple(byte[] assetHash, int max, int min, List<byte[]> pubList ,List<byte[]> signatures) {
-        this.assetHash = assetHash;
-        this.max = max;
-        this.min = min;
-        this.pubList = pubList;
-        this.signatures = signatures;
-    }
 }

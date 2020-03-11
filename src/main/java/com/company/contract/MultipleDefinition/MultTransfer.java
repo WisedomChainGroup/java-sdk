@@ -20,13 +20,15 @@ public class MultTransfer {
     @RLP(1)
     private int dest;
     @RLP(2)
-    private List<byte[]> pubhash;
+    private List<byte[]> from;
     @RLP(3)
-    private List<byte[]> signaturesList;
+    private List<byte[]> signatures;
     @RLP(4)
     private byte[] to;
     @RLP(5)
     private long value;
+    @RLP(6)
+    private List<byte[]> pubkeyHashList;//公钥哈希数组
 
     public byte[] RLPdeserialization() {
         return RLPElement.readRLPTree(this).getEncoded();
@@ -37,10 +39,11 @@ public class MultTransfer {
             MultTransfer multTransfer = RLPCodec.decode(payload, MultTransfer.class);
             this.origin = multTransfer.getOrigin();
             this.dest = multTransfer.getDest();
-            this.pubhash = multTransfer.getPubhash();
-            this.signaturesList = multTransfer.getSignaturesList();
+            this.from = multTransfer.getFrom();
+            this.signatures = multTransfer.getSignatures();
             this.to = multTransfer.getTo();
             this.value = multTransfer.getValue();
+            this.pubkeyHashList = multTransfer.getPubkeyHashList();
             return multTransfer;
         } catch (Exception e) {
             throw e;
