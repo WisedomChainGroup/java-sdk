@@ -2277,7 +2277,9 @@ public class TxUtility extends Thread {
                     fromList.add(multTransfer.getFrom().get(i));
                 }
             }
-            fromList.add(pubkeyOtherBy);
+            if(!frompubkey.equals(pubkeyOther)) {
+                fromList.add(pubkeyOtherBy);
+            }
             //公钥哈希数组
             List<byte[]> pubkeyHashList = new ArrayList<>();
             for(int i = 0 ;i<multTransfer.getPubkeyHashList().size();i++){
