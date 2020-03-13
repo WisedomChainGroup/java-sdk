@@ -1827,7 +1827,6 @@ public class TxUtility extends Thread {
             byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
             Transaction transaction = new Transaction(new String(Hex.encodeHex(signRawBasicTransaction)));
             byte[] sign = transaction.signature;
-            String si = new String(Hex.encodeHex(sign));
             signaturesBy.add(sign);
             JSONObject jsonObjectFirstSign = CreateMultipleForRuleFirst(fromPubkeyStr, assetHashBy, max, min,pubListBy,signaturesBy,pubHashListBy);
             if(jsonObjectFirstSign.getInteger("code") == 5000){
@@ -1992,7 +1991,9 @@ public class TxUtility extends Thread {
                     pubListBy.add(multiple.getPubList().get(i));
                 }
             }
-            pubListBy.add(pubOther);
+            if(!frompubkey.equals(pubkeyOther)) {
+                pubListBy.add(pubOther);
+            }
             List<byte[]> list = new ArrayList<>();
             for(int i = 0 ;i < multiple.getSignatures().size(); i++){
                 list.add(multiple.getSignatures().get(i));
