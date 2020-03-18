@@ -1749,7 +1749,7 @@ public class TxUtility extends Thread {
      * @param signatures
      * @return
      */
-    public static JSONObject CreateMultipleForRuleFirst(String fromPubkeyStr,  byte[] assetHash,int max, int min, List<byte[]> pubList,List<byte[]> signatures,List<byte[]> pubkeyHashList){
+    public static JSONObject CreateMultipleForRuleFirst(String fromPubkeyStr, long nonce , byte[] assetHash,int max, int min, List<byte[]> pubList,List<byte[]> signatures,List<byte[]> pubkeyHashList){
         try {
             Multiple multiple = new Multiple(assetHash, max, min,pubList,signatures,pubkeyHashList);
             //版本号
@@ -1759,7 +1759,7 @@ public class TxUtility extends Thread {
             byte[] type = new byte[1];
             type[0] = 0x07;
             //Nonce 无符号64位
-            byte[] nonece = BigEndian.encodeUint64(0);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 20字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
@@ -1803,7 +1803,7 @@ public class TxUtility extends Thread {
      * @param pubkeyHashList
      * @return
      */
-    public static JSONObject CreateMultipleToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr, String assetHash,int max, int min, List<String> pubkeyHashList) {
+    public static JSONObject CreateMultipleToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr, long nonce, String assetHash,int max, int min, List<String> pubkeyHashList) {
         try {
             byte[] assetHashBy;
             if(assetHash.equals("0000000000000000000000000000000000000000") || assetHash == "0000000000000000000000000000000000000000"){
@@ -1819,7 +1819,7 @@ public class TxUtility extends Thread {
                 pubHashListBy.add(pubkeyHashBy);
             }
             List<byte[]> signaturesBy = new ArrayList<>();
-            JSONObject jsonObjectRes = CreateMultipleForRuleFirst(fromPubkeyStr, assetHashBy, max, min,pubListBy,signaturesBy,pubHashListBy);
+            JSONObject jsonObjectRes = CreateMultipleForRuleFirst(fromPubkeyStr,nonce ,assetHashBy, max, min,pubListBy,signaturesBy,pubHashListBy);
             if(jsonObjectRes.getInteger("code") == 5000){
                 return jsonObjectRes;
             }
@@ -1828,7 +1828,7 @@ public class TxUtility extends Thread {
             Transaction transaction = new Transaction(new String(Hex.encodeHex(signRawBasicTransaction)));
             byte[] sign = transaction.signature;
             signaturesBy.add(sign);
-            JSONObject jsonObjectFirstSign = CreateMultipleForRuleFirst(fromPubkeyStr, assetHashBy, max, min,pubListBy,signaturesBy,pubHashListBy);
+            JSONObject jsonObjectFirstSign = CreateMultipleForRuleFirst(fromPubkeyStr, nonce,assetHashBy, max, min,pubListBy,signaturesBy,pubHashListBy);
             if(jsonObjectFirstSign.getInteger("code") == 5000){
                 return  jsonObjectFirstSign;
             }
@@ -2024,7 +2024,7 @@ public class TxUtility extends Thread {
     }
 
     /**
-     * 构造多重签名（发布者签名）
+     * 构造多重签名转账（发布者签名）
      * @param fromPubkeyStr
      * @param txHash
      * @param origin
@@ -2036,7 +2036,7 @@ public class TxUtility extends Thread {
      * @param pubkeyHashList
      * @return
      */
-    public static JSONObject CreateMultisignatureForTransferFirst(String fromPubkeyStr,String txHash, int origin, int dest, List<byte[]> from, List<byte[]> signatures, byte[] to, BigDecimal value,List<byte[]> pubkeyHashList){
+    public static JSONObject CreateMultisignatureForTransferFirst(String fromPubkeyStr,String txHash,long nonce, int origin, int dest, List<byte[]> from, List<byte[]> signatures, byte[] to, BigDecimal value,List<byte[]> pubkeyHashList){
         try {
             value = value.multiply(BigDecimal.valueOf(rate));
             JSONObject jsonObjectValue = new JSONObject();
@@ -2052,7 +2052,7 @@ public class TxUtility extends Thread {
             byte[] type = new byte[1];
             type[0] = 0x08;
             //Nonce 无符号64位
-            byte[] nonece = BigEndian.encodeUint64(0);
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
             //签发者公钥哈希 32字节
             byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
             //gas单价
@@ -2087,7 +2087,7 @@ public class TxUtility extends Thread {
     }
 
     /**
-     * 构造签名的多重签名（发布者签名）
+     * 构造签名的多重签名转账（发布者签名）
      * @param fromPubkeyStr
      * @param prikeyStr
      * @param txHashRule
@@ -2099,7 +2099,7 @@ public class TxUtility extends Thread {
      * @param pubkeyHashList
      * @return
      */
-    public static JSONObject CreateMultisignatureToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr,String txHashRule,int origin, int dest,  List<String> signatures, String to, BigDecimal value,List<String> pubkeyHashList) {
+    public static JSONObject CreateMultisignatureToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr,String txHashRule,long nonce,int origin, int dest,  List<String> signatures, String to, BigDecimal value,List<String> pubkeyHashList) {
         try {
             List<byte[]> pubListBy = new ArrayList<>();
             byte[] toBy = Hex.decodeHex(to.toCharArray());
@@ -2111,7 +2111,7 @@ public class TxUtility extends Thread {
             for (int i = 0 ;i<pubkeyHashList.size();i++){
                 pubHashList.add(Hex.decodeHex(pubkeyHashList.get(i).toCharArray()));
             }
-            JSONObject jsonObjectFirst = CreateMultisignatureForTransferFirst(fromPubkeyStr, txHashRule,origin, dest, pubListBy, pubListBy, toBy, value,pubHashList);
+            JSONObject jsonObjectFirst = CreateMultisignatureForTransferFirst(fromPubkeyStr, txHashRule,nonce,origin, dest, pubListBy, pubListBy, toBy, value,pubHashList);
             if(jsonObjectFirst.getInteger("code") == 5000){
                 return  jsonObjectFirst;
             }
@@ -2121,7 +2121,7 @@ public class TxUtility extends Thread {
             Transaction transaction = new Transaction(signRawBasicTransactionS);;
             byte[] sign = transaction.signature;
             signaturesListBy.add(sign);
-            JSONObject jsonObjectFirstSign = CreateMultisignatureForTransferFirst(fromPubkeyStr, txHashRule,origin, dest, pubListBy, signaturesListBy, toBy, value,pubHashList);
+            JSONObject jsonObjectFirstSign = CreateMultisignatureForTransferFirst(fromPubkeyStr, txHashRule,nonce,origin, dest, pubListBy, signaturesListBy, toBy, value,pubHashList);
             if(jsonObjectFirstSign.getInteger("code") == 5000){
                 return  jsonObjectFirstSign;
             }
@@ -2149,7 +2149,7 @@ public class TxUtility extends Thread {
     }
 
     /**
-     * 构造签名的多重签名（其他人签名）
+     * 构造签名的多重签名转账（其他人签名）
      * @param fromPubkeyStr
      * @param prikeyStr
      * @param isPutSign
@@ -2181,7 +2181,7 @@ public class TxUtility extends Thread {
     }
 
     /**
-     * 构造多重签名（拼接签名）
+     * 构造多重签名转账（拼接签名）
      * @param fromPubkeyStr
      * @param txHash
      * @param nonce
@@ -2239,7 +2239,7 @@ public class TxUtility extends Thread {
     }
 
     /**
-     * 构造签名的多重签名(拼接签名)
+     * 构造签名的多重签名转账(拼接签名)
      * @param prikeyStr
      * @param txHashRule
      * @param signFirst
