@@ -369,7 +369,7 @@ WalletUtility. importKeystore()
  6）、createuser(十六进制字符串，规则创建者的公钥)
  5）、owner（十六进制字符串，规则所有者的公钥)
  6）、allowincrease(int 是否允许增发 1表示允许，0表示不允许)
- 7）、info(十六进制字符串)
+ 7）、info(string 说明)
  返回类型：Json
  返回值：
  {
