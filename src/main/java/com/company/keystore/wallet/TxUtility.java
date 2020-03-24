@@ -1143,6 +1143,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -1225,6 +1226,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -1319,6 +1321,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -1414,6 +1417,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -1529,6 +1533,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -1625,6 +1630,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -1726,6 +1732,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -1843,6 +1850,7 @@ public class TxUtility extends Thread {
             jsonObject.put("signFirst",traninfo);
             jsonObject.put("data",txHash);
             jsonObject.put("message",traninfo);
+            jsonObject.put("statusCode",2000);
             String jsonString = JSON.toJSONString(jsonObject);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -1873,6 +1881,7 @@ public class TxUtility extends Thread {
             jsonObject.put("signOther",traninfo);
             jsonObject.put("data",txHash);
             jsonObject.put("message",traninfo);
+            jsonObject.put("statusCode",2000);
             String jsonString = JSON.toJSONString(jsonObject);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -2010,6 +2019,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -2135,6 +2145,7 @@ public class TxUtility extends Thread {
             jsonObject.put("pubkeyFirst",fromPubkeyStr);
             jsonObject.put("signFirst",traninfo);
             jsonObject.put("data",txHash);
+            jsonObject.put("statusCode",2000);
             String jsonString = JSON.toJSONString(jsonObject);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -2167,6 +2178,7 @@ public class TxUtility extends Thread {
             jsonObject.put("signOther",signRawBasicTransactionS);
             jsonObject.put("data",txHash);
             jsonObject.put("message",traninfo);
+            jsonObject.put("statusCode",2000);
             String jsonString = JSON.toJSONString(jsonObject);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -2317,6 +2329,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -2402,6 +2415,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -2498,6 +2512,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -2620,6 +2635,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -2702,6 +2718,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -2798,6 +2815,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
@@ -2927,6 +2945,7 @@ public class TxUtility extends Thread {
             APIResult result = new APIResult();
             result.setData(txHash);
             result.setMessage(traninfo);
+            result.setStatusCode(2000);
             String jsonString = JSON.toJSONString(result);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
