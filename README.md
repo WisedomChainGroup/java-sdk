@@ -367,7 +367,7 @@ WalletUtility. importKeystore()
  4）、code(String，资产代码)
  5）、offering（BigDecimal，期初发行额度)
  6）、createuser(十六进制字符串，规则创建者的公钥)
- 5）、owner（十六进制字符串，规则所有者的公钥)
+ 5）、owner（十六进制字符串，规则所有者的公钥哈希)
  6）、allowincrease(int 是否允许增发 1表示允许，0表示不允许)
  7）、info(string 说明)
  返回类型：Json
@@ -386,7 +386,7 @@ WalletUtility. importKeystore()
  2）、事务哈希（十六进制字符串)
  3）、私钥（十六进制字符串)
  4）、nonce(Long)
- 5）、newowner(十六进制字符串，目标地址对应的公钥)
+ 5）、newowner(十六进制字符串，新的目标用户地址)
  返回类型：Json
  返回值：
  {
@@ -499,7 +499,7 @@ WalletUtility. importKeystore()
  4）、code(String，资产代码)
  5）、offering（BigDecimal，期初发行额度)
  6）、createuser(十六进制字符串，规则创建者的公钥)
- 5）、owner（十六进制字符串，规则所有者的公钥)
+ 5）、owner（十六进制字符串，规则所有者的公钥哈希)
  6）、allowincrease(int 是否允许增发 1表示允许，0表示不允许)
  7）、info(十六进制字符串)
  8）、judge(boolean)true：判断   false：不判断
