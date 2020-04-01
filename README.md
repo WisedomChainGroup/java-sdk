@@ -433,7 +433,7 @@ WalletUtility. importKeystore()
 ```
 1.32 获取Asset资产部署的详细信息
 ```
-*   方法：TxUtility.getAsset(POST)     
+*   方法：TxUtility.getAsset()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -445,7 +445,7 @@ WalletUtility. importKeystore()
 ```
 1.33 获取AssetChangeowner资产更换所有者的详细信息
 ```
-*   方法：TxUtility.getAssetChangeowner(POST)     
+*   方法：TxUtility.getAssetChangeowner()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -457,7 +457,7 @@ WalletUtility. importKeystore()
 ```
 1.34 获取AssetIncreased资产增发的详细信息
 ```
-*   方法：TxUtility.getAssetIncreased(POST)     
+*   方法：TxUtility.getAssetIncreased()
 *	参数：payload(十六进制字符串)   
  返回类型：Json
  返回值：
@@ -469,7 +469,7 @@ WalletUtility. importKeystore()
 ```
 1.35 获取AssetTransfer资产转账的详细信息
 ```
-*   方法：TxUtility.getAssetTransfer(POST)     
+*   方法：TxUtility.getAssetTransfer()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -678,7 +678,7 @@ WalletUtility. importKeystore()
 ```
 1.46 获取Multiple多签部署的详细信息
 ```
-*   方法：TxUtility.getMultiple(POST)     
+*   方法：TxUtility.getMultiple()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -690,7 +690,7 @@ WalletUtility. importKeystore()
 ```
 1.47 获取MultTransfer多签规则转账的详细信息
 ```
-*   方法：TxUtility.getMultTransfer(POST)     
+*   方法：TxUtility.getMultTransfer()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -810,7 +810,7 @@ WalletUtility. importKeystore()
 ```
 1.54 获取Hashtimeblock时间锁定支付的详细信息
 ```
-*   方法：TxUtility.getHashtimeblock(POST)     
+*   方法：TxUtility.getHashtimeblock()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -822,7 +822,7 @@ WalletUtility. importKeystore()
 ```
 1.55 获得HashtimeblockGet时间锁定支付获得锁定资产的详细信息
 ```
-*   方法：TxUtility.getHashtimeblockGet(POST)     
+*   方法：TxUtility.getHashtimeblockGet()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -834,7 +834,7 @@ WalletUtility. importKeystore()
 ```
 1.56 获得HashtimeblockTransfer时间锁定支付转发资产的详细信息
 ```
-*   方法：TxUtility.getHashtimeblockTransfer(POST)     
+*   方法：TxUtility.getHashtimeblockTransfer()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -846,7 +846,7 @@ WalletUtility. importKeystore()
 ```
 1.57 获取Hashheightblock区块高度锁定的详细信息
 ```
-*   方法：TxUtility.getHashheightblock(POST)     
+*   方法：TxUtility.getHashheightblock()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -858,7 +858,7 @@ WalletUtility. importKeystore()
 ```
 1.58 获取HashheightblockGet区块高度锁定获得锁定资产的详细信息
 ```
-*   方法：TxUtility.getHashheightblockGet(POST)     
+*   方法：TxUtility.getHashheightblockGet()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -870,7 +870,7 @@ WalletUtility. importKeystore()
 ```
 1.59 获得HashheightblockTransfer区块高度锁定转发资产的详细信息
 ```
-*   方法：TxUtility.getHashheightblockTransfer(POST)     
+*   方法：TxUtility.getHashheightblockTransfer()     
 *	参数：payload(十六进制字符串)  
  返回类型：Json
  返回值：
@@ -882,7 +882,7 @@ WalletUtility. importKeystore()
 ```
 1.60 通过事务哈希转公钥哈希
 ``` 
-*   方法：TxUtility.txhashTopubhash(POST)     
+*   方法：TxUtility.txhashTopubhash()     
 *	参数：事务哈希(十六进制字符串)  
  返回类型：String
  返回值：
