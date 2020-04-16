@@ -489,67 +489,8 @@ WalletUtility. importKeystore()
  合约地址：String
  }
 ```
-1.37构造签名的规则部署的资产定义事务(判断参数是否错误)
-```
- TxUtility. CreateSignToDeployforRuleAssetIsJudge()
- 参数：
- 1）、发送者公钥（十六进制字符串)
- 2）、私钥（十六进制字符串)
- 3）、Nonce(Long)
- 4）、code(String，资产代码)
- 5）、offering（BigDecimal，期初发行额度)
- 6）、createuser(十六进制字符串，规则创建者的公钥)
- 5）、owner（十六进制字符串，规则所有者的公钥哈希)
- 6）、allowincrease(int 是否允许增发 1表示允许，0表示不允许)
- 7）、info(十六进制字符串)
- 8）、judge(boolean)true：判断   false：不判断
- 返回类型：Json
- 返回值：
- {
- data : Transaction;
- (int)statusCode:0
- (String)message:null
- }
-```
-1.38构造签名的资产定义资产增发的规则调用事务(判断参是否数错误)
-```
- TxUtility. CreateSignToDeployforRuleAssetIncreased()
- 参数：
- 1）、发送者公钥（十六进制字符串)
- 2）、事务哈希（十六进制字符串)
- 3）、私钥（十六进制字符串)
- 4）、nonce(Long)
- 5）、amount(BigDecimal，增发的金额)
- 6）、judge(boolean)true：判断   false：不判断
- 返回类型：Json
- 返回值：
- {
- data : Transaction;
- (int)statusCode:0
- (String)message:null
- }
-```
-1.39构造签名的资产定义的转账的规则调用事务(判断参数是否错误)
-```
- TxUtility. CreateSignToDeployforRuleTransfer()
- 参数：
- 1）、发送者公钥（十六进制字符串)
- 2）、事务哈希（十六进制字符串)
- 3）、私钥（十六进制字符串)
- 4）、nonce(Long)
- 5）、from(十六进制字符串，公钥)
- 6）、to(十六进制字符串，目标地址的公钥哈希)
- 7）、value(BigDecimal，转发金额，必须大于0，整数)
- 8）、judge(boolean 是否签名  true：签名   false：不签名)
- 返回类型：Json
- 返回值：
- {
- data : Transaction;
- (int)statusCode:0
- (String)message:null
- }
-```
-1.40构造签名的多重规则部署（发布者签名）
+
+1.37构造签名的多重规则部署（发布者签名）
 ```
  TxUtility. CreateMultipleToDeployforRuleFirst()
  参数：
@@ -574,7 +515,7 @@ WalletUtility. importKeystore()
  (String)message:(十六进制字符串)
  }
 ```
-1.41构造签名的多重签名的部署（其他人签名）
+1.38构造签名的多重签名的部署（其他人签名）
 ```
  TxUtility. CreateMultipleToDeployforRuleOther()
  参数：
@@ -592,7 +533,7 @@ WalletUtility. importKeystore()
  (String)signOther:(十六进制字符串，其他人的签名)
  }
 ```
-1.42构造签名的多重规则部署(拼接签名)
+1.39构造签名的多重规则部署(拼接签名)
 ```
  TxUtility. CreateMultipleToDeployforRuleSignSplice()
  参数：
@@ -611,7 +552,7 @@ WalletUtility. importKeystore()
  (String)message:(十六位进制字符串  拼接完之后签名)
  }
 ```
-1.43构造签名转账的多重签名（发布者签名）
+1.40构造签名转账的多重签名（发布者签名）
 ```
  TxUtility. CreateMultisignatureToDeployforRuleFirst()
  参数：
@@ -637,7 +578,7 @@ WalletUtility. importKeystore()
  (String)data:(十六进制字符串)
  }
 ```
-1.44构造签名转账的多重签名（其他人签名）
+1.41构造签名转账的多重签名（其他人签名）
 ```
  TxUtility. CreateMultisignatureToDeployforRuleOther()
  参数：
@@ -655,7 +596,7 @@ WalletUtility. importKeystore()
  (String)signOther:(十六进制字符串，其他人的签名)
  }
 ```
-1.45 构造签名转账的多重签名(拼接签名)
+1.42 构造签名转账的多重签名(拼接签名)
 ```
  TxUtility. CreateMultisignatureToDeployforRuleSignSplice()
  参数：
@@ -676,7 +617,7 @@ WalletUtility. importKeystore()
  (String)message:(拼接后的签名)
  }
 ```
-1.46 获取Multiple多签部署的详细信息
+1.43 获取Multiple多签部署的详细信息
 ```
 *   方法：TxUtility.getMultiple()     
 *	参数：payload(十六进制字符串)  
@@ -688,7 +629,7 @@ WalletUtility. importKeystore()
  (String)message:对象的所有参数
  }
 ```
-1.47 获取MultTransfer多签规则转账的详细信息
+1.44 获取MultTransfer多签规则转账的详细信息
 ```
 *   方法：TxUtility.getMultTransfer()     
 *	参数：payload(十六进制字符串)  
@@ -700,7 +641,7 @@ WalletUtility. importKeystore()
  (String)message:对象的所有参数
  }
 ```
-1.48 构造签名的时间锁定的事务
+1.45 构造签名的时间锁定的事务
 ```
  TxUtility. CreateHashTimeBlockForDeploy()
  参数：
@@ -717,7 +658,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.49 构造签名的获得锁定资产事务
+1.46 构造签名的获得锁定资产事务
 ```
  TxUtility. CreateHashTimeBlockGetForDeploy()
  参数：
@@ -735,7 +676,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.50 构造签名的时间锁定的转发资产事务
+1.47 构造签名的时间锁定的转发资产事务
 ```
  TxUtility. CreateHashTimeBlockTransferForDeploy()
  参数：
@@ -754,7 +695,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.51 构造签名的区块高度锁定支付事务
+1.48 构造签名的区块高度锁定支付事务
 ```
  TxUtility. CreateHashHeightBlockForDeploy()
  参数：
@@ -771,7 +712,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.52 构造签名的区块高度获得锁定资产事务
+1.49 构造签名的区块高度获得锁定资产事务
 ```
  TxUtility. CreateHashHeightBlockGetForDeploy()
  参数：
@@ -789,7 +730,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.53 构造签名的区块高度锁定的转发资产事务
+1.50 构造签名的区块高度锁定的转发资产事务
 ```
  TxUtility. CreateHashHeightBlockTransferForDeploy()
  参数：
@@ -808,7 +749,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.54 获取Hashtimeblock时间锁定支付的详细信息
+1.51 获取Hashtimeblock时间锁定支付的详细信息
 ```
 *   方法：TxUtility.getHashtimeblock()     
 *	参数：payload(十六进制字符串)  
@@ -820,7 +761,7 @@ WalletUtility. importKeystore()
  (String)message:对象的所有参数
  }
 ```
-1.55 获得HashtimeblockGet时间锁定支付获得锁定资产的详细信息
+1.52 获得HashtimeblockGet时间锁定支付获得锁定资产的详细信息
 ```
 *   方法：TxUtility.getHashtimeblockGet()     
 *	参数：payload(十六进制字符串)  
@@ -832,7 +773,7 @@ WalletUtility. importKeystore()
  (String)message:对象的所有参数
  }
 ```
-1.56 获得HashtimeblockTransfer时间锁定支付转发资产的详细信息
+1.53 获得HashtimeblockTransfer时间锁定支付转发资产的详细信息
 ```
 *   方法：TxUtility.getHashtimeblockTransfer()     
 *	参数：payload(十六进制字符串)  
@@ -844,7 +785,7 @@ WalletUtility. importKeystore()
  (String)message:对象的所有参数
  }
 ```
-1.57 获取Hashheightblock区块高度锁定的详细信息
+1.54 获取Hashheightblock区块高度锁定的详细信息
 ```
 *   方法：TxUtility.getHashheightblock()     
 *	参数：payload(十六进制字符串)  
@@ -856,7 +797,7 @@ WalletUtility. importKeystore()
  (String)message:对象的所有参数
  }
 ```
-1.58 获取HashheightblockGet区块高度锁定获得锁定资产的详细信息
+1.55 获取HashheightblockGet区块高度锁定获得锁定资产的详细信息
 ```
 *   方法：TxUtility.getHashheightblockGet()     
 *	参数：payload(十六进制字符串)  
@@ -868,7 +809,7 @@ WalletUtility. importKeystore()
  (String)message:对象的所有参数
  }
 ```
-1.59 获得HashheightblockTransfer区块高度锁定转发资产的详细信息
+1.56 获得HashheightblockTransfer区块高度锁定转发资产的详细信息
 ```
 *   方法：TxUtility.getHashheightblockTransfer()     
 *	参数：payload(十六进制字符串)  
@@ -880,7 +821,7 @@ WalletUtility. importKeystore()
  (String)message:对象的所有参数
  }
 ```
-1.60 通过事务哈希转公钥哈希
+1.57 通过事务哈希转公钥哈希
 ``` 
 *   方法：TxUtility.txhashTopubhash()     
 *	参数：事务哈希(十六进制字符串)  
