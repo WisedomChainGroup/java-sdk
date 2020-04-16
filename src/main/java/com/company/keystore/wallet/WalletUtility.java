@@ -313,15 +313,6 @@ public class WalletUtility {
      */
     public static String prikeyToPubkey(String prikey) {
         try {
-            if (prikey.length() == 64) {
-                if (new BigInteger(Hex.decodeHex(prikey.toCharArray())).compareTo(new BigInteger(ByteUtils.hexStringToBytes(t))) > 0) {
-                    return "";
-                }
-            } else if (prikey.length() == 128) {
-                if (new BigInteger(Hex.decodeHex(prikey.substring(0, 64).toCharArray())).compareTo(new BigInteger(ByteUtils.hexStringToBytes(t))) > 0) {
-                    return "";
-                }
-            }
             Ed25519PrivateKey eprik = new Ed25519PrivateKey(Hex.decodeHex(prikey.toCharArray()));
             Ed25519PublicKey epuk = eprik.generatePublicKey();
             String pubkey = new String(Hex.encodeHex(epuk.getEncoded()));
