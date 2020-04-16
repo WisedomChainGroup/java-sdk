@@ -1788,25 +1788,21 @@ public class TxUtility extends Thread {
      * @param txHashRule
      * @param origin
      * @param dest
-     * @param signatures
      * @param to
      * @param value
      * @param pubkeyHashList
      * @return
      */
-    public static JSONObject CreateMultisignatureToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr,String txHashRule,long nonce,int origin, int dest,  List<String> signatures, String to, BigDecimal value,List<String> pubkeyHashList) {
+    public static JSONObject CreateMultisignatureToDeployforRuleFirst(String fromPubkeyStr, String prikeyStr,String txHashRule,long nonce,int origin, int dest, String to, BigDecimal value,List<String> pubkeyHashList) {
         try {
             List<byte[]> pubListBy = new ArrayList<>();
             byte[] toBy = Hex.decodeHex(to.toCharArray());
             List<byte[]> signaturesListBy = new ArrayList<>();
-            for (int i = 0 ;i<signatures.size();i++){
-                signaturesListBy.add(Hex.decodeHex(signatures.get(i).toCharArray()));
-            }
             List<byte[]> pubHashList = new ArrayList<>();
             for (int i = 0 ;i<pubkeyHashList.size();i++){
                 pubHashList.add(Hex.decodeHex(pubkeyHashList.get(i).toCharArray()));
             }
-            JSONObject jsonObjectFirst = CreateMultisignatureForTransferFirst(fromPubkeyStr, txHashRule,nonce,origin, dest, pubListBy, pubListBy, toBy, value,pubHashList);
+            JSONObject jsonObjectFirst = CreateMultisignatureForTransferFirst(fromPubkeyStr, txHashRule,nonce,origin, dest, pubListBy, signaturesListBy, toBy, value,pubHashList);
             if(jsonObjectFirst.getInteger("code") == 5000){
                 return  jsonObjectFirst;
             }

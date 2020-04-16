@@ -563,9 +563,8 @@ WalletUtility. importKeystore()
  5）、origin(int   来源账户类型，1表示多签地址，0表示普通账户地址)
  6）、dest(int   目标账户类型，1表示多签地址，0表示普通账户地址)
  7）、pubhash(十六进制字符串的集合   公钥数组)
- 8）、signaturesList(十六进制字符串的集合  签名数组 )
- 9）、to（十六进制字符串   普通地址所对应的公钥哈希或者多签地址对应的事务哈希)
- 10）、value(BigDecimal   转账金额)
+ 8）、to（十六进制字符串   普通地址所对应的公钥哈希或者多签地址对应的事务哈希)
+ 9）、value(BigDecimal   转账金额)
  返回类型：Json
  返回值：
  {
