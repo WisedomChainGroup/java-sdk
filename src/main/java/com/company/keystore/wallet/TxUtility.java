@@ -2766,7 +2766,10 @@ public class TxUtility extends Thread {
         asset = asset.RLPdeserialization(payloadNew);
         String createuser = new String(Hex.encodeHex(asset.getCreateuser()));
         String owner = new String(Hex.encodeHex(asset.getOwner()));
-        String info = new String(Hex.encodeHex(asset.getInfo()));
+        String info = "";
+        if(asset.getInfo() != null){
+            info = new String(Hex.encodeHex(asset.getInfo()));
+        }
         JSONObject json = new JSONObject();
         json.put("code",asset.getCode());
         json.put("offering",asset.getOffering());
