@@ -16,6 +16,9 @@ import com.company.contract.HashtimeblockDefinition.HashtimeblockGet;
 import com.company.contract.HashtimeblockDefinition.HashtimeblockTransfer;
 import com.company.contract.MultipleDefinition.MultTransfer;
 import com.company.contract.MultipleDefinition.Multiple;
+import com.company.contract.RateheightlockDefinition.Rateheightlock;
+import com.company.contract.RateheightlockDefinition.RateheightlockDeposit;
+import com.company.contract.RateheightlockDefinition.RateheightlockWithdraw;
 import com.company.encoding.BigEndian;
 import com.company.keystore.crypto.RipemdUtility;
 import com.company.keystore.crypto.SHA3Utility;
@@ -32,6 +35,7 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.tdf.common.util.ByteArrayMap;
 import org.tdf.rlp.RLPElement;
 
 import java.io.*;
@@ -2639,6 +2643,318 @@ public class TxUtility extends Thread {
         }
     }
 
+    /**
+     * 构造部署定额条件比例支付事务
+     * @param fromPubkeyStr
+     * @param nonce
+     * @param assetHash
+     * @param onetimedepositmultiple
+     * @param withdrawperiodheight
+     * @param withdrawrate
+     * @param dest
+     * @return
+     */
+    public static JSONObject CreateRateheightlockRule(String fromPubkeyStr, long nonce, byte[] assetHash, long onetimedepositmultiple, int withdrawperiodheight, BigDecimal withdrawrate, byte[] dest){
+        try {
+            ByteArrayMap stateMap = null;
+            Rateheightlock rateheightlock = new Rateheightlock(assetHash,onetimedepositmultiple,withdrawperiodheight,withdrawrate,dest,stateMap);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0X07;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希,填0
+            String toPubkeyHashStr = "0000000000000000000000000000000000000000";
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            //构造payload
+            byte[] payload = rateheightlock.RLPserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x04}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的部署定额条件比例支付事务
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param nonce
+     * @param assetHash
+     * @param onetimedepositmultiple
+     * @param withdrawperiodheight
+     * @param withdrawrate
+     * @param dest
+     * @return
+     */
+    public static JSONObject CreateRateheightlockruleForDeploy(String fromPubkeyStr,String prikeyStr,long nonce, String assetHash, BigDecimal onetimedepositmultiple, int withdrawperiodheight, BigDecimal withdrawrate, String dest) {
+        APIResult apiResult = new APIResult();
+        try {
+//            if(assetHash == "0000000000000000000000000000000000000000") {
+                byte[] assetHashByte = Hex.decodeHex(assetHash.toCharArray());
+                BigDecimal compare = new BigDecimal("100000000");
+                if(onetimedepositmultiple.compareTo(MAXIMUM_LONG) > 0 || new BigDecimal(onetimedepositmultiple.longValue()).compareTo(onetimedepositmultiple) != 0
+                        ||onetimedepositmultiple.compareTo(BigDecimal.ONE) <= 0){
+                    apiResult.setMessage("转入的资产金额错误");
+                    apiResult.setStatusCode(5000);
+                    String jsonString = JSON.toJSONString(apiResult);
+                    JSONObject json = JSON.parseObject(jsonString);
+                    return json;
+                }
+                BigDecimal withdrawperiodheightBig = new BigDecimal(withdrawperiodheight);
+                if(new BigDecimal(withdrawperiodheightBig.longValue()).compareTo(withdrawperiodheightBig) != 0 || withdrawperiodheightBig.compareTo(BigDecimal.ZERO) <= 0
+                        || withdrawperiodheightBig.compareTo(new BigDecimal(Integer.MAX_VALUE)) > 0){
+                    apiResult.setMessage("资产的提取高度周期错误");
+                    apiResult.setStatusCode(5000);
+                    String jsonString = JSON.toJSONString(apiResult);
+                    JSONObject json = JSON.parseObject(jsonString);
+                    return json;
+                }
+                BigDecimal fenzi = new BigDecimal("100");
+                BigDecimal chenJi = onetimedepositmultiple.multiply(BigDecimal.valueOf(rate));
+                if(withdrawrate.compareTo(fenzi) >= 0 || withdrawrate.compareTo(BigDecimal.ZERO) <= 0 || new BigDecimal(chenJi.multiply(withdrawrate).longValue()).compareTo(chenJi.multiply(withdrawrate)) != 0
+                || ((BigDecimal.ONE.divideAndRemainder(BigDecimal.ONE.divide(withdrawrate.multiply(fenzi)))[1]).compareTo(BigDecimal.ZERO)) != 0){
+                    apiResult.setMessage("提取比例错误");
+                    apiResult.setStatusCode(5000);
+                    String jsonString = JSON.toJSONString(apiResult);
+                    JSONObject json = JSON.parseObject(jsonString);
+                    return json;
+                }
+                long onetimedepositmultipleLong = onetimedepositmultiple.longValue();
+                byte[] destByte = Hex.decodeHex(dest.toCharArray());
+                JSONObject jsonObject = CreateRateheightlockRule(fromPubkeyStr, nonce, assetHashByte, onetimedepositmultipleLong, withdrawperiodheight, withdrawrate, destByte);
+                if (jsonObject.getInteger("code") == 5000) {
+                    return jsonObject;
+                }
+                String RawTransactionHex = jsonObject.getString("RawTransactionHex");
+                byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+                byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+                String txHash = new String(Hex.encodeHex(hash));
+                String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+                APIResult result = new APIResult();
+                result.setData(txHash);
+                result.setMessage(traninfo);
+                result.setStatusCode(2000);
+                String jsonString = JSON.toJSONString(result);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+//            }else{
+//                apiResult.setMessage("还不支持非WDC资产");
+//                apiResult.setStatusCode(5000);
+//                String jsonString = JSON.toJSONString(apiResult);
+//                JSONObject json = JSON.parseObject(jsonString);
+//                return json;
+//            }
+        } catch (Exception e) {
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造调用定额条件比例支付的转入金额事务
+     * @param fromPubkeyStr
+     * @param txHash
+     * @param nonce
+     * @param value
+     * @return
+     */
+    public static JSONObject CreateRateheightlockDepositRule(String fromPubkeyStr,String txHash, long nonce, BigDecimal value){
+        try {
+            RateheightlockDeposit rateheightlockDeposit = new RateheightlockDeposit(value.longValue());
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0X08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希,填0
+            byte[] toPubkeyHash = Hex.decodeHex(txHash.toCharArray());
+            //构造payload
+            byte[] payload = rateheightlockDeposit.RLPserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x08}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的调用定额条件比例支付的转入金额事务
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param nonce
+     * @return
+     */
+    public static JSONObject CreateRateheightlockDepositRuleForDeploy(String fromPubkeyStr,String prikeyStr,String txHashCreate,long nonce, BigDecimal value) {
+        APIResult apiResult = new APIResult();
+        try {
+                JSONObject jsonObject = CreateRateheightlockDepositRule(fromPubkeyStr, txHashCreate,nonce,value );
+                if (jsonObject.getInteger("code") == 5000) {
+                    return jsonObject;
+                }
+                String RawTransactionHex = jsonObject.getString("RawTransactionHex");
+                byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+                byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+                String txHash = new String(Hex.encodeHex(hash));
+                String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+                APIResult result = new APIResult();
+                result.setData(txHash);
+                result.setMessage(traninfo);
+                result.setStatusCode(2000);
+                String jsonString = JSON.toJSONString(result);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+        } catch (Exception e) {
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造调用的定额条件比例支付的转出事务
+     * @param fromPubkeyStr
+     * @param txHash
+     * @param nonce
+     * @param deposithash
+     * @param to
+     * @return
+     */
+    public static JSONObject CreateRateheightlockWithdrawRule(String fromPubkeyStr, String txHash,long nonce, byte[] deposithash,byte[] to){
+        try {
+            RateheightlockWithdraw rateheightlockWithdraw = new RateheightlockWithdraw(deposithash,to);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0X08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希,填0
+            byte[] toPubkeyHash = Hex.decodeHex(txHash.toCharArray());
+            //构造payload
+            byte[] payload = rateheightlockWithdraw.RLPserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x09}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的调用定额条件比例支付的转出事务
+     * @param fromPubkeyStr
+     * @param txHashCreate
+     * @param prikeyStr
+     * @param nonce
+     * @param deposithash
+     * @param to
+     * @return
+     */
+    public static JSONObject CreateRateheightlockruleForDeploy(String fromPubkeyStr,String txHashCreate,String prikeyStr,long nonce, String deposithash, String to) {
+        APIResult apiResult = new APIResult();
+        try {
+            byte[] deposithashByte = Hex.decodeHex(deposithash.toCharArray());
+            byte[] toByte = Hex.decodeHex(to.toCharArray());
+            JSONObject jsonObject = CreateRateheightlockWithdrawRule(fromPubkeyStr,txHashCreate, nonce, deposithashByte,toByte);
+            if (jsonObject.getInteger("code") == 5000) {
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
 
     /**
      * 构建判断是否签名事务
