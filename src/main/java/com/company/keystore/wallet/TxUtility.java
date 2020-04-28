@@ -2839,6 +2839,20 @@ public class TxUtility extends Thread {
     public static JSONObject CreateRateheightlockDepositRuleForDeploy(String fromPubkeyStr,String prikeyStr,String txHashCreate,long nonce, BigDecimal value) {
         APIResult apiResult = new APIResult();
         try {
+                if(value.equals("") || value == null){
+                    apiResult.setMessage("金额不能为空");
+                    apiResult.setStatusCode(5000);
+                    String jsonString = JSON.toJSONString(apiResult);
+                    JSONObject json = JSON.parseObject(jsonString);
+                    return json;
+                }
+                if(value.compareTo(BigDecimal.ZERO) <= 0){
+                    apiResult.setMessage("必须为正整数");
+                    apiResult.setStatusCode(5000);
+                    String jsonString = JSON.toJSONString(apiResult);
+                    JSONObject json = JSON.parseObject(jsonString);
+                    return json;
+                }
                 JSONObject jsonObject = CreateRateheightlockDepositRule(fromPubkeyStr, txHashCreate,nonce,value );
                 if (jsonObject.getInteger("code") == 5000) {
                     return jsonObject;
@@ -2926,9 +2940,16 @@ public class TxUtility extends Thread {
      * @param to
      * @return
      */
-    public static JSONObject CreateRateheightlockruleForDeploy(String fromPubkeyStr,String txHashCreate,String prikeyStr,long nonce, String deposithash, String to) {
+    public static JSONObject CreateRateheightlockWithdrawRuleForDeploy(String fromPubkeyStr,String txHashCreate,String prikeyStr,long nonce, String deposithash, String to) {
         APIResult apiResult = new APIResult();
         try {
+            if(deposithash.equals("") || deposithash == null || to.equals("") || to == null){
+                apiResult.setMessage("转入哈希或转出地址不能为空");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
             byte[] deposithashByte = Hex.decodeHex(deposithash.toCharArray());
             byte[] toByte = Hex.decodeHex(to.toCharArray());
             JSONObject jsonObject = CreateRateheightlockWithdrawRule(fromPubkeyStr,txHashCreate, nonce, deposithashByte,toByte);
