@@ -2702,16 +2702,6 @@ public class TxUtility extends Thread {
         }
     }
 
-    public static void main(String[] args) {
-        String hash = "0000000000000000000000000000000000000000";
-
-        String pri  = "f4b6b5b72dfb8b44241e7ed61e2c61e56e48e8d035650f35b5ebc58981ce009e";
-        String pub = "5b7514a3d3337022cfaf9619b8d7dc8c5fbbb3c3d942ded3ee240248c0550ad8";
-        String pubhash = "7d4d105a3fc6db71d35ed654b1b7aab73d8fa50d";
-        String dest = "0000000000000000000000000000000000000000";
-        System.out.println(CreateRateheightlockruleForDeploy(pub,pri,21,hash,BigDecimal.valueOf(100),20,BigDecimal.valueOf(20),dest));
-    }
-
     /**
      * 构造签名的部署定额条件比例支付事务
      * @param fromPubkeyStr
