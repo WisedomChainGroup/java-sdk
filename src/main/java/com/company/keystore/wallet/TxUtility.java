@@ -2657,7 +2657,7 @@ public class TxUtility extends Thread {
      * @param dest
      * @return
      */
-    public static JSONObject CreateRateheightlockRule(String fromPubkeyStr, long nonce, byte[] assetHash, long onetimedepositmultiple, int withdrawperiodheight, BigDecimal withdrawrate, byte[] dest){
+    public static JSONObject CreateRateheightlockRule(String fromPubkeyStr, long nonce, byte[] assetHash, long onetimedepositmultiple, int withdrawperiodheight, String withdrawrate, byte[] dest){
         try {
             Map stateMap = new HashMap();
             Rateheightlock rateheightlock = new Rateheightlock(assetHash,onetimedepositmultiple,withdrawperiodheight,withdrawrate,dest, stateMap);
@@ -2714,7 +2714,7 @@ public class TxUtility extends Thread {
      * @param dest
      * @return
      */
-    public static JSONObject CreateRateheightlockruleForDeploy(String fromPubkeyStr,String prikeyStr,long nonce, String assetHash, BigDecimal onetimedepositmultiple, int withdrawperiodheight, BigDecimal withdrawrate, String dest) {
+    public static JSONObject CreateRateheightlockruleForDeploy(String fromPubkeyStr,String prikeyStr,long nonce, String assetHash, BigDecimal onetimedepositmultiple, int withdrawperiodheight, String withdrawrate, String dest) {
         APIResult apiResult = new APIResult();
         try {
 //            if(assetHash == "0000000000000000000000000000000000000000") {
@@ -2738,9 +2738,10 @@ public class TxUtility extends Thread {
                     return json;
                 }
                 BigDecimal fenzi = new BigDecimal("100");
+                BigDecimal with = new BigDecimal(withdrawrate);
                 BigDecimal chenJi = onetimedepositmultiple.multiply(BigDecimal.valueOf(rate));
-                if(withdrawrate.compareTo(fenzi) >= 0 || withdrawrate.compareTo(BigDecimal.ZERO) <= 0 || new BigDecimal(chenJi.multiply(withdrawrate).longValue()).compareTo(chenJi.multiply(withdrawrate)) != 0
-                || ((BigDecimal.ONE.divideAndRemainder(BigDecimal.ONE.divide(withdrawrate.multiply(fenzi)))[1]).compareTo(BigDecimal.ZERO)) != 0){
+                if(with.compareTo(fenzi) >= 0 || with.compareTo(BigDecimal.ZERO) <= 0 || new BigDecimal(chenJi.multiply(with).longValue()).compareTo(chenJi.multiply(with)) != 0
+                || ((BigDecimal.ONE.divideAndRemainder(BigDecimal.ONE.divide(with.multiply(fenzi)))[1]).compareTo(BigDecimal.ZERO)) != 0){
                     apiResult.setMessage("提取比例错误");
                     apiResult.setStatusCode(5000);
                     String jsonString = JSON.toJSONString(apiResult);

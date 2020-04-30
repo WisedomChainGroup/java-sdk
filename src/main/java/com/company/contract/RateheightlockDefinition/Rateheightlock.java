@@ -27,7 +27,7 @@ public class Rateheightlock{
     @RLP(2)
     private int withdrawperiodheight;
     @RLP(3)
-    private BigDecimal withdrawrate;
+    private String withdrawrate;
     @RLP(4)
     private byte[] dest;
     @RLP(5)
