@@ -16,6 +16,7 @@ import com.company.contract.HashtimeblockDefinition.HashtimeblockGet;
 import com.company.contract.HashtimeblockDefinition.HashtimeblockTransfer;
 import com.company.contract.MultipleDefinition.MultTransfer;
 import com.company.contract.MultipleDefinition.Multiple;
+import com.company.contract.RateheightlockDefinition.Extract;
 import com.company.contract.RateheightlockDefinition.Rateheightlock;
 import com.company.contract.RateheightlockDefinition.RateheightlockDeposit;
 import com.company.contract.RateheightlockDefinition.RateheightlockWithdraw;
@@ -50,6 +51,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class TxUtility extends Thread {
@@ -2656,8 +2658,8 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateRateheightlockRule(String fromPubkeyStr, long nonce, byte[] assetHash, long onetimedepositmultiple, int withdrawperiodheight, BigDecimal withdrawrate, byte[] dest){
         try {
-            ByteArrayMap stateMap = null;
-            Rateheightlock rateheightlock = new Rateheightlock(assetHash,onetimedepositmultiple,withdrawperiodheight,withdrawrate,dest,stateMap);
+            ByteArrayMap<Extract> stateMap = new ByteArrayMap<>();
+            Rateheightlock rateheightlock = new Rateheightlock(assetHash,onetimedepositmultiple,withdrawperiodheight,withdrawrate,dest, stateMap);
             //版本号
             byte[] version = new byte[1];
             version[0] = 0x01;

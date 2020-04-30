@@ -34,7 +34,14 @@ public class Rateheightlock{
     private ByteArrayMap<Extract> stateMap;
 
     public byte[] RLPserialization() {
-        return RLPElement.readRLPTree(this).getEncoded();
+//        return RLPElement.readRLPTree(this).getEncoded();
+        return RLPCodec.encode(Rateheightlock.builder()
+                .assetHash(this.assetHash)
+                .onetimedepositmultiple(this.onetimedepositmultiple)
+                .withdrawperiodheight(this.withdrawperiodheight)
+                .withdrawrate(this.withdrawrate)
+                .dest(this.dest)
+                .stateMap(this.stateMap).build());
     }
 
     public Rateheightlock RLPdeserialization(byte[] payload) {
