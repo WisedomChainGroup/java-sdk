@@ -2717,7 +2717,7 @@ public class TxUtility extends Thread {
 //            if(assetHash == "0000000000000000000000000000000000000000") {
                 byte[] assetHashByte = Hex.decodeHex(assetHash.toCharArray());
                 BigDecimal compare = new BigDecimal("100000000");
-                if(onetimedepositmultiple.compareTo(MAXIMUM_LONG) > 0 || new BigDecimal(onetimedepositmultiple.longValue()).compareTo(onetimedepositmultiple) != 0
+                if(onetimedepositmultiple.compareTo(compare) > 0 || new BigDecimal(onetimedepositmultiple.longValue()).compareTo(onetimedepositmultiple) != 0
                         ||onetimedepositmultiple.compareTo(BigDecimal.ONE) <= 0){
                     apiResult.setMessage("转入的资产金额错误");
                     apiResult.setStatusCode(5000);
@@ -3005,7 +3005,6 @@ public class TxUtility extends Thread {
             byte[] signo = ByteUtil.bytearraycopy(RawTransaction, 58, 64);
             //to
             byte[] to = ByteUtil.bytearraycopy(RawTransaction, 122, 20);
-            ;
             //payloadlen
             byte[] payloadlen = ByteUtil.bytearraycopy(RawTransaction, 142, 4);
             //payload
