@@ -50,6 +50,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -2658,7 +2659,7 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateRateheightlockRule(String fromPubkeyStr, long nonce, byte[] assetHash, long onetimedepositmultiple, int withdrawperiodheight, BigDecimal withdrawrate, byte[] dest){
         try {
-            ByteArrayMap<Extract> stateMap = new ByteArrayMap<>();
+            Map stateMap = new HashMap();
             Rateheightlock rateheightlock = new Rateheightlock(assetHash,onetimedepositmultiple,withdrawperiodheight,withdrawrate,dest, stateMap);
             //版本号
             byte[] version = new byte[1];
@@ -2699,6 +2700,16 @@ public class TxUtility extends Thread {
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
+    }
+
+    public static void main(String[] args) {
+        String hash = "0000000000000000000000000000000000000000";
+
+        String pri  = "f4b6b5b72dfb8b44241e7ed61e2c61e56e48e8d035650f35b5ebc58981ce009e";
+        String pub = "5b7514a3d3337022cfaf9619b8d7dc8c5fbbb3c3d942ded3ee240248c0550ad8";
+        String pubhash = "7d4d105a3fc6db71d35ed654b1b7aab73d8fa50d";
+        String dest = "0000000000000000000000000000000000000000";
+        System.out.println(CreateRateheightlockruleForDeploy(pub,pri,21,hash,BigDecimal.valueOf(100),20,BigDecimal.valueOf(20),dest));
     }
 
     /**

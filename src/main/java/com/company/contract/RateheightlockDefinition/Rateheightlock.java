@@ -12,6 +12,7 @@ import org.tdf.rlp.RLPDecoding;
 import org.tdf.rlp.RLPElement;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -30,8 +31,7 @@ public class Rateheightlock{
     @RLP(4)
     private byte[] dest;
     @RLP(5)
-    @RLPDecoding(as = ByteArrayMap.class)
-    private ByteArrayMap<Extract> stateMap;
+    private Map<byte[],Extract> stateMap;
 
     public byte[] RLPserialization() {
 //        return RLPElement.readRLPTree(this).getEncoded();
