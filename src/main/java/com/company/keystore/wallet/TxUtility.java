@@ -2750,7 +2750,8 @@ public class TxUtility extends Thread {
                 }
                 long onetimedepositmultipleLong = onetimedepositmultiple.longValue();
                 byte[] destByte = Hex.decodeHex(dest.toCharArray());
-                JSONObject jsonObject = CreateRateheightlockRule(fromPubkeyStr, nonce, assetHashByte, onetimedepositmultipleLong, withdrawperiodheight, withdrawrate, destByte);
+                String withString = String.valueOf(Double.valueOf(withdrawrate)/100);
+                JSONObject jsonObject = CreateRateheightlockRule(fromPubkeyStr, nonce, assetHashByte, onetimedepositmultipleLong, withdrawperiodheight, withString, destByte);
                 if (jsonObject.getInteger("code") == 5000) {
                     return jsonObject;
                 }
