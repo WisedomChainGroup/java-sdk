@@ -24,13 +24,14 @@ public class RateheightlockWithdraw{
                 .to(this.to).build());
     }
 
-    public boolean RLPdeserialization(byte[] payload) {
-        RateheightlockWithdraw rateheightlockWithdraw = RLPElement.fromEncoded(payload).as(RateheightlockWithdraw.class);
-        if (rateheightlockWithdraw == null) {
-            return false;
+    public RateheightlockWithdraw RLPdeserialization(byte[] payload) {
+        try {
+            RateheightlockWithdraw rateheightlockWithdraw = RLPElement.fromEncoded(payload).as(RateheightlockWithdraw.class);
+            this.deposithash = rateheightlockWithdraw.getDeposithash();
+            this.to = rateheightlockWithdraw.getTo();
+            return rateheightlockWithdraw;
+        } catch (Exception e) {
+            throw e;
         }
-        this.deposithash = rateheightlockWithdraw.getDeposithash();
-        this.to = rateheightlockWithdraw.getTo();
-        return true;
     }
 }

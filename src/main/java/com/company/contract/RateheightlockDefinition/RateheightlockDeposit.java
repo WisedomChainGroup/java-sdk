@@ -21,12 +21,13 @@ public class RateheightlockDeposit {
                 .value(this.value).build());
     }
 
-    public boolean RLPdeserialization(byte[] payload) {
-        RateheightlockDeposit rateheightlockDeposit = RLPElement.fromEncoded(payload).as(RateheightlockDeposit.class);
-        if (rateheightlockDeposit == null) {
-            return false;
+    public RateheightlockDeposit RLPdeserialization(byte[] payload) {
+        try {
+            RateheightlockDeposit rateheightlockDeposit = RLPElement.fromEncoded(payload).as(RateheightlockDeposit.class);
+            this.value = rateheightlockDeposit.getValue();
+            return rateheightlockDeposit;
+        } catch (Exception e) {
+            throw e;
         }
-        this.value = rateheightlockDeposit.getValue();
-        return true;
     }
 }

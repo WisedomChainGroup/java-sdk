@@ -3481,4 +3481,90 @@ public class TxUtility extends Thread {
         apiResult.setData("");
         return apiResult;
     }
+
+    /**
+     * 获得Rateheightlock的详细信息
+     * @param payload
+     * @return
+     */
+    public static APIResult getRateheightlock(byte[] payload) {
+        Rateheightlock rateheightlock = new Rateheightlock();
+        APIResult apiResult = new APIResult();
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        rateheightlock = RLPElement.fromEncoded(payloadNew).as(Rateheightlock.class);
+        if(rateheightlock == null){
+            return APIResult.newFailResult(5000,"Invalid Rateheightlock Rules");
+        }
+        rateheightlock = rateheightlock.RLPdeserialization(payloadNew);
+        String assetHash = new String(Hex.encodeHex(rateheightlock.getAssetHash()));
+        String dest = new String(Hex.encodeHex(rateheightlock.getDest()));
+        JSONObject json = new JSONObject();
+        json.put("assetHash",assetHash);
+        json.put("onetimedepositmultiple",rateheightlock.getOnetimedepositmultiple());
+        json.put("withdrawperiodheight",rateheightlock.getWithdrawperiodheight());
+        json.put("withdrawrate",rateheightlock.getWithdrawperiodheight());
+        json.put("dest",dest);
+        json.put("stateMap",rateheightlock.getStateMap());
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
+    }
+
+    /**
+     * 获得RateheightlockDeposit的详细信息
+     * @param payload
+     * @return
+     */
+    public static APIResult getRateheightlockDeposit(byte[] payload) {
+        RateheightlockDeposit rateheightlockDeposit = new RateheightlockDeposit();
+        APIResult apiResult = new APIResult();
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        rateheightlockDeposit = RLPElement.fromEncoded(payloadNew).as(RateheightlockDeposit.class);
+        if(rateheightlockDeposit == null){
+            return APIResult.newFailResult(5000,"Invalid RateheightlockDeposit Rules");
+        }
+        rateheightlockDeposit = rateheightlockDeposit.RLPdeserialization(payloadNew);
+        JSONObject json = new JSONObject();
+        json.put("value",rateheightlockDeposit.getValue());
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
+    }
+
+    /**
+     * 获得RateheightlockWithdraw的详细信息
+     * @param payload
+     * @return
+     */
+    public static APIResult getRateheightlockWithdraw(byte[] payload) {
+        RateheightlockWithdraw rateheightlockWithdraw = new RateheightlockWithdraw();
+        APIResult apiResult = new APIResult();
+        byte[] payloadNew = new byte[payload.length-1];
+        for (int i = 1 ; i < payload.length ; i++){
+            payloadNew[i-1] = payload[i];
+        }
+        rateheightlockWithdraw = RLPElement.fromEncoded(payloadNew).as(RateheightlockWithdraw.class);
+        if(rateheightlockWithdraw == null){
+            return APIResult.newFailResult(5000,"Invalid RateheightlockWithdraw Rules");
+        }
+        rateheightlockWithdraw = rateheightlockWithdraw.RLPdeserialization(payloadNew);
+        JSONObject json = new JSONObject();
+        json.put("deposithash",rateheightlockWithdraw.getDeposithash());
+        json.put("to",rateheightlockWithdraw.getTo());
+        String message = json.toString();
+        apiResult.setMessage(message);
+        apiResult.setStatusCode(2000);
+        apiResult.setData("");
+        return apiResult;
+    }
 }
