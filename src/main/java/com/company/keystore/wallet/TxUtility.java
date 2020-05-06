@@ -2812,7 +2812,8 @@ public class TxUtility extends Thread {
             //为签名留白
             byte[] signull = new byte[64];
             //接收者公钥哈希,填0
-            byte[] toPubkeyHash = Hex.decodeHex(txHash.toCharArray());
+            byte[] txHashGet = Hex.decodeHex(txHash.toCharArray());
+            byte[] toPubkeyHash = RipemdUtility.ripemd160(txHashGet);
             //构造payload
             byte[] payload = rateheightlockDeposit.RLPserialization();
             //长度
@@ -2913,7 +2914,8 @@ public class TxUtility extends Thread {
             //为签名留白
             byte[] signull = new byte[64];
             //接收者公钥哈希,填0
-            byte[] toPubkeyHash = Hex.decodeHex(txHash.toCharArray());
+            byte[] txHashGet = Hex.decodeHex(txHash.toCharArray());
+            byte[] toPubkeyHash = RipemdUtility.ripemd160(txHashGet);
             //构造payload
             byte[] payload = rateheightlockWithdraw.RLPserialization();
             //长度
@@ -3505,7 +3507,7 @@ public class TxUtility extends Thread {
         json.put("assetHash",assetHash);
         json.put("onetimedepositmultiple",rateheightlock.getOnetimedepositmultiple());
         json.put("withdrawperiodheight",rateheightlock.getWithdrawperiodheight());
-        json.put("withdrawrate",rateheightlock.getWithdrawperiodheight());
+        json.put("withdrawrate",rateheightlock.getWithdrawrate());
         json.put("dest",dest);
         json.put("stateMap",rateheightlock.getStateMap());
         String message = json.toString();
@@ -3559,8 +3561,8 @@ public class TxUtility extends Thread {
         }
         rateheightlockWithdraw = rateheightlockWithdraw.RLPdeserialization(payloadNew);
         JSONObject json = new JSONObject();
-        json.put("deposithash",rateheightlockWithdraw.getDeposithash());
-        json.put("to",rateheightlockWithdraw.getTo());
+        json.put("deposithash",Hex.encodeHexString(rateheightlockWithdraw.getDeposithash()));
+        json.put("to",Hex.encodeHexString(rateheightlockWithdraw.getTo()));
         String message = json.toString();
         apiResult.setMessage(message);
         apiResult.setStatusCode(2000);
