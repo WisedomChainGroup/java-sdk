@@ -2793,6 +2793,7 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateRateheightlockDepositRule(String fromPubkeyStr,String txHash, long nonce, BigDecimal value){
         try {
+            value = value.multiply(BigDecimal.valueOf(rate));
             RateheightlockDeposit rateheightlockDeposit = new RateheightlockDeposit(value.longValue());
             //版本号
             byte[] version = new byte[1];
