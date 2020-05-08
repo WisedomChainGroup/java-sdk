@@ -2718,7 +2718,12 @@ public class TxUtility extends Thread {
         APIResult apiResult = new APIResult();
         try {
 //            if(assetHash == "0000000000000000000000000000000000000000") {
-                byte[] assetHashByte = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
+                byte[] assetHashByte;
+                if(assetHash != "0000000000000000000000000000000000000000") {
+                    assetHashByte = RipemdUtility.ripemd160(Hex.decodeHex(assetHash.toCharArray()));
+                }else{
+                    assetHashByte = Hex.decodeHex(assetHash.toCharArray());
+                }
                 BigDecimal compare = new BigDecimal("100000000");
                 if(onetimedepositmultiple.compareTo(compare) > 0 || new BigDecimal(onetimedepositmultiple.longValue()).compareTo(onetimedepositmultiple) != 0
                         ||onetimedepositmultiple.compareTo(BigDecimal.ONE) <= 0){
