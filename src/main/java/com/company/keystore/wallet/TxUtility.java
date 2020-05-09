@@ -2802,7 +2802,6 @@ public class TxUtility extends Thread {
      */
     public static JSONObject CreateRateheightlockDepositRule(String fromPubkeyStr,String txHash, long nonce, BigDecimal value){
         try {
-            value = value.multiply(BigDecimal.valueOf(rate));
             RateheightlockDeposit rateheightlockDeposit = new RateheightlockDeposit(value.longValue());
             //版本号
             byte[] version = new byte[1];
@@ -2855,6 +2854,7 @@ public class TxUtility extends Thread {
     public static JSONObject CreateRateheightlockDepositRuleForDeploy(String fromPubkeyStr,String prikeyStr,String txHashCreate,long nonce, BigDecimal value) {
         APIResult apiResult = new APIResult();
         try {
+                value = value.multiply(BigDecimal.valueOf(rate));
                 if(value.equals("") || value == null){
                     apiResult.setMessage("金额不能为空");
                     apiResult.setStatusCode(5000);
@@ -2864,6 +2864,17 @@ public class TxUtility extends Thread {
                 }
                 if(value.compareTo(BigDecimal.ZERO) <= 0){
                     apiResult.setMessage("必须为正整数");
+                    apiResult.setStatusCode(5000);
+                    String jsonString = JSON.toJSONString(apiResult);
+                    JSONObject json = JSON.parseObject(jsonString);
+                    return json;
+                }
+                //判断是否有小数
+                String string = value.stripTrailingZeros().toPlainString();
+                int index = string.indexOf(".");
+                index = index < 0 ? 0 : string.length() - index - 1;
+                if(index > 0){
+                    apiResult.setMessage("金额输入错误");
                     apiResult.setStatusCode(5000);
                     String jsonString = JSON.toJSONString(apiResult);
                     JSONObject json = JSON.parseObject(jsonString);
