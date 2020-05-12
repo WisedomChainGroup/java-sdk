@@ -2745,14 +2745,12 @@ public class TxUtility extends Thread {
                 BigDecimal fenzi = new BigDecimal("100");
                 BigDecimal with = new BigDecimal(withdrawrate);
                 BigDecimal chenJi = onetimedepositmultiple.multiply(BigDecimal.valueOf(rate));
-                BigDecimal rate_e = new BigDecimal("100000000");
-                BigDecimal rate_c = with.multiply(rate_e);
                 //判断提取比率小数位数
                 String string = with.stripTrailingZeros().toPlainString();
                 int index = string.indexOf(".");
                 index = index < 0 ? 0 : string.length() - index - 1;
                 if(with.compareTo(fenzi) > 0 || with.compareTo(BigDecimal.ZERO) <= 0 || new BigDecimal(chenJi.multiply(with).longValue()).compareTo(chenJi.multiply(with)) != 0
-                || rate_c.divideAndRemainder(with.multiply(onetimedepositmultiple))[1].compareTo(BigDecimal.ZERO) != 0 || index > 8){
+                || chenJi.divideAndRemainder(with.multiply(onetimedepositmultiple))[1].compareTo(BigDecimal.ZERO) != 0 || index > 8){
                     apiResult.setMessage("提取比例错误");
                     apiResult.setStatusCode(5000);
                     String jsonString = JSON.toJSONString(apiResult);
