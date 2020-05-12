@@ -47,12 +47,12 @@ public class Rateheightlock{
     public Rateheightlock RLPdeserialization(byte[] payload) {
         try {
             Rateheightlock rateheightlock = RLPCodec.decode(payload, Rateheightlock.class);
-            this.assetHash = rateheightlock.getAssetHash();
-            this.onetimedepositmultiple = rateheightlock.getOnetimedepositmultiple();
-            this.withdrawperiodheight = rateheightlock.getWithdrawperiodheight();
-            this.withdrawrate = rateheightlock.getWithdrawrate();
-            this.dest = rateheightlock.getDest();
-            this.stateMap = rateheightlock.getStateMap();
+            rateheightlock.assetHash = rateheightlock.getAssetHash();
+            rateheightlock.onetimedepositmultiple = rateheightlock.getOnetimedepositmultiple();
+            rateheightlock.withdrawperiodheight = rateheightlock.getWithdrawperiodheight();
+            rateheightlock.withdrawrate = rateheightlock.getWithdrawrate();
+            rateheightlock.dest = rateheightlock.getDest();
+            rateheightlock.stateMap = new ByteArrayMap<>(rateheightlock.getStateMap());
             return rateheightlock;
         } catch (Exception e) {
             throw e;

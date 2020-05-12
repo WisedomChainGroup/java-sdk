@@ -3530,7 +3530,7 @@ public class TxUtility extends Thread {
         json.put("withdrawperiodheight",rateheightlock.getWithdrawperiodheight());
         json.put("withdrawrate",rateheightlock.getWithdrawrate());
         json.put("dest",dest);
-        json.put("stateMap",rateheightlock.getStateMap());
+        json.put("stateMap",rateheightlock.getStateMap().toString());
         String message = json.toString();
         apiResult.setMessage(message);
         apiResult.setStatusCode(2000);
