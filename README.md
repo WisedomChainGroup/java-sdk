@@ -830,6 +830,99 @@ WalletUtility. importKeystore()
  公钥哈希：String
  }
 ```
+1.58 构造签名的部署定额条件比例支付事务
+```
+ TxUtility. CreateRateheightlockruleForDeploy()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、nonce（long)
+ 4）、assetHash(十六进制字符串   资产哈希)
+ 5）、onetimedepositmultiple(Bigdecimal
+                            每次往规则转入对应资产的倍数关系)
+ 6）、withdrawperiodheight(int  资产的提取高度周期)
+ 7）、withdrawrate(int  提取比率)
+ 8）、dest(十六位进制字符串  目标地址)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000/5000
+ (String)message:null
+ }
+```
+1.59 构造签名的调用定额条件比例支付的转入金额事务
+```
+ TxUtility. CreateRateheightlockDepositRuleForDeploy()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、txHashCreate(十六进制字符串   部署定额条件比例支付返回的事务哈希)
+ 4）、nonce（long)
+ 5）、value(Bigdecimal  用户转入的指定金额)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000/5000
+ (String)message:null
+ }
+```
+1.60 构造签名的调用定额条件比例支付的转出事务
+```
+ TxUtility. CreateRateheightlockWithdrawRuleForDeploy()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、txHashCreate(十六进制字符串   部署定额条件比例支付返回的事务哈希)
+ 3）、私钥（十六进制字符串)
+ 4）、nonce（long)
+ 5）、deposithash(十六进制字符串                 
+                    构造转入金额条件比例支付返回的事务哈希)
+ 6）、to(十六进制字符串  公钥哈希，可能是普通账户也可能是多签)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000/5000
+ (String)message:null
+ }
+```
+1.55 获取Rateheightlock定额条件比例支付的转入金额事务的详细信息
+```
+*   方法：TxUtility.getRateheightlock()     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
+ }
+```
+1.55 获取RateheightlockDeposit区块高度锁定获得锁定资产的详细信息
+```
+*   方法：TxUtility.getRateheightlockDeposit()     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
+ }
+```
+1.55 获取RateheightlockWithdraw定额条件比例支付的转出的详细信息
+```
+*   方法：TxUtility.getRateheightlockWithdraw()     
+*	参数：payload(十六进制字符串)  
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000
+ (String)message:对象的所有参数
+ }
+```
 
 ### 节点rpc
 1.0 获取Nonce
