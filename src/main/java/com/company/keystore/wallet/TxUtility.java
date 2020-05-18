@@ -36,7 +36,6 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.tdf.common.util.ByteArrayMap;
 import org.tdf.rlp.RLPElement;
 
 import java.io.*;
