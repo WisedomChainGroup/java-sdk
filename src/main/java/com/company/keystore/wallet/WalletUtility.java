@@ -2,33 +2,21 @@ package com.company.keystore.wallet;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.company.ApiResult.APIResult;
 import com.company.keystore.crypto.*;
 import com.company.keystore.crypto.ed25519.Ed25519PrivateKey;
 import com.company.keystore.crypto.ed25519.Ed25519PublicKey;
 import com.company.keystore.util.Base58Utility;
 import com.company.keystore.util.ByteUtil;
-import com.company.keystore.util.ByteUtils;
 import com.company.keystore.util.Utils;
 import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 public class WalletUtility {
 

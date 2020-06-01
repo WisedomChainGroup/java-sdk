@@ -16,7 +16,6 @@ import com.company.contract.HashtimeblockDefinition.HashtimeblockGet;
 import com.company.contract.HashtimeblockDefinition.HashtimeblockTransfer;
 import com.company.contract.MultipleDefinition.MultTransfer;
 import com.company.contract.MultipleDefinition.Multiple;
-import com.company.contract.RateheightlockDefinition.Extract;
 import com.company.contract.RateheightlockDefinition.Rateheightlock;
 import com.company.contract.RateheightlockDefinition.RateheightlockDeposit;
 import com.company.contract.RateheightlockDefinition.RateheightlockWithdraw;
@@ -29,10 +28,7 @@ import com.company.keystore.util.Base58Utility;
 import com.company.keystore.util.ByteUtil;
 import com.company.protobuf.HatchModel;
 import com.company.protobuf.ProtocolModel;
-import com.google.gson.JsonObject;
 import com.google.protobuf.ByteString;
-import com.sun.javafx.binding.StringFormatter;
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -42,9 +38,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -2748,7 +2742,7 @@ public class TxUtility extends Thread {
                 String string = with.stripTrailingZeros().toPlainString();
                 int index = string.indexOf(".");
                 index = index < 0 ? 0 : string.length() - index - 1;
-                if(with.compareTo(fenzi) > 0 || with.compareTo(BigDecimal.ZERO) <= 0 || new BigDecimal(chenJi.multiply(with).longValue()).compareTo(chenJi.multiply(with)) != 0
+                if(with.compareTo(fenzi) > 0 || with.compareTo(BigDecimal.ZERO) <= 0 || new BigDecimal(onetimedepositmultiple.multiply(with).divide(fenzi).longValue()).compareTo(onetimedepositmultiple.multiply(with).divide(fenzi)) != 0
                 || chenJi.divideAndRemainder(with.multiply(onetimedepositmultiple))[1].compareTo(BigDecimal.ZERO) != 0 || index > 6){
                     apiResult.setMessage("提取比例错误");
                     apiResult.setStatusCode(5000);

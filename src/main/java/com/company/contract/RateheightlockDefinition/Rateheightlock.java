@@ -1,6 +1,5 @@
 package com.company.contract.RateheightlockDefinition;
 
-import com.company.contract.AssetDefinition.Asset;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,10 +7,6 @@ import lombok.NoArgsConstructor;
 import org.tdf.common.util.ByteArrayMap;
 import org.tdf.rlp.RLP;
 import org.tdf.rlp.RLPCodec;
-import org.tdf.rlp.RLPDecoding;
-import org.tdf.rlp.RLPElement;
-
-import java.math.BigDecimal;
 import java.util.Map;
 
 @Data
