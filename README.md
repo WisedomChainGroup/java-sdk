@@ -3,6 +3,111 @@
 lombok usage
 https://jingyan.baidu.com/article/0a52e3f4e53ca1bf63ed725c.html
 
+JitPack地址：https://jitpack.io/#WisedomChainGroup/java-sdk/
+如果您是JitPack上直接下载依赖，则需要手动导入以下jar包
+<dependency>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcprov-jdk15on</artifactId>
+    <version>1.61</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-collections4</artifactId>
+    <version>4.0</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+    <version>3.4</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-math3</artifactId>
+    <version>3.6</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>commons-codec</groupId>
+    <artifactId>commons-codec</artifactId>
+    <version>1.10</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.4</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>commons-cli</groupId>
+    <artifactId>commons-cli</artifactId>
+    <version>1.4</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>fastjson</artifactId>
+    <version>1.2.47</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.5</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>28.1-jre</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.5.1</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.kosprov.jargon2</groupId>
+    <artifactId>jargon2-api</artifactId>
+    <version>1.1.1</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.kosprov.jargon2</groupId>
+    <artifactId>jargon2-native-ri-backend</artifactId>
+    <version>1.1.1</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>net.java.dev.jna</groupId>
+    <artifactId>jna</artifactId>
+    <version>4.5.2</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.nativelibs4java</groupId>
+    <artifactId>jnaerator-runtime</artifactId>
+    <version>0.12</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.nativelibs4java</groupId>
+    <artifactId>ochafik-util</artifactId>
+    <version>0.12</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>2.0.0.Final</version>
+    <scope>compile</scope>
+</dependency>
+
 APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事务的构造，签名，发送以及孵化器相关的操作，对于RPC来说，提供若干的接口，对于客户端来说，需要提供若干的实现方法，如下所示：
 
 ## 1.0 基本说明
@@ -887,7 +992,7 @@ WalletUtility. importKeystore()
  (String)message:null
  }
 ```
-1.55 获取Rateheightlock定额条件比例支付的转入金额事务的详细信息
+1.61 获取Rateheightlock定额条件比例支付的转入金额事务的详细信息
 ```
 *   方法：TxUtility.getRateheightlock()     
 *	参数：payload(十六进制字符串)  
@@ -899,7 +1004,7 @@ WalletUtility. importKeystore()
  (String)message:对象的所有参数
  }
 ```
-1.55 获取RateheightlockDeposit区块高度锁定获得锁定资产的详细信息
+1.62 获取RateheightlockDeposit区块高度锁定获得锁定资产的详细信息
 ```
 *   方法：TxUtility.getRateheightlockDeposit()     
 *	参数：payload(十六进制字符串)  
@@ -911,7 +1016,7 @@ WalletUtility. importKeystore()
  (String)message:对象的所有参数
  }
 ```
-1.55 获取RateheightlockWithdraw定额条件比例支付的转出的详细信息
+1.63 获取RateheightlockWithdraw定额条件比例支付的转出的详细信息
 ```
 *   方法：TxUtility.getRateheightlockWithdraw()     
 *	参数：payload(十六进制字符串)  
