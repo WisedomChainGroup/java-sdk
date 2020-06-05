@@ -2911,22 +2911,22 @@ public class TxUtility extends Thread {
         return jsonObject;
     }
 
-    /**
-     * 通过事务哈希得到合约地址
-     * @param txHash
-     * @return
-     * @throws Exception
-     */
-    public static String contractAddress(String txHash) throws Exception {
-        String contractAdd = RipemdUtility.HexStringRipemd160(Hex.decodeHex(txHash.toCharArray()));
-        byte[] r1 = Hex.decodeHex(contractAdd.toCharArray());
-        byte[] r2 = ByteUtil.prepend(r1, (byte) 0x00);
-        byte[] r3 = SHA3Utility.keccak256(SHA3Utility.keccak256(r1));
-        byte[] b4 = ByteUtil.bytearraycopy(r3, 0, 4);
-        byte[] b5 = ByteUtil.byteMerger(r2, b4);
-        String s6 = Base58Utility.encode(b5);
-        return "WR"+s6;
-    }
+//    /**
+//     * 通过事务哈希得到合约地址
+//     * @param txHash
+//     * @return
+//     * @throws Exception
+//     */
+//    public static String contractAddress(String txHash) throws Exception {
+//        String contractAdd = RipemdUtility.HexStringRipemd160(Hex.decodeHex(txHash.toCharArray()));
+//        byte[] r1 = Hex.decodeHex(contractAdd.toCharArray());
+//        byte[] r2 = ByteUtil.prepend(r1, (byte) 0x00);
+//        byte[] r3 = SHA3Utility.keccak256(SHA3Utility.keccak256(r1));
+//        byte[] b4 = ByteUtil.bytearraycopy(r3, 0, 4);
+//        byte[] b5 = ByteUtil.byteMerger(r2, b4);
+//        String s6 = Base58Utility.encode(b5);
+//        return "WR"+s6;
+//    }
 
     /**
      * 事务哈希转公钥哈希
