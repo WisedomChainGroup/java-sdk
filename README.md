@@ -5,108 +5,109 @@ https://jingyan.baidu.com/article/0a52e3f4e53ca1bf63ed725c.html
 
 JitPack地址：https://jitpack.io/#WisedomChainGroup/java-sdk/
 如果您是JitPack上直接下载依赖，则需要手动导入以下jar包
-<dependency>
-    <groupId>org.bouncycastle</groupId>
-    <artifactId>bcprov-jdk15on</artifactId>
-    <version>1.61</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-collections4</artifactId>
-    <version>4.0</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-lang3</artifactId>
-    <version>3.4</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-math3</artifactId>
-    <version>3.6</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>commons-codec</groupId>
-    <artifactId>commons-codec</artifactId>
-    <version>1.10</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>commons-io</groupId>
-    <artifactId>commons-io</artifactId>
-    <version>2.4</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>commons-cli</groupId>
-    <artifactId>commons-cli</artifactId>
-    <version>1.4</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.alibaba</groupId>
-    <artifactId>fastjson</artifactId>
-    <version>1.2.47</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.google.code.gson</groupId>
-    <artifactId>gson</artifactId>
-    <version>2.8.5</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.google.guava</groupId>
-    <artifactId>guava</artifactId>
-    <version>28.1-jre</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-databind</artifactId>
-    <version>2.5.1</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.kosprov.jargon2</groupId>
-    <artifactId>jargon2-api</artifactId>
-    <version>1.1.1</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.kosprov.jargon2</groupId>
-    <artifactId>jargon2-native-ri-backend</artifactId>
-    <version>1.1.1</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>net.java.dev.jna</groupId>
-    <artifactId>jna</artifactId>
-    <version>4.5.2</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.nativelibs4java</groupId>
-    <artifactId>jnaerator-runtime</artifactId>
-    <version>0.12</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.nativelibs4java</groupId>
-    <artifactId>ochafik-util</artifactId>
-    <version>0.12</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>javax.validation</groupId>
-    <artifactId>validation-api</artifactId>
-    <version>2.0.0.Final</version>
-    <scope>compile</scope>
-</dependency>
+
+    <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15on</artifactId>
+        <version>1.61</version>
+        <scope>compile</scope>
+        </dependency>
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-collections4</artifactId>
+        <version>4.0</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.4</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-math3</artifactId>
+        <version>3.6</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.10</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.4</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>commons-cli</groupId>
+        <artifactId>commons-cli</artifactId>
+        <version>1.4</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>fastjson</artifactId>
+        <version>1.2.47</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.8.5</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>28.1-jre</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.5.1</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.kosprov.jargon2</groupId>
+        <artifactId>jargon2-api</artifactId>
+        <version>1.1.1</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.kosprov.jargon2</groupId>
+        <artifactId>jargon2-native-ri-backend</artifactId>
+        <version>1.1.1</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna</artifactId>
+        <version>4.5.2</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.nativelibs4java</groupId>
+        <artifactId>jnaerator-runtime</artifactId>
+        <version>0.12</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.nativelibs4java</groupId>
+        <artifactId>ochafik-util</artifactId>
+        <version>0.12</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>2.0.0.Final</version>
+        <scope>compile</scope>
+    </dependency>
 
 APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事务的构造，签名，发送以及孵化器相关的操作，对于RPC来说，提供若干的接口，对于客户端来说，需要提供若干的实现方法，如下所示：
 
@@ -202,26 +203,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  返回类型：String（十六进制字符串）
  返回值：Pubkey
 ```
-1.9 导入keystore
-```
-WalletUtility. importKeystore()
- 参数：
- 1）、keystore（String)
- 2）、路径（String)选填
- 返回类型：String
- 返回值：Address
-```
-1.10 修改KeyStore密码方法
-```
- WalletUtility.modifyPassword()
- 参数：
- 1）、keystore（String)
- 2）、旧密码（String)
- 3）、新密码（String)
- 返回类型：json
- 返回值：Keystore
-```
-1.11 SHA3-256哈希方法
+1.9 SHA3-256哈希方法
 ```
  SHA3Utility.HexStringkeccak256()
  参数：
@@ -229,7 +211,7 @@ WalletUtility. importKeystore()
  返回类型：十六进制字符串
  返回值：哈希值
 ```
-1.12 Ripemd-160哈希方法
+1.10 Ripemd-160哈希方法
 ```
  RipemdUtility.HexStringRipemd160()
  参数：
@@ -237,7 +219,7 @@ WalletUtility. importKeystore()
  返回类型：十六进制字符串
  返回值：哈希值
 ```
-1.13 base58编码方法
+1.11 base58编码方法
 ```
  Base58Utility.encode ()
  参数：
@@ -245,7 +227,7 @@ WalletUtility. importKeystore()
  返回类型：String
  返回值：哈希值
 ``` 
-1.14 创建原生转账事务
+1.12 创建原生转账事务
 ```
  TxUtility.CreateRawTransaction()
  参数：
@@ -256,7 +238,7 @@ WalletUtility. importKeystore()
  返回类型：十六进制字符串
  返回值：未签名的事务哈希
 ```
-1.15 签名事务
+1.13 签名事务
 ```
  TxUtility.signRawBasicTransaction()
  参数：
@@ -265,7 +247,7 @@ WalletUtility. importKeystore()
  返回类型：十六进制字符串
  返回值：已签名事务哈希
 ```
-1.16 发起转账申请
+1.14 发起转账申请
 ```
  TxUtility. ClientToTransferAccount()
  参数：
@@ -282,7 +264,7 @@ WalletUtility. importKeystore()
  (String)message:traninfo（已签名事务，十六进制字符串)
  }
  ```
- 1.18 发起存证事务
+ 1.15 发起存证事务
  ```
  TxUtility. ClientToTransferProve()
  参数：
@@ -299,7 +281,7 @@ WalletUtility. importKeystore()
  }
  ```
  
- 1.19 发起投票事务
+ 1.16 发起投票事务
  ```
  TxUtility.ClientToTransferVote()
  参数：
@@ -317,7 +299,7 @@ WalletUtility. importKeystore()
  }
 ```
 
-1.20 发起投票撤回事务
+1.17 发起投票撤回事务
  ```
  TxUtility.ClientToTransferVoteWithdraw()
  参数：
@@ -336,7 +318,7 @@ WalletUtility. importKeystore()
  }
 ```
 
-1.21 发起抵押事务（只能给自己抵押）
+1.18 发起抵押事务（只能给自己抵押）
  ```
  TxUtility.ClientToTransferMortgage()
  参数：
@@ -354,7 +336,7 @@ WalletUtility. importKeystore()
  }
 ```
 
-1.22 发起抵押撤回事务
+1.19 发起抵押撤回事务
  ```
  TxUtility.ClientToTransferMortgageWithdraw()
  参数：
