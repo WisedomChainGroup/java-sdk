@@ -59,14 +59,4 @@ public class AESUtils {
         }
         return null;
     }
-
-
-    public static void main(String[] args) {
-        String data="php和java互通!";
-        String enStr=AESUtils.encryptData(data);
-        System.out.println("加密:"+enStr);
-        String deStr=AESUtils.decryptData(enStr);
-        System.out.println("解密:"+deStr);
-    }
-
 }
