@@ -540,12 +540,16 @@ public class TxUtility extends Thread {
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            e.printStackTrace();
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -568,11 +572,16 @@ public class TxUtility extends Thread {
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -597,11 +606,16 @@ public class TxUtility extends Thread {
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -626,11 +640,16 @@ public class TxUtility extends Thread {
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -655,11 +674,16 @@ public class TxUtility extends Thread {
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -684,11 +708,16 @@ public class TxUtility extends Thread {
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -713,11 +742,16 @@ public class TxUtility extends Thread {
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -743,11 +777,16 @@ public class TxUtility extends Thread {
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -773,11 +812,16 @@ public class TxUtility extends Thread {
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
@@ -802,11 +846,16 @@ public class TxUtility extends Thread {
             APIResult ar = new APIResult();
             ar.setData(txHash);
             ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
             String jsonString = JSON.toJSONString(ar);
             JSONObject json = JSON.parseObject(jsonString);
             return json;
         } catch (Exception e) {
-            JSONObject json = JSON.parseObject("");
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
             return json;
         }
     }
