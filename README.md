@@ -504,7 +504,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  TxUtility. CreateSignToDeployforRuleTransfer()
  参数：
  1）、发送者公钥（十六进制字符串)
- 2）、事务哈希（十六进制字符串)
+ 2）、事务哈希（十六进制字符串，资产部署时的事务哈希)
  3）、私钥（十六进制字符串)
  4）、nonce(Long)
  5）、from(十六进制字符串，公钥)
@@ -518,7 +518,26 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.32 获取Asset资产部署的详细信息
+1.32构造签名的资产定义的转账的规则调用事务（传部署的160哈希）
+```
+ TxUtility.CreateSignToDeployforRuleTransferAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、160哈希（十六进制字符串，资产部署时的160哈希值)
+ 3）、私钥（十六进制字符串)
+ 4）、nonce(Long)
+ 5）、from(十六进制字符串，公钥)
+ 6）、to(十六进制字符串，目标地址的公钥哈希)
+ 7）、value(BigDecimal，转发金额，必须大于0，整数)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.33 获取Asset资产部署的详细信息
 ```
 *   方法：TxUtility.getAsset()     
 *	参数：payload(十六进制字符串)  
@@ -530,7 +549,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message::对象的所有参数
  }
 ```
-1.33 获取AssetChangeowner资产更换所有者的详细信息
+1.34 获取AssetChangeowner资产更换所有者的详细信息
 ```
 *   方法：TxUtility.getAssetChangeowner()     
 *	参数：payload(十六进制字符串)  
@@ -542,7 +561,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message::对象的所有参数
  }
 ```
-1.34 获取AssetIncreased资产增发的详细信息
+1.35 获取AssetIncreased资产增发的详细信息
 ```
 *   方法：TxUtility.getAssetIncreased()
 *	参数：payload(十六进制字符串)   
@@ -554,7 +573,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message::对象的所有参数
  }
 ```
-1.35 获取AssetTransfer资产转账的详细信息
+1.36 获取AssetTransfer资产转账的详细信息
 ```
 *   方法：TxUtility.getAssetTransfer()     
 *	参数：payload(十六进制字符串)  

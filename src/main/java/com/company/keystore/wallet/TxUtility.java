@@ -24,7 +24,6 @@ import com.company.keystore.crypto.RipemdUtility;
 import com.company.keystore.crypto.SHA3Utility;
 import com.company.keystore.crypto.ed25519.Ed25519PrivateKey;
 import com.company.keystore.crypto.ed25519.Ed25519PublicKey;
-import com.company.keystore.util.Base58Utility;
 import com.company.keystore.util.ByteUtil;
 import com.company.protobuf.HatchModel;
 import com.company.protobuf.ProtocolModel;
@@ -1242,6 +1241,101 @@ public class TxUtility extends Thread {
             byte[] fromBy = Hex.decodeHex(from.toCharArray());
             byte[] toBy = Hex.decodeHex(to.toCharArray());
             JSONObject jsonObject = CreateDeployforRuleAssetTransfer(fromPubkeyStr, txHash1, nonce, fromBy, toBy, value);
+            if(jsonObject.getInteger("code") == 5000){
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造资产定义的转账事务(160哈希)
+     * @param fromPubkeyStr
+     * @param hash160
+     * @param nonce
+     * @param from
+     * @param to
+     * @param value
+     * @return
+     */
+    public static JSONObject CreateDeployforRuleAssetTransferAsHash160(String fromPubkeyStr, String hash160, Long nonce, byte[] from, byte[] to, BigDecimal value) {
+        try {
+            value = value.multiply(BigDecimal.valueOf(rate));
+            AssetTransfer assetTransfer = new AssetTransfer(from, to, value.longValue());
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0x08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希
+            byte[] toPubkeyHash = Hex.decodeHex(hash160.toCharArray());
+            //构造payload
+            byte[] payload = assetTransfer.RLPdeserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x01}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的资产定义的转账事务(160哈希)
+     * @param fromPubkeyStr
+     * @param hash160
+     * @param prikeyStr
+     * @param nonce
+     * @param from
+     * @param to
+     * @param value
+     * @return
+     */
+    public static JSONObject CreateSignToDeployforRuleTransferAsHash160(String fromPubkeyStr, String hash160, String prikeyStr, Long nonce, String from, String to, BigDecimal value) {
+        try {
+            byte[] fromBy = Hex.decodeHex(from.toCharArray());
+            byte[] toBy = Hex.decodeHex(to.toCharArray());
+            JSONObject jsonObject = CreateDeployforRuleAssetTransferAsHash160(fromPubkeyStr, hash160, nonce, fromBy, toBy, value);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
