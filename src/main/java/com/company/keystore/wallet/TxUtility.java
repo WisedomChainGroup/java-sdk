@@ -1125,6 +1125,88 @@ public class TxUtility extends Thread {
     }
 
     /**
+     * 构造资产定义的更换所有者事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param nonce
+     * @param newowner
+     * @return
+     */
+    public static String CreateCallforRuleAssetChangeownerAsHash160(String fromPubkeyStr, String txHash160, Long nonce, byte[] newowner) {
+        try {
+            AssetChangeowner assetChangeowner = new AssetChangeowner(newowner);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0X08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希
+            byte[] toPubkeyHash = Hex.decodeHex(txHash160.toCharArray());
+            //构造payload
+            byte[] payload = assetChangeowner.RLPdeserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x00}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * 构造签名的资产定义的更换所有者事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param prikeyStr
+     * @param nonce
+     * @param newowner
+     * @return
+     */
+    public static JSONObject CreateSignToDeployforAssetChangeownerAsHash160(String fromPubkeyStr, String txHash160, String prikeyStr, Long nonce, String newowner) {
+        try {
+            byte[] newownerBy;
+            if(newowner.equals("0000000000000000000000000000000000000000") || newowner == "0000000000000000000000000000000000000000"){
+                newownerBy = Hex.decodeHex(newowner.toCharArray());
+            }else{
+                newownerBy = Hex.decodeHex(WalletUtility.addressToPubkeyHash(newowner).toCharArray());
+            }
+            String RawTransactionHex = CreateCallforRuleAssetChangeownerAsHash160(fromPubkeyStr, txHash160, nonce, newownerBy);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
      * 构造资产定义的增发事务
      * @param fromPubkeyStr
      * @param txHash
@@ -1218,6 +1300,101 @@ public class TxUtility extends Thread {
             return json;
         }
     }
+
+    /**
+     * 构造资产定义的增发事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param nonce
+     * @param amount
+     * @return
+     */
+    public static JSONObject CreateCallforRuleAssetIncreasedAsHash160(String fromPubkeyStr, String txHash160, Long nonce, BigDecimal amount) {
+        try {
+            amount = amount.multiply(BigDecimal.valueOf(rate));
+            JSONObject jsonObjectAmount = new JSONObject();
+            jsonObjectAmount = isValidPositiveLong(amount);
+            if(jsonObjectAmount.getInteger("code") == 5000){
+                return jsonObjectAmount;
+            }
+            AssetIncreased assetIncreased = new AssetIncreased(amount.longValue());
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0x08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希
+            byte[] toPubkeyHash = Hex.decodeHex(txHash160.toCharArray());
+            //构造payload
+            byte[] payload = assetIncreased.RLPdeserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x02}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的资产定义的增发事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param prikeyStr
+     * @param nonce
+     * @param amount
+     * @return
+     */
+    public static JSONObject CreateSignToDeployforRuleAssetIncreasedAsHash160(String fromPubkeyStr, String txHash160, String prikeyStr, Long nonce, BigDecimal amount) {
+        try {
+            JSONObject jsonObject = CreateCallforRuleAssetIncreasedAsHash160(fromPubkeyStr, txHash160, nonce, amount);
+            if(jsonObject.getInteger("code") == 5000){
+                return  jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
 
     /**
      * 构造资产定义的转账事务
@@ -2004,6 +2181,309 @@ public class TxUtility extends Thread {
     }
 
 
+    /**
+     * 构造多重签名转账（发布者签名）(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param origin
+     * @param dest
+     * @param from
+     * @param signatures
+     * @param to
+     * @param value
+     * @param pubkeyHashList
+     * @return
+     */
+    public static JSONObject CreateMultisignatureForTransferFirstAsHash160(String fromPubkeyStr,String txHash160,long nonce, int origin, int dest, List<byte[]> from, List<byte[]> signatures, byte[] to, BigDecimal value,List<byte[]> pubkeyHashList){
+        try {
+            value = value.multiply(BigDecimal.valueOf(rate));
+            JSONObject jsonObjectValue = new JSONObject();
+            jsonObjectValue = isValidPositiveLong(value);
+            if(jsonObjectValue.getInteger("code") == 5000){
+                return jsonObjectValue;
+            }
+            MultTransfer multTransfer = new MultTransfer(origin,dest,from,signatures,to,value.longValue(),pubkeyHashList);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0x08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 32字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希
+            byte[] toPubkeyHash = Hex.decodeHex(txHash160.toCharArray());
+            //构造payload
+            byte[] payload = multTransfer.RLPdeserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length+1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x03},payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的多重签名转账（发布者签名）(160哈希)
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param txHashRule160
+     * @param origin
+     * @param dest
+     * @param to
+     * @param value
+     * @param pubkeyHashList
+     * @return
+     */
+    public static JSONObject CreateMultisignatureToDeployforRuleFirstAsHash160(String fromPubkeyStr, String prikeyStr,String txHashRule160,long nonce,int origin, int dest, String to, BigDecimal value,List<String> pubkeyHashList) {
+        try {
+            List<byte[]> pubListBy = new ArrayList<>();
+            byte[] toBy = Hex.decodeHex(to.toCharArray());
+            List<byte[]> signaturesListBy = new ArrayList<>();
+            List<byte[]> pubHashList = new ArrayList<>();
+            for (int i = 0 ;i<pubkeyHashList.size();i++){
+                pubHashList.add(Hex.decodeHex(pubkeyHashList.get(i).toCharArray()));
+            }
+            JSONObject jsonObjectFirst = CreateMultisignatureForTransferFirstAsHash160(fromPubkeyStr, txHashRule160,nonce,origin, dest, pubListBy, signaturesListBy, toBy, value,pubHashList);
+            if(jsonObjectFirst.getInteger("code") == 5000){
+                return  jsonObjectFirst;
+            }
+            String RawTransactionHexFirst = jsonObjectFirst.getString("RawTransactionHex");
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHexFirst, prikeyStr).toCharArray());
+            String signRawBasicTransactionS = new String(Hex.encodeHex(signRawBasicTransaction));
+            Transaction transaction = new Transaction(signRawBasicTransactionS);;
+            byte[] sign = transaction.signature;
+            signaturesListBy.add(sign);
+            JSONObject jsonObjectFirstSign = CreateMultisignatureForTransferFirstAsHash160(fromPubkeyStr, txHashRule160,nonce,origin, dest, pubListBy, signaturesListBy, toBy, value,pubHashList);
+            if(jsonObjectFirstSign.getInteger("code") == 5000){
+                return  jsonObjectFirstSign;
+            }
+            String RawTransactionHexFirstSign = jsonObjectFirstSign.getString("RawTransactionHex");
+            byte[] signRawBasicTransactionSign = Hex.decodeHex(signRawBasicTransaction(RawTransactionHexFirstSign, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransactionSign, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransactionSign));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("pubkeyFirstSign",RawTransactionHexFirst);
+            jsonObject.put("pubkeyFirst",fromPubkeyStr);
+            jsonObject.put("signFirst",traninfo);
+            jsonObject.put("data",txHash);
+            jsonObject.put("statusCode",2000);
+            String jsonString = JSON.toJSONString(jsonObject);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的多重签名转账（其他人签名）(160哈希)
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param isPutSign
+     * @return
+     */
+    public static JSONObject CreateMultisignatureToDeployforRuleOtherAsHash160(String fromPubkeyStr,String pubkeyFirstSign, String prikeyStr,boolean isPutSign){
+        try {
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransactionAndIsSign(pubkeyFirstSign, prikeyStr,isPutSign).toCharArray());
+            String signRawBasicTransactionS = new String(Hex.encodeHex(signRawBasicTransaction));
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("pubkeyOther",fromPubkeyStr);
+            jsonObject.put("signOther",signRawBasicTransactionS);
+            jsonObject.put("data",txHash);
+            jsonObject.put("message",traninfo);
+            jsonObject.put("statusCode",2000);
+            String jsonString = JSON.toJSONString(jsonObject);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造多重签名转账（拼接签名）(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param nonce
+     * @param origin
+     * @param dest
+     * @param from
+     * @param signatures
+     * @param to
+     * @param value
+     * @param pubkeyHashList
+     * @return
+     */
+    public static JSONObject CreateMultisignatureForTransferSpliceAsHash160(String fromPubkeyStr, String txHash160, long nonce,int origin, int dest, List<byte[]> from, List<byte[]> signatures, byte[] to, BigDecimal value,List<byte[]> pubkeyHashList){
+        try {
+            MultTransfer multTransfer = new MultTransfer(origin,dest,from,signatures,to,value.longValue(),pubkeyHashList);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0x08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希
+            byte[] toPubkeyHash = Hex.decodeHex(txHash160.toCharArray());
+            //构造payload
+            byte[] payload = multTransfer.RLPdeserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length+1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x03}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的多重签名转账(拼接签名)(160哈希)
+     * @param prikeyStr
+     * @param txHashRule160
+     * @param signFirst
+     * @param pubkeyOther
+     * @param signOther
+     * @return
+     */
+    public static JSONObject CreateMultisignatureToDeployforRuleSignSpliceAsHash160(String prikeyStr, String pubkeyFirstSign,String frompubkey,String txHashRule160,long nonce,String signFirst,String pubkeyOther,String signOther,int type){
+        try {
+            Transaction transactionPay = new Transaction(signFirst);
+            byte[] payload = transactionPay.payload;
+            MultTransfer multTransfer = new MultTransfer();
+            byte[] payloadNew = new byte[payload.length-1];
+            for (int i = 1 ; i < payload.length ; i++){
+                payloadNew[i-1] = payload[i];
+            }
+            multTransfer = multTransfer.RLPdeserialization(payloadNew);
+            List<byte[]> list = new ArrayList<>();
+            for(int i = 0 ;i<multTransfer.getSignatures().size();i++){
+                list.add(multTransfer.getSignatures().get(i));
+            }
+            int origin = multTransfer.getOrigin();
+            int dest = multTransfer.getDest();
+            byte[] toBy = multTransfer.getTo();
+            long value = multTransfer.getValue();
+            BigDecimal valueBig = new BigDecimal(value);
+            byte[] frompubkeyBy = Hex.decodeHex(frompubkey.toCharArray());
+            byte[] pubkeyOtherBy = Hex.decodeHex(pubkeyOther.toCharArray());
+            //公钥数组
+            List<byte[]> fromList = new ArrayList<>();
+            if(multTransfer.getFrom().size() == 0){
+                fromList.add(frompubkeyBy);
+            }else{
+                for(int i = 0 ;i<multTransfer.getFrom().size();i++){
+                    fromList.add(multTransfer.getFrom().get(i));
+                }
+            }
+            if(!frompubkey.equals(pubkeyOther)) {
+                fromList.add(pubkeyOtherBy);
+            }
+            //公钥哈希数组
+            List<byte[]> pubkeyHashList = new ArrayList<>();
+            for(int i = 0 ;i<multTransfer.getPubkeyHashList().size();i++){
+                pubkeyHashList.add(multTransfer.getPubkeyHashList().get(i));
+            }
+            JSONObject jsonObjectRes = new JSONObject();
+            if(type == 1){
+                jsonObjectRes = CreateMultisignatureForTransferSpliceAsHash160(frompubkey,txHashRule160,nonce,origin,dest,fromList,list,toBy,valueBig,pubkeyHashList);
+            }else if(type == 2 ||type == 3){
+                //验证其他人的签名
+                Transaction transaction = new Transaction(signOther);
+                byte[] sig = transaction.signature;
+                byte[] pubkey = Hex.decodeHex(pubkeyOther.toCharArray());
+                Ed25519PublicKey ed25519PublicKey = new Ed25519PublicKey(pubkey);
+                boolean isTrue =ed25519PublicKey.verify(Hex.decodeHex(pubkeyFirstSign.toCharArray()),sig);
+                if(!isTrue){
+                    JSONObject jsonObjectSign = new JSONObject();
+                    jsonObjectSign.put("code",5000);
+                    jsonObjectSign.put("message","others sign is wrong");
+                    return jsonObjectSign;
+                }
+                list.add(sig);
+                jsonObjectRes = CreateMultisignatureForTransferSpliceAsHash160(frompubkey,txHashRule160,nonce,origin,dest,fromList,list,toBy,valueBig,pubkeyHashList);
+            } else {
+                JSONObject jsonObjectType = new JSONObject();
+                jsonObjectType.put("code",5000);
+                jsonObjectType.put("message","type can only be 1 or 2 or 3");
+                return jsonObjectType;
+            }
+            String RawTransactionHex = jsonObjectRes.getString("RawTransactionHex");
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
 
     /**
      * 构造时间锁定的事务
@@ -2186,6 +2666,102 @@ public class TxUtility extends Thread {
     }
 
     /**
+     * 构造获得锁定资产事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param nonce
+     * @param transferhash
+     * @param origintext
+     * @return
+     */
+    public static String hashTimeBlockGetForDeployAsHash160(String fromPubkeyStr,String txHash160,long nonce, byte[] transferhash,String origintext){
+        try {
+            HashtimeblockGet hashtimeblockGet = new HashtimeblockGet(transferhash,origintext);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0X08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //部署事务的事务哈希
+            byte[] toPubkeyHash = Hex.decodeHex(txHash160.toCharArray());
+            //构造payload
+            byte[] payload = hashtimeblockGet.RLPserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x05},payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * 构造签名的获得锁定资产事务(160哈希)
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param txGetHash160
+     * @param nonce
+     * @param transferhash
+     * @param origintext
+     * @return
+     */
+    public static JSONObject CreateHashTimeBlockGetForDeployAsHash160(String fromPubkeyStr,String prikeyStr,String txGetHash160,long nonce, String transferhash,String origintext) {
+        APIResult apiResult = new APIResult();
+        try {
+            if(origintext == null ){
+                apiResult.setMessage("origintext can not be null");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            String origintextNew = origintext.replace(" ","");
+            byte[] origintext_utf8 = origintextNew.getBytes(StandardCharsets.UTF_8);
+            if(origintext_utf8.length > 512 || origintext_utf8.length <= 0){
+                apiResult.setMessage("origintext length is too large or too short");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] transferhashBy = Hex.decodeHex(transferhash.toCharArray());
+            String RawTransactionHex = hashTimeBlockGetForDeployAsHash160(fromPubkeyStr, txGetHash160,nonce,transferhashBy,origintextNew);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+
+    /**
      * 构造时间锁定的转发资产事务
      * @param fromPubkeyStr
      * @param txHash
@@ -2284,6 +2860,128 @@ public class TxUtility extends Thread {
             }
             byte[] hashresultByte = SHA3Utility.sha3256(hashresult_utf8);
             JSONObject jsonObject = hashTimeBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresultByte, timestamp);
+            if(jsonObject.getInteger("code") == 5000){
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造时间锁定的转发资产事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param nonce
+     * @param value
+     * @param hashresult
+     * @param timestamp
+     * @return
+     */
+    public static JSONObject hashTimeBlockTransferForDeployAsHash160(String fromPubkeyStr,String txHash160,long nonce,BigDecimal value,byte[] hashresult,BigDecimal timestamp){
+        try {
+            value = value.multiply(BigDecimal.valueOf(rate));
+            JSONObject jsonObjectValue = new JSONObject();
+            jsonObjectValue = isValidPositiveLong(value);
+            if(jsonObjectValue.getInteger("code") == 5000){
+                return jsonObjectValue;
+            }
+            HashtimeblockTransfer hashtimeblockTransfer = new HashtimeblockTransfer(value.longValue(),hashresult,timestamp.longValue());
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0X08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希,填0
+            byte[] toPubkeyHash = Hex.decodeHex(txHash160.toCharArray());
+            //构造payload
+            byte[] payload = hashtimeblockTransfer.RLPserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x04}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的时间锁定的转发资产事务(160哈希)
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param txGetHash160
+     * @param nonce
+     * @param value
+     * @param hashresult
+     * @param timestamp
+     * @return
+     */
+    public static JSONObject CreateHashTimeBlockTransferForDeployAsHa(String fromPubkeyStr,String prikeyStr,String txGetHash160,long nonce,BigDecimal value,String hashresult,BigDecimal timestamp) {
+        APIResult apiResult = new APIResult();
+        try {
+            if(hashresult == null){
+                apiResult.setMessage("hashresult can not be null");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            String hashresultNew = hashresult.replace(" ","");
+            if(hashresultNew == "" || "".equals(hashresultNew)){
+                apiResult.setMessage("hashresult can not be empty");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] hashresult_utf8 = hashresultNew.getBytes(StandardCharsets.UTF_8);
+            if(hashresult_utf8.length > 512 || hashresult_utf8.length <= 0){
+                apiResult.setMessage("hashresult length is too large or too short");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] hashresultByte = SHA3Utility.sha3256(hashresult_utf8);
+            JSONObject jsonObject = hashTimeBlockTransferForDeployAsHash160(fromPubkeyStr,txGetHash160, nonce,value,hashresultByte, timestamp);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
@@ -2488,6 +3186,102 @@ public class TxUtility extends Thread {
         }
     }
 
+
+    /**
+     * 构造区块高度锁定的获得锁定资产事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param nonce
+     * @param transferhash
+     * @param origintext
+     * @return
+     */
+    public static String HashHeightBlockGetForDeployAsHash160(String fromPubkeyStr,String txHash160,long nonce, byte[] transferhash,String origintext){
+        try {
+            HashheightblockGet hashheightblockGet = new HashheightblockGet(transferhash,origintext);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0X08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希,填0
+            byte[] toPubkeyHash = Hex.decodeHex(txHash160.toCharArray());
+            //构造payload
+            byte[] payload = hashheightblockGet.RLPserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength, new byte[]{0x07},payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * 构造签名的获得锁定资产事务(160哈希)
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param txGetHash160
+     * @param nonce
+     * @param transferhash
+     * @param origintext
+     * @return
+     */
+    public static JSONObject CreateHashHeightBlockGetForDeployAsHash160(String fromPubkeyStr,String prikeyStr,String txGetHash160,long nonce, String transferhash,String origintext) {
+        APIResult apiResult = new APIResult();
+        try {
+            if(origintext == null){
+                apiResult.setMessage("origintext can not be null");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            String origintextNew = origintext.replace(" ","");
+            byte[] origintext_utf8 = origintextNew.getBytes(StandardCharsets.UTF_8);
+            if(origintext_utf8.length > 512 || origintext_utf8.length <=0){
+                apiResult.setMessage("origintext length is too large or too short");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] transferhashBy = Hex.decodeHex(transferhash.toCharArray());
+            String RawTransactionHex = HashHeightBlockGetForDeployAsHash160(fromPubkeyStr, txGetHash160,nonce,transferhashBy,origintextNew);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
     /**
      * 构造区块高度锁定的转发资产事务
      * @param fromPubkeyStr
@@ -2594,6 +3388,135 @@ public class TxUtility extends Thread {
             }
             byte[] hashresultByte = SHA3Utility.sha3256(hashresult_utf8);
             JSONObject jsonObject = HashHeightBlockTransferForDeploy(fromPubkeyStr,txGetHash, nonce,value,hashresultByte, blockheight);
+            if(jsonObject.getInteger("code") == 5000){
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造区块高度锁定的转发资产事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param nonce
+     * @param value
+     * @param hashresult
+     * @param blockheight
+     * @return
+     */
+    public static JSONObject HashHeightBlockTransferForDeployAsHash160(String fromPubkeyStr,String txHash160,long nonce,BigDecimal value,byte[] hashresult,BigDecimal blockheight){
+        try {
+            value = value.multiply(BigDecimal.valueOf(rate));
+            JSONObject jsonObjectValue = new JSONObject();
+            jsonObjectValue = isValidPositiveLong(value);
+            if(jsonObjectValue.getInteger("code") == 5000){
+                return jsonObjectValue;
+            }
+            if (new BigDecimal(blockheight.longValue()).compareTo(blockheight) != 0 || blockheight.compareTo(BigDecimal.ZERO) < 0 ) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("message", "blockheight must be a positive long number");
+                jsonObject.put("data", "");
+                jsonObject.put("code", "5000");
+                return jsonObject;
+            }
+            HashheightblockTransfer hashheightblockTransfer = new HashheightblockTransfer(value.longValue(),hashresult,blockheight.longValue());
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0X08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希,填0
+            byte[] toPubkeyHash = Hex.decodeHex(txHash160.toCharArray());
+            //构造payload
+            byte[] payload = hashheightblockTransfer.RLPserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x06}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的区块高度锁定的转发资产事务(160哈希)
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param txGetHash160
+     * @param nonce
+     * @param value
+     * @param hashresult
+     * @param blockheight
+     * @return
+     */
+    public static JSONObject CreateHashHeightBlockTransferForDeployAsHash160(String fromPubkeyStr,String prikeyStr,String txGetHash160,long nonce,BigDecimal value,String hashresult,BigDecimal blockheight) {
+        APIResult apiResult = new APIResult();
+        try {
+            if(hashresult == null){
+                apiResult.setMessage("hashresult can not be null");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            String hashresultNew = hashresult.replace(" ","");
+            if(hashresultNew == "" || "".equals(hashresultNew)){
+                apiResult.setMessage("hashresult can not be empty");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] hashresult_utf8 = hashresultNew.getBytes(StandardCharsets.UTF_8);
+            if(hashresult_utf8.length > 512 || hashresult_utf8.length <= 0){
+                apiResult.setMessage("hashresult length is too large or to short");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] hashresultByte = SHA3Utility.sha3256(hashresult_utf8);
+            JSONObject jsonObject = HashHeightBlockTransferForDeployAsHash160(fromPubkeyStr,txGetHash160, nonce,value,hashresultByte, blockheight);
             if(jsonObject.getInteger("code") == 5000){
                 return jsonObject;
             }
@@ -2878,6 +3801,118 @@ public class TxUtility extends Thread {
     }
 
     /**
+     * 构造调用定额条件比例支付的转入金额事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param nonce
+     * @param value
+     * @return
+     */
+    public static JSONObject CreateRateheightlockDepositRuleAsHash160(String fromPubkeyStr,String txHash160, long nonce, BigDecimal value){
+        try {
+            RateheightlockDeposit rateheightlockDeposit = new RateheightlockDeposit(value.longValue());
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0X08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希,填0
+            byte[] toPubkeyHash = Hex.decodeHex(txHash160.toCharArray());
+            //构造payload
+            byte[] payload = rateheightlockDeposit.RLPserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x08}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的调用定额条件比例支付的转入金额事务(160哈希)
+     * @param fromPubkeyStr
+     * @param prikeyStr
+     * @param nonce
+     * @return
+     */
+    public static JSONObject CreateRateheightlockDepositRuleForDeployAsHash160(String fromPubkeyStr,String prikeyStr,String txHashCreate160,long nonce, BigDecimal value) {
+        APIResult apiResult = new APIResult();
+        try {
+            value = value.multiply(BigDecimal.valueOf(rate));
+            if(value.equals("") || value == null){
+                apiResult.setMessage("金额不能为空");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            if(value.compareTo(BigDecimal.ZERO) <= 0){
+                apiResult.setMessage("必须为正整数");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            //判断是否有小数
+            String string = value.stripTrailingZeros().toPlainString();
+            int index = string.indexOf(".");
+            index = index < 0 ? 0 : string.length() - index - 1;
+            if(index > 0){
+                apiResult.setMessage("金额输入错误");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            JSONObject jsonObject = CreateRateheightlockDepositRuleAsHash160(fromPubkeyStr, txHashCreate160,nonce,value );
+            if (jsonObject.getInteger("code") == 5000) {
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
      * 构造调用的定额条件比例支付的转出事务
      * @param fromPubkeyStr
      * @param txHash
@@ -2953,6 +3988,105 @@ public class TxUtility extends Thread {
             byte[] deposithashByte = Hex.decodeHex(deposithash.toCharArray());
             byte[] toByte = Hex.decodeHex(to.toCharArray());
             JSONObject jsonObject = CreateRateheightlockWithdrawRule(fromPubkeyStr,txHashCreate, nonce, deposithashByte,toByte);
+            if (jsonObject.getInteger("code") == 5000) {
+                return jsonObject;
+            }
+            String RawTransactionHex = jsonObject.getString("RawTransactionHex");
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult result = new APIResult();
+            result.setData(txHash);
+            result.setMessage(traninfo);
+            result.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(result);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造调用的定额条件比例支付的转出事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHash160
+     * @param nonce
+     * @param deposithash
+     * @param to
+     * @return
+     */
+    public static JSONObject CreateRateheightlockWithdrawRuleAsHash160(String fromPubkeyStr, String txHash160,long nonce, byte[] deposithash,byte[] to){
+        try {
+            RateheightlockWithdraw rateheightlockWithdraw = new RateheightlockWithdraw(deposithash,to);
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型
+            byte[] type = new byte[1];
+            type[0] = 0X08;
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice = ByteUtil.longToBytes(obtainServiceCharge(100000L, serviceCharge));
+            //分享收益 无符号64位
+            BigDecimal bdAmount = BigDecimal.valueOf(0);
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希,填0
+            byte[] toPubkeyHash = Hex.decodeHex(txHash160.toCharArray());
+            //构造payload
+            byte[] payload = rateheightlockWithdraw.RLPserialization();
+            //长度
+            byte[] payLoadLength = BigEndian.encodeUint32(payload.length + 1);
+            byte[] allPayload = ByteUtil.merge(payLoadLength,new byte[]{0x09}, payload);
+            byte[] RawTransaction = ByteUtil.merge(version, type, nonece, fromPubkeyHash, gasPrice, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("RawTransactionHex",RawTransactionStr);
+            jsonObject.put("code",2000);
+            return jsonObject;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("exception error");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
+    /**
+     * 构造签名的调用定额条件比例支付的转出事务(160哈希)
+     * @param fromPubkeyStr
+     * @param txHashCreate160
+     * @param prikeyStr
+     * @param nonce
+     * @param deposithash
+     * @param to
+     * @return
+     */
+    public static JSONObject CreateRateheightlockWithdrawRuleForDeployAsHash160(String fromPubkeyStr,String txHashCreate160,String prikeyStr,long nonce, String deposithash, String to) {
+        APIResult apiResult = new APIResult();
+        try {
+            if(deposithash.equals("") || deposithash == null || to.equals("") || to == null){
+                apiResult.setMessage("转入哈希或转出地址不能为空");
+                apiResult.setStatusCode(5000);
+                String jsonString = JSON.toJSONString(apiResult);
+                JSONObject json = JSON.parseObject(jsonString);
+                return json;
+            }
+            byte[] deposithashByte = Hex.decodeHex(deposithash.toCharArray());
+            byte[] toByte = Hex.decodeHex(to.toCharArray());
+            JSONObject jsonObject = CreateRateheightlockWithdrawRuleAsHash160(fromPubkeyStr,txHashCreate160, nonce, deposithashByte,toByte);
             if (jsonObject.getInteger("code") == 5000) {
                 return jsonObject;
             }
