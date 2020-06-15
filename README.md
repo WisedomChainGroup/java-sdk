@@ -482,12 +482,29 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.30构造签名的资产定义的资产增发的规则调用事务
+1.30构造签名的资产定义的更换资产的规则调用事务(传部署时的160哈希)
+```
+ TxUtility. CreateSignToDeployforAssetChangeownerAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、160哈希（十六进制字符串 资产部署时的160哈希值)
+ 3）、私钥（十六进制字符串)
+ 4）、nonce(Long)
+ 5）、newowner(十六进制字符串，新的目标用户地址)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.31构造签名的资产定义的资产增发的规则调用事务
 ```
  TxUtility. CreateSignToDeployforRuleAssetIncreased()
  参数：
  1）、发送者公钥（十六进制字符串)
- 2）、事务哈希（十六进制字符串)
+ 2）、160哈希（十六进制字符串)
  3）、私钥（十六进制字符串)
  4）、nonce(Long)
  5）、amount(BigDecimal，增发的金额)
@@ -499,7 +516,24 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.31构造签名的资产定义的转账的规则调用事务
+1.32构造签名的资产定义的资产增发的规则调用事务(传部署时的160哈希)
+```
+ TxUtility. CreateSignToDeployforRuleAssetIncreasedAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串 资产部署时的160哈希值)
+ 2）、160哈希（十六进制字符串)
+ 3）、私钥（十六进制字符串)
+ 4）、nonce(Long)
+ 5）、amount(BigDecimal，增发的金额)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.33构造签名的资产定义的转账的规则调用事务
 ```
  TxUtility. CreateSignToDeployforRuleTransfer()
  参数：
@@ -518,7 +552,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.32构造签名的资产定义的转账的规则调用事务（传部署的160哈希）
+1.34构造签名的资产定义的转账的规则调用事务（传部署的160哈希）
 ```
  TxUtility.CreateSignToDeployforRuleTransferAsHash160()
  参数：
@@ -537,7 +571,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.33 获取Asset资产部署的详细信息
+1.35 获取Asset资产部署的详细信息
 ```
 *   方法：TxUtility.getAsset()     
 *	参数：payload(十六进制字符串)  
@@ -549,7 +583,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message::对象的所有参数
  }
 ```
-1.34 获取AssetChangeowner资产更换所有者的详细信息
+1.36 获取AssetChangeowner资产更换所有者的详细信息
 ```
 *   方法：TxUtility.getAssetChangeowner()     
 *	参数：payload(十六进制字符串)  
@@ -561,7 +595,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message::对象的所有参数
  }
 ```
-1.35 获取AssetIncreased资产增发的详细信息
+1.37 获取AssetIncreased资产增发的详细信息
 ```
 *   方法：TxUtility.getAssetIncreased()
 *	参数：payload(十六进制字符串)   
@@ -573,7 +607,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message::对象的所有参数
  }
 ```
-1.36 获取AssetTransfer资产转账的详细信息
+1.38 获取AssetTransfer资产转账的详细信息
 ```
 *   方法：TxUtility.getAssetTransfer()     
 *	参数：payload(十六进制字符串)  
@@ -586,7 +620,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  }
 ```
 
-1.37构造签名的多重规则部署（发布者签名）
+1.39构造签名的多重规则部署（发布者签名）
 ```
  TxUtility. CreateMultipleToDeployforRuleFirst()
  参数：
@@ -611,7 +645,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:(十六进制字符串)
  }
 ```
-1.38构造签名的多重签名的部署（其他人签名）
+1.40构造签名的多重签名的部署（其他人签名）
 ```
  TxUtility. CreateMultipleToDeployforRuleOther()
  参数：
@@ -629,7 +663,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)signOther:(十六进制字符串，其他人的签名)
  }
 ```
-1.39构造签名的多重规则部署(拼接签名)
+1.41构造签名的多重规则部署(拼接签名)
 ```
  TxUtility. CreateMultipleToDeployforRuleSignSplice()
  参数：
@@ -648,7 +682,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:(十六位进制字符串  拼接完之后签名)
  }
 ```
-1.40构造签名转账的多重签名（发布者签名）
+1.42构造签名转账的多重签名（发布者签名）
 ```
  TxUtility. CreateMultisignatureToDeployforRuleFirst()
  参数：
@@ -673,7 +707,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)data:(十六进制字符串)
  }
 ```
-1.41构造签名转账的多重签名（其他人签名）
+1.43构造签名转账的多重签名（其他人签名）
 ```
  TxUtility. CreateMultisignatureToDeployforRuleOther()
  参数：
@@ -691,7 +725,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)signOther:(十六进制字符串，其他人的签名)
  }
 ```
-1.42 构造签名转账的多重签名(拼接签名)
+1.44 构造签名转账的多重签名(拼接签名)
 ```
  TxUtility. CreateMultisignatureToDeployforRuleSignSplice()
  参数：
@@ -712,7 +746,71 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:(拼接后的签名)
  }
 ```
-1.43 获取Multiple多签部署的详细信息
+1.45构造签名转账的多重签名（发布者签名）(多签部署的160哈希)
+```
+ TxUtility. CreateMultisignatureToDeployforRuleFirstAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、Nonce(Long) 发布人的当前nonce
+ 4）、160哈希（十六进制字符串   多签部署时的160哈希值)
+ 5）、origin(int   来源账户类型，1表示多签地址，0表示普通账户地址)
+ 6）、dest(int   目标账户类型，1表示多签地址，0表示普通账户地址)
+ 7）、pubhash(十六进制字符串的集合   公钥数组)
+ 8）、to（十六进制字符串   普通地址所对应的公钥哈希或者多签地址对应的事务哈希)
+ 9）、value(BigDecimal   转账金额)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ (String)pubkeyFirstSign:(十六进制字符串，发布者未签名的事务构造)
+ (String)pubkeyFirst:(十六进制字符串，发布者公钥)
+ (String)signFirst:(十六进制字符串，发布者签名的事务构造)
+ (String)data:(十六进制字符串)
+ }
+```
+1.46构造签名转账的多重签名（其他人签名）（多签部署的160哈希）
+```
+ TxUtility. CreateMultisignatureToDeployforRuleOtherAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、pubFirstSign（十六进制字符串，发布者签名返回的pubkeyFirstSign字段)
+ 3）、私钥（十六进制字符串)
+ 4）、isPutSign(boolean   是否签名)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ (String)pubkeyOther:(十六进制字符串，其他人的公钥)
+ (String)signOther:(十六进制字符串，其他人的签名)
+ }
+```
+1.47 构造签名转账的多重签名(拼接签名)(多签部署的160哈希)
+```
+ TxUtility. CreateMultisignatureToDeployforRuleSignSpliceAsHash160()
+ 参数：
+ 1）、发布者私钥（十六进制字符串)
+ 2）、pubFirstSign（十六进制字符串，发布者签名返回的pubkeyFirstSign字段)
+ 3）、发布者公钥（十六进制字符串)
+ 4）、160哈希（十六进制字符串    多签部署时的160哈希值)
+ 5）、nonce(Long    发布者当前的nonce)
+ 6）、 signFirst(十六进制字符串，  发布者签名或者拼接后的签名)
+ 7）、 pubkeyOther(十六进制字符串，公钥)
+ 8）、 signOther(十六进制字符串，   其他人的签名)
+ 9）、 type(int，   1为单对多   2为多对单  3为多对多)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:(拼接后的签名)
+ }
+```
+1.48 获取Multiple多签部署的详细信息
 ```
 *   方法：TxUtility.getMultiple()     
 *	参数：payload(十六进制字符串)  
@@ -724,7 +822,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:对象的所有参数
  }
 ```
-1.44 获取MultTransfer多签规则转账的详细信息
+1.49 获取MultTransfer多签规则转账的详细信息
 ```
 *   方法：TxUtility.getMultTransfer()     
 *	参数：payload(十六进制字符串)  
@@ -736,7 +834,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:对象的所有参数
  }
 ```
-1.45 构造签名的时间锁定的事务
+1.50 构造签名的时间锁定的事务
 ```
  TxUtility. CreateHashTimeBlockForDeploy()
  参数：
@@ -753,7 +851,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.46 构造签名的获得锁定资产事务
+1.51 构造签名的获得锁定资产事务
 ```
  TxUtility. CreateHashTimeBlockGetForDeploy()
  参数：
@@ -771,7 +869,25 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.47 构造签名的时间锁定的转发资产事务
+1.52 构造签名的获得锁定资产事务(部署时间锁定的160哈希)
+```
+ TxUtility. CreateHashTimeBlockGetForDeployAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、160哈希（十六进制字符串   时间锁定部署的160哈希)
+ 4）、nonce(int)
+ 5）、transferhash(十六进制字符串   签发事务的哈希)
+ 6）、origintext(十六进制字符串   原文)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.53 构造签名的时间锁定的转发资产事务
 ```
  TxUtility. CreateHashTimeBlockTransferForDeploy()
  参数：
@@ -790,7 +906,26 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.48 构造签名的区块高度锁定支付事务
+1.54 构造签名的时间锁定的转发资产事务(部署时间锁定的160哈希)
+```
+ TxUtility. CreateHashTimeBlockTransferForDeployAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、160哈希（十六进制字符串  时间锁定部署的160哈希)
+ 4）、nonce(int)
+ 5）、value(BigDecimal   金额)
+ 6）、hashresult(十六进制字符串   原文)
+ 7）、timestamp(时间戳)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.55 构造签名的区块高度锁定支付事务
 ```
  TxUtility. CreateHashHeightBlockForDeploy()
  参数：
@@ -807,7 +942,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.49 构造签名的区块高度获得锁定资产事务
+1.56 构造签名的区块高度获得锁定资产事务
 ```
  TxUtility. CreateHashHeightBlockGetForDeploy()
  参数：
@@ -825,7 +960,25 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.50 构造签名的区块高度锁定的转发资产事务
+1.57 构造签名的区块高度获得锁定资产事务(区块高度锁定部署的160哈希)
+```
+ TxUtility. CreateHashHeightBlockGetForDeployAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、160哈希（十六进制字符串 区块高度部署时的160哈希)
+ 4）、nonce(int)
+ 5）、transferhash(十六进制字符串  转账事务的哈希)
+ 6）、origintext(十六进制字符串  原文)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.58 构造签名的区块高度锁定的转发资产事务
 ```
  TxUtility. CreateHashHeightBlockTransferForDeploy()
  参数：
@@ -844,7 +997,26 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.51 获取Hashtimeblock时间锁定支付的详细信息
+1.59 构造签名的区块高度锁定的转发资产事务（传160哈希）
+```
+ TxUtility. CreateHashHeightBlockTransferForDeployAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、160哈希（十六进制字符串 区块高度部署时的160哈希)
+ 4）、nonce(int)
+ 5）、value(BigDecimal   金额)
+ 6）、hashresult(十六进制字符串  原文)
+ 7）、timestamp(时间戳)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:0
+ (String)message:null
+ }
+```
+1.60 获取Hashtimeblock时间锁定支付的详细信息
 ```
 *   方法：TxUtility.getHashtimeblock()     
 *	参数：payload(十六进制字符串)  
@@ -856,7 +1028,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:对象的所有参数
  }
 ```
-1.52 获得HashtimeblockGet时间锁定支付获得锁定资产的详细信息
+1.61 获得HashtimeblockGet时间锁定支付获得锁定资产的详细信息
 ```
 *   方法：TxUtility.getHashtimeblockGet()     
 *	参数：payload(十六进制字符串)  
@@ -868,7 +1040,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:对象的所有参数
  }
 ```
-1.53 获得HashtimeblockTransfer时间锁定支付转发资产的详细信息
+1.62 获得HashtimeblockTransfer时间锁定支付转发资产的详细信息
 ```
 *   方法：TxUtility.getHashtimeblockTransfer()     
 *	参数：payload(十六进制字符串)  
@@ -880,7 +1052,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:对象的所有参数
  }
 ```
-1.54 获取Hashheightblock区块高度锁定的详细信息
+1.63 获取Hashheightblock区块高度锁定的详细信息
 ```
 *   方法：TxUtility.getHashheightblock()     
 *	参数：payload(十六进制字符串)  
@@ -892,7 +1064,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:对象的所有参数
  }
 ```
-1.55 获取HashheightblockGet区块高度锁定获得锁定资产的详细信息
+1.64 获取HashheightblockGet区块高度锁定获得锁定资产的详细信息
 ```
 *   方法：TxUtility.getHashheightblockGet()     
 *	参数：payload(十六进制字符串)  
@@ -904,7 +1076,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:对象的所有参数
  }
 ```
-1.56 获得HashheightblockTransfer区块高度锁定转发资产的详细信息
+1.65 获得HashheightblockTransfer区块高度锁定转发资产的详细信息
 ```
 *   方法：TxUtility.getHashheightblockTransfer()     
 *	参数：payload(十六进制字符串)  
@@ -916,7 +1088,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:对象的所有参数
  }
 ```
-1.57 通过事务哈希转公钥哈希
+1.66 通过事务哈希转公钥哈希
 ``` 
 *   方法：TxUtility.txhashTopubhash()     
 *	参数：事务哈希(十六进制字符串)  
@@ -926,7 +1098,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  公钥哈希：String
  }
 ```
-1.58 构造签名的部署定额条件比例支付事务
+1.67 构造签名的部署定额条件比例支付事务
 ```
  TxUtility. CreateRateheightlockruleForDeploy()
  参数：
@@ -947,7 +1119,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.59 构造签名的调用定额条件比例支付的转入金额事务
+1.68 构造签名的调用定额条件比例支付的转入金额事务
 ```
  TxUtility. CreateRateheightlockDepositRuleForDeploy()
  参数：
@@ -964,7 +1136,24 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.60 构造签名的调用定额条件比例支付的转出事务
+1.69 构造签名的调用定额条件比例支付的转入金额事务（传160哈希）
+```
+ TxUtility. CreateRateheightlockDepositRuleForDeployAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、私钥（十六进制字符串)
+ 3）、txHashCreate(十六进制字符串   部署定额条件比例支付的160哈希)
+ 4）、nonce（long)
+ 5）、value(Bigdecimal  用户转入的指定金额)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000/5000
+ (String)message:null
+ }
+```
+1.70 构造签名的调用定额条件比例支付的转出事务
 ```
  TxUtility. CreateRateheightlockWithdrawRuleForDeploy()
  参数：
@@ -983,7 +1172,26 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:null
  }
 ```
-1.61 获取Rateheightlock定额条件比例支付的转入金额事务的详细信息
+1.71 构造签名的调用定额条件比例支付的转出事务（传160哈希）
+```
+ TxUtility. CreateRateheightlockWithdrawRuleForDeployAsHash160()
+ 参数：
+ 1）、发送者公钥（十六进制字符串)
+ 2）、txHashCreate(十六进制字符串   部署定额条件比例支付的160哈希)
+ 3）、私钥（十六进制字符串)
+ 4）、nonce（long)
+ 5）、deposithash(十六进制字符串                 
+                    构造转入金额条件比例支付返回的事务哈希)
+ 6）、to(十六进制字符串  公钥哈希，可能是普通账户也可能是多签)
+ 返回类型：Json
+ 返回值：
+ {
+ data : Transaction;
+ (int)statusCode:2000/5000
+ (String)message:null
+ }
+```
+1.72 获取Rateheightlock定额条件比例支付的转入金额事务的详细信息
 ```
 *   方法：TxUtility.getRateheightlock()     
 *	参数：payload(十六进制字符串)  
@@ -995,7 +1203,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:对象的所有参数
  }
 ```
-1.62 获取RateheightlockDeposit区块高度锁定获得锁定资产的详细信息
+1.73 获取RateheightlockDeposit区块高度锁定获得锁定资产的详细信息
 ```
 *   方法：TxUtility.getRateheightlockDeposit()     
 *	参数：payload(十六进制字符串)  
@@ -1007,7 +1215,7 @@ APPSDK是提供给APP调用的方法，主要是提供给实现普通转账事�
  (String)message:对象的所有参数
  }
 ```
-1.63 获取RateheightlockWithdraw定额条件比例支付的转出的详细信息
+1.74 获取RateheightlockWithdraw定额条件比例支付的转出的详细信息
 ```
 *   方法：TxUtility.getRateheightlockWithdraw()     
 *	参数：payload(十六进制字符串)  
