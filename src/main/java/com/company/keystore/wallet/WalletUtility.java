@@ -126,60 +126,60 @@ public class WalletUtility {
         }
     }
 
-//    /**
-//     * 修改keystore密码
-//     * @param keystoreJson
-//     * @param password
-//     * @param newPassword
-//     * @return
-//     */
-//    public static JSON modifyPassword(String keystoreJson, String password,String newPassword){
-//        try {
-//            String prikey = obtainPrikey(keystoreJson,password);
-//            Ed25519PrivateKey privateKey = new Ed25519PrivateKey(Hex.decodeHex(prikey.toCharArray()));
-//            Ed25519PublicKey publicKey = privateKey.generatePublicKey();
-//            if (password.length()>20 || password.length()<8){
-//                JSONObject json = JSON.parseObject("");;
-//                return json;
-//            }else {
-//                byte[] salt = new byte[saltLength];
-//                byte[] iv = new byte[ivLength];
-//                SecureRandom random = new SecureRandom();
-//                random.nextBytes(iv);
-//                SecureRandom sr = new SecureRandom();
-//                sr.nextBytes(salt);
-//                ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, new String(Hex.encodeHex(salt)), newVersion);
-//                AESManage aes = new AESManage(iv);
-//
-//                byte[] derivedKey = argon2id.hash(newPassword.getBytes());
-//                byte[] cipherPrivKey = aes.encrypt(derivedKey, privateKey.getEncoded());
-//                byte[] mac = SHA3Utility.keccak256(Bytes.concat(
-//                        derivedKey,cipherPrivKey
-//                        )
-//                );
-//                String b= new String(Hex.encodeHex(iv));
-//
-//                Crypto crypto = new Crypto(
-//                        AESManage.cipher,new String(Hex.encodeHex(cipherPrivKey)),
-//                        new Cipherparams(
-//                                new String(Hex.encodeHex(iv))
-//                        )
-//                );
-//                Kdfparams kdfparams = new Kdfparams(ArgonManage.memoryCost,ArgonManage.timeCost,ArgonManage.parallelism, new String(Hex.encodeHex(salt)));
-//
-//                com.company.keystore.account.Address ads = new com.company.keystore.account.Address(publicKey);
-//                Keystore ks = new Keystore(ads.getAddress(), crypto, Utils.generateUUID(),
-//                        newVersion, new String(Hex.encodeHex(mac)), argon2id.kdf(),kdfparams
-//                );
-//                String jsonString = JSON.toJSONString(ks);
-//                JSONObject json = JSON.parseObject(jsonString);
-//                return  json;
-//            }
-//        }catch (Exception e){
-//            JSONObject json = JSON.parseObject("");
-//            return json;
-//        }
-//    }
+    /**
+     * 修改keystore密码
+     * @param keystoreJson
+     * @param password
+     * @param newPassword
+     * @return
+     */
+    public static JSON modifyPassword(String keystoreJson, String password,String newPassword){
+        try {
+            String prikey = obtainPrikey(keystoreJson,password);
+            Ed25519PrivateKey privateKey = new Ed25519PrivateKey(Hex.decodeHex(prikey.toCharArray()));
+            Ed25519PublicKey publicKey = privateKey.generatePublicKey();
+            if (password.length()>20 || password.length()<8){
+                JSONObject json = JSON.parseObject("");;
+                return json;
+            }else {
+                byte[] salt = new byte[saltLength];
+                byte[] iv = new byte[ivLength];
+                SecureRandom random = new SecureRandom();
+                random.nextBytes(iv);
+                SecureRandom sr = new SecureRandom();
+                sr.nextBytes(salt);
+                ArgonManage argon2id = new ArgonManage(ArgonManage.Type.ARGON2id, new String(Hex.encodeHex(salt)), newVersion);
+                AESManage aes = new AESManage(iv);
+
+                byte[] derivedKey = argon2id.hash(newPassword.getBytes());
+                byte[] cipherPrivKey = aes.encrypt(derivedKey, privateKey.getEncoded());
+                byte[] mac = SHA3Utility.keccak256(Bytes.concat(
+                        derivedKey,cipherPrivKey
+                        )
+                );
+                String b= new String(Hex.encodeHex(iv));
+
+                Crypto crypto = new Crypto(
+                        AESManage.cipher,new String(Hex.encodeHex(cipherPrivKey)),
+                        new Cipherparams(
+                                new String(Hex.encodeHex(iv))
+                        )
+                );
+                Kdfparams kdfparams = new Kdfparams(ArgonManage.memoryCost,ArgonManage.timeCost,ArgonManage.parallelism, new String(Hex.encodeHex(salt)));
+
+                com.company.keystore.account.Address ads = new com.company.keystore.account.Address(publicKey);
+                Keystore ks = new Keystore(ads.getAddress(), crypto, Utils.generateUUID(),
+                        newVersion, new String(Hex.encodeHex(mac)), argon2id.kdf(),kdfparams
+                );
+                String jsonString = JSON.toJSONString(ks);
+                JSONObject json = JSON.parseObject(jsonString);
+                return  json;
+            }
+        }catch (Exception e){
+            JSONObject json = JSON.parseObject("");
+            return json;
+        }
+    }
 
     /*
       3.将r1进行两次SHA3-256计算，得到结果r3，
