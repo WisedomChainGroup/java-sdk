@@ -10,6 +10,7 @@ import com.company.keystore.util.ByteUtil;
 import com.company.keystore.util.Utils;
 import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 
 import java.io.BufferedWriter;
@@ -17,7 +18,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
+@Slf4j
 public class WalletUtility {
 
     public String address;
@@ -197,7 +200,7 @@ public class WalletUtility {
             byte[] b4 = ByteUtil.bytearraycopy(r3, 0, 4);
             byte[] b5 = ByteUtil.byteMerger(r2, b4);
             String s6 = Base58Utility.encode(b5);
-            return type == 1 ? s6 : "WX"+s6;
+            return type == 1 ? s6 : s6;
         } catch (Exception e) {
             return "";
         }
@@ -319,11 +322,14 @@ public class WalletUtility {
      */
     public static String prikeyToPubkey(String prikey) {
         try {
+            System.out.println("===========================prikey:"+prikey);
             Ed25519PrivateKey eprik = new Ed25519PrivateKey(Hex.decodeHex(prikey.toCharArray()));
             Ed25519PublicKey epuk = eprik.generatePublicKey();
             String pubkey = new String(Hex.encodeHex(epuk.getEncoded()));
             return pubkey;
         } catch (Exception e) {
+            System.out.println("===========================异常");
+            e.printStackTrace();
             return "";
         }
     }
