@@ -20,7 +20,6 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
-@Slf4j
 public class WalletUtility {
 
     public String address;
