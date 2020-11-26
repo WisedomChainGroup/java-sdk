@@ -84,6 +84,60 @@ public class TxUtility extends Thread {
         }
     }
 
+    public static String CreateUnsignedTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, long nonce,String type,String gasPrice){
+        try {
+            //版本号
+            byte[] version = new byte[1];
+            version[0] = 0x01;
+            //类型：WDC转账
+            byte[] type1 = Hex.decodeHex(type.toCharArray());
+            //Nonce 无符号64位
+            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
+            //签发者公钥哈希 20字节
+            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gas单价
+            byte[] gasPrice1 = ByteUtil.longToBytes(Long.parseLong(gasPrice));
+            //转账金额 无符号64位
+            BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
+            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
+            //为签名留白
+            byte[] signull = new byte[64];
+            //接收者公钥哈希
+            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
+            //长度
+            byte[] allPayload = BigEndian.encodeUint32(0);
+            byte[] RawTransaction = ByteUtil.merge(version, type1, nonece, fromPubkeyHash, gasPrice1, Amount, signull, toPubkeyHash, allPayload);
+            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
+            return RawTransactionStr;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static JSONObject CreateSignedTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, Long nonce,String type,String gasPrice) {
+        try {
+            String RawTransactionHex = CreateUnsignedTransaction(fromPubkeyStr, toPubkeyHashStr, amount, nonce,type,gasPrice);
+            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
+            String txHash = new String(Hex.encodeHex(hash));
+            String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
+            APIResult ar = new APIResult();
+            ar.setData(txHash);
+            ar.setMessage(traninfo);
+            ar.setStatusCode(2000);
+            String jsonString = JSON.toJSONString(ar);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        } catch (Exception e) {
+            APIResult apiResult = new APIResult();
+            apiResult.setMessage("事务构造有问题");
+            apiResult.setStatusCode(5000);
+            String jsonString = JSON.toJSONString(apiResult);
+            JSONObject json = JSON.parseObject(jsonString);
+            return json;
+        }
+    }
+
     /**
      * 构造申请孵化事务
      *
