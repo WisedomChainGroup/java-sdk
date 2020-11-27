@@ -84,40 +84,50 @@ public class TxUtility extends Thread {
         }
     }
 
-    public static String CreateUnsignedTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, long nonce,String type,String gasPrice){
+    public static String signRawBasicTransaction1(String RawTransactionHex,String fromPubkeyStr , String prikeyStr) {
         try {
-            //版本号
-            byte[] version = new byte[1];
-            version[0] = 0x01;
-            //类型：WDC转账
-            byte[] type1 = Hex.decodeHex(type.toCharArray());
-            //Nonce 无符号64位
-            byte[] nonece = BigEndian.encodeUint64(nonce + 1);
-            //签发者公钥哈希 20字节
-            byte[] fromPubkeyHash = Hex.decodeHex(fromPubkeyStr.toCharArray());
-            //gas单价
-            byte[] gasPrice1 = ByteUtil.longToBytes(Long.parseLong(gasPrice));
-            //转账金额 无符号64位
-            BigDecimal bdAmount = amount.multiply(BigDecimal.valueOf(rate));
-            byte[] Amount = ByteUtil.longToBytes(bdAmount.longValue());
-            //为签名留白
-            byte[] signull = new byte[64];
-            //接收者公钥哈希
-            byte[] toPubkeyHash = Hex.decodeHex(toPubkeyHashStr.toCharArray());
-            //长度
-            byte[] allPayload = BigEndian.encodeUint32(0);
-            byte[] RawTransaction = ByteUtil.merge(version, type1, nonece, fromPubkeyHash, gasPrice1, Amount, signull, toPubkeyHash, allPayload);
-            String RawTransactionStr = new String(Hex.encodeHex(RawTransaction));
-            return RawTransactionStr;
+            byte[] RawTransaction = Hex.decodeHex(RawTransactionHex.toCharArray());
+            //私钥字节数组
+            byte[] privkey = Hex.decodeHex(prikeyStr.toCharArray());
+            //version
+            byte[] version = ByteUtil.bytearraycopy(RawTransaction, 0, 1);
+            //type
+            byte[] type = ByteUtil.bytearraycopy(RawTransaction, 1, 1);
+            //nonce
+            byte[] nonce = ByteUtil.bytearraycopy(RawTransaction, 2, 8);
+            //from
+            byte[] from = Hex.decodeHex(fromPubkeyStr.toCharArray());
+            //gasprice
+            byte[] gasprice = ByteUtil.bytearraycopy(RawTransaction, 42, 8);
+            //amount
+            byte[] amount = ByteUtil.bytearraycopy(RawTransaction, 50, 8);
+            //signo
+            byte[] signo = ByteUtil.bytearraycopy(RawTransaction, 58, 64);
+            //to
+            byte[] to = ByteUtil.bytearraycopy(RawTransaction, 122, 20);
+            ;
+            //payloadlen
+            byte[] payloadlen = ByteUtil.bytearraycopy(RawTransaction, 142, 4);
+            //payload
+            byte[] payload = ByteUtil.bytearraycopy(RawTransaction, 146, (int) BigEndian.decodeUint32(payloadlen));
+            byte[] RawTransactionNoSign = ByteUtil.merge(version, type, nonce, from, gasprice, amount, signo, to, payloadlen, payload);
+            byte[] RawTransactionNoSig = ByteUtil.merge(version, type, nonce, from, gasprice, amount);
+            //签名数据
+            byte[] sig = new Ed25519PrivateKey(privkey).sign(RawTransactionNoSign);
+            byte[] transha = SHA3Utility.keccak256(ByteUtil.merge(RawTransactionNoSig, sig, to, payloadlen, payload));
+            byte[] signRawBasicTransaction = ByteUtil.merge(version, transha, type, nonce, from, gasprice, amount, sig, to, payloadlen, payload);
+            String signRawBasicTransactionHex = new String(Hex.encodeHex(signRawBasicTransaction));
+            return signRawBasicTransactionHex;
         } catch (Exception e) {
             return "";
         }
     }
 
-    public static JSONObject CreateSignedTransaction(String fromPubkeyStr, String toPubkeyHashStr, BigDecimal amount, String prikeyStr, Long nonce,String type,String gasPrice) {
+
+    public static JSONObject CreateSignedTransaction(String unsignHash,String fromPubkeyStr, String prikeyStr) {
         try {
-            String RawTransactionHex = CreateUnsignedTransaction(fromPubkeyStr, toPubkeyHashStr, amount, nonce,type,gasPrice);
-            byte[] signRawBasicTransaction = Hex.decodeHex(signRawBasicTransaction(RawTransactionHex, prikeyStr).toCharArray());
+            String RawTransactionHex = signRawBasicTransaction1(unsignHash, fromPubkeyStr, prikeyStr);
+            byte[] signRawBasicTransaction = Hex.decodeHex(RawTransactionHex.toCharArray());
             byte[] hash = ByteUtil.bytearraycopy(signRawBasicTransaction, 1, 32);
             String txHash = new String(Hex.encodeHex(hash));
             String traninfo = new String(Hex.encodeHex(signRawBasicTransaction));
